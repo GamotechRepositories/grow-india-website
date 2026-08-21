@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { 
   Phone, Mail, MessageSquare, MapPin, Clock, ShieldCheck, 
-  CheckCircle2, ArrowRight, Sparkles, Building2, HelpCircle, Send 
+  CheckCircle2, ArrowRight, Sparkles, Building2, HelpCircle, Send, ExternalLink 
 } from 'lucide-react';
 import PageLayout from '../components/layout/PageLayout';
 import SectionTitle from '../components/ui/SectionTitle';
@@ -20,15 +20,55 @@ export default function ContactPage() {
     phone: '',
     sector: industries[0].name,
     division: services[0].code,
-    primaryFriction: '',
-    urgency: 'Within 2-4 Weeks'
+    primaryFriction: ''
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [lastWhatsAppUrl, setLastWhatsAppUrl] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Construct Clean Structured WhatsApp Message for Principal Consultant
+    const targetPhone = contactDetails.phone.replace(/[^0-9]/g, '');
+    const messageLines = [
+      `*NEW ENTERPRISE DIAGNOSTIC INQUIRY*`,
+      `*GROW INDIA ADVISORY*`,
+      `----------------------------------------`,
+      `👤 *Full Name:* ${formData.fullName.trim()}`,
+      `🏢 *Enterprise / Org:* ${formData.organization.trim()}`,
+      `📧 *Email:* ${formData.email.trim()}`,
+      `📞 *Phone:* ${formData.phone.trim()}`,
+      `🏭 *Industry Sector:* ${formData.sector}`,
+      `🏷️ *Practice Division:* ${formData.division}`,
+      formData.primaryFriction.trim() 
+        ? `⚠️ *Primary Challenge / Scope:*\n${formData.primaryFriction.trim()}`
+        : null,
+      `----------------------------------------`,
+      `_Submitted via GROW India Official Portal_`
+    ].filter(Boolean);
+
+    const fullMessage = messageLines.join('\n');
+    const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(fullMessage)}`;
+
+    setLastWhatsAppUrl(waUrl);
     setSubmitted(true);
+
+    // Open WhatsApp Chat with prefilled message in a new window/tab
+    window.open(waUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleReset = () => {
+    setFormData({
+      fullName: '',
+      organization: '',
+      email: '',
+      phone: '',
+      sector: industries[0].name,
+      division: services[0].code,
+      primaryFriction: ''
+    });
+    setSubmitted(false);
   };
 
   return (
@@ -67,23 +107,46 @@ export default function ContactPage() {
               <div className="p-5 sm:p-8 lg:p-10 rounded-3xl bg-slate-50 border border-slate-200 shadow-sm">
                 
                 {submitted ? (
-                  <div className="text-center py-10 space-y-4">
-                    <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                  <div className="text-center py-8 space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
                       <CheckCircle2 className="w-8 h-8" />
                     </div>
-                    <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
-                      Inquiry Received Successfully
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
-                      Thank you, <strong>{formData.fullName}</strong>. A principal consultant from GROW India will review your inquiry and connect via {formData.phone || formData.email} within 24 business hours.
+                    
+                    <div className="space-y-1">
+                      <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 block">
+                        Direct Delivery Forwarded
+                      </span>
+                      <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+                        Inquiry Sent to WhatsApp Advisory
+                      </h3>
+                    </div>
+
+                    <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                      Thank you, <strong>{formData.fullName}</strong>. Your consultation request for <strong>{formData.organization}</strong> has been prepared and opened in WhatsApp for instant review by GROW India's principal consultants.
                     </p>
-                    <div className="pt-4">
+
+                    {lastWhatsAppUrl && (
+                      <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <a
+                          href={lastWhatsAppUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                          <span>Open WhatsApp Chat Directly</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      </div>
+                    )}
+
+                    <div className="pt-4 border-t border-slate-200">
                       <button
                         type="button"
-                        onClick={() => setSubmitted(false)}
+                        onClick={handleReset}
                         className="text-xs text-amber-700 font-bold hover:underline cursor-pointer"
                       >
-                        Submit Another Inquiry
+                        ← Submit Another Inquiry
                       </button>
                     </div>
                   </div>
