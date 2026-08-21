@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Workflow, Layers, CheckCircle2, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Workflow, Layers, CheckCircle2, ArrowRight, ShieldCheck, PieChart as PieIcon } from 'lucide-react';
 import SectionTitle from '../ui/SectionTitle';
 import Button from '../ui/Button';
+import { PracticeWeightagePieChart } from '../common/PieChartDiagram';
 import { growOperatingModel, grcMethodology, growIntegratedCycle, implementationSupportData } from '../../data/methodology';
 
 export default function DualMethodologySection() {
@@ -15,38 +16,50 @@ export default function DualMethodologySection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionTitle
           badge="Structured Frameworks"
-          title="XIX & XI. GROW'S OPERATING MODEL & GRC METHODOLOGY"
-          subtitle="Two rigorous consulting frameworks connecting organizational discovery with structured implementation and sustained improvement."
+          title="XIX & XI. GROW'S OPERATING MODEL, GRC & WEIGHTAGE ALLOCATION"
+          subtitle="Three rigorous consulting dimensions connecting organizational discovery, GRC codification, and holistic practice allocation."
           theme="dark"
           align="center"
         />
 
-        {/* Framework Selector Toggle */}
+        {/* Framework Selector Toggle with 3 Tabs */}
         <div className="flex justify-center mt-6 mb-6">
-          <div className="inline-flex p-1.5 rounded-2xl bg-slate-950 border border-slate-800 shadow-inner">
+          <div className="inline-flex flex-wrap justify-center p-1.5 rounded-2xl bg-slate-950 border border-slate-800 shadow-inner gap-1">
             <button
               type="button"
               onClick={() => setActiveFramework('operating-model')}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer ${
+              className={`inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer ${
                 activeFramework === 'operating-model'
-                  ? 'bg-amber-500 text-slate-950 shadow-sm'
+                  ? 'bg-amber-500 text-slate-950 shadow-sm font-black'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
               <Workflow className="w-4 h-4" />
-              <span>XIX. 6-Stage Operating Model</span>
+              <span>1. 6-Stage Operating Flow</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveFramework('grc-methodology')}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer ${
+              className={`inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer ${
                 activeFramework === 'grc-methodology'
-                  ? 'bg-amber-500 text-slate-950 shadow-sm'
+                  ? 'bg-amber-500 text-slate-950 shadow-sm font-black'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
               <Layers className="w-4 h-4" />
-              <span>XI. 9-Phase GRC Methodology</span>
+              <span>2. 9-Phase GRC Matrix</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveFramework('pie-chart')}
+              className={`inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer ${
+                activeFramework === 'pie-chart'
+                  ? 'bg-amber-500 text-slate-950 shadow-sm font-black'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <PieIcon className="w-4 h-4" />
+              <span>3. Practice Weightage (Pie Chart)</span>
             </button>
           </div>
         </div>
@@ -70,7 +83,7 @@ export default function DualMethodologySection() {
                     }`}
                   >
                     <span className="font-mono text-xs font-bold text-amber-400 block mb-0.5">
-                      Stage {st.stage}
+                      Stage 0{st.stage}
                     </span>
                     <span className="font-display text-xs font-bold block truncate">
                       {st.name}
@@ -85,7 +98,7 @@ export default function DualMethodologySection() {
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3 mb-4">
                 <div className="flex items-center gap-3">
                   <span className="font-mono text-2xl font-black text-amber-400">
-                    {activeStage.stage}
+                    0{activeStage.stage}
                   </span>
                   <div>
                     <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
@@ -138,27 +151,24 @@ export default function DualMethodologySection() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {grcMethodology.phases.map((ph) => (
+              {grcMethodology.phases.map((p) => (
                 <div
-                  key={ph.phase}
-                  className="p-4 rounded-2xl bg-slate-950 border border-slate-800 hover:border-amber-500/40 transition-all duration-200 flex flex-col justify-between"
+                  key={p.phase}
+                  className="p-4 rounded-2xl bg-slate-950 border border-slate-800 hover:border-amber-400/40 transition-colors"
                 >
-                  <div>
-                    <div className="flex items-center justify-between mb-2.5 border-b border-slate-800 pb-2">
-                      <span className="font-mono text-xs font-black text-amber-400">
-                        {ph.title}
-                      </span>
-                      <ShieldCheck className="w-4 h-4 text-amber-400" />
-                    </div>
-
-                    <ul className="space-y-1 pt-1">
-                      {ph.points.map((pt, idx) => (
-                        <li key={idx} className="text-xs text-slate-300 flex items-start gap-1.5">
-                          <span className="text-amber-400 font-bold">•</span>
-                          <span>{pt}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  <span className="font-mono text-xs font-bold text-amber-400 block mb-1">
+                    Phase {p.phase}
+                  </span>
+                  <h4 className="font-display text-sm font-bold text-white mb-1.5">
+                    {p.title}
+                  </h4>
+                  <div className="space-y-1">
+                    {p.points.slice(0, 3).map((pt, ptIdx) => (
+                      <div key={ptIdx} className="text-[11px] text-slate-300 flex items-start gap-1.5">
+                        <CheckCircle2 className="w-3 h-3 text-amber-400 shrink-0 mt-0.5" />
+                        <span className="truncate">{pt}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}
@@ -166,72 +176,12 @@ export default function DualMethodologySection() {
           </div>
         )}
 
-        {/* Section X & XVIII: Integrated Cycle & Implementation Cycle */}
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Section X: GROW Cycle */}
-          <div className="p-5 sm:p-6 rounded-3xl bg-slate-950 border border-slate-800 flex flex-col justify-between">
-            <div>
-              <span className="text-[11px] font-bold text-amber-400 uppercase tracking-widest block mb-1">
-                X. {growIntegratedCycle.title}
-              </span>
-              <h3 className="font-display text-base sm:text-lg font-bold text-white mb-1">
-                THE GROW CYCLE
-              </h3>
-              <p className="text-xs text-slate-400 mb-4">
-                {growIntegratedCycle.subtitle}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-1 mb-4">
-                {growIntegratedCycle.cycleSteps.map((step, idx) => (
-                  <span key={idx} className="flex items-center gap-1 text-xs font-semibold">
-                    <span className="px-2 py-0.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 text-[11px]">
-                      {step}
-                    </span>
-                    {idx < growIntegratedCycle.cycleSteps.length - 1 && (
-                      <span className="text-amber-400 text-xs">&rarr;</span>
-                    )}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <p className="text-[11px] text-slate-400 border-t border-slate-800 pt-3 italic">
-              "{growIntegratedCycle.objective}"
-            </p>
+        {/* Framework 3: Interactive Practice Weightage Pie Chart */}
+        {activeFramework === 'pie-chart' && (
+          <div className="animate-in fade-in duration-300">
+            <PracticeWeightagePieChart />
           </div>
-
-          {/* Section XVIII: Implementation Support Cycle */}
-          <div className="p-5 sm:p-6 rounded-3xl bg-slate-950 border border-slate-800 flex flex-col justify-between">
-            <div>
-              <span className="text-[11px] font-bold text-amber-400 uppercase tracking-widest block mb-1">
-                XVIII. {implementationSupportData.title}
-              </span>
-              <h3 className="font-display text-base sm:text-lg font-bold text-white mb-1">
-                IMPLEMENTATION CYCLE
-              </h3>
-              <p className="text-xs text-slate-400 mb-4">
-                {implementationSupportData.subtitle}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-1 mb-4">
-                {implementationSupportData.implementationCycle.map((step, idx) => (
-                  <span key={idx} className="flex items-center gap-1 text-xs font-semibold">
-                    <span className="px-2 py-0.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px]">
-                      {step}
-                    </span>
-                    {idx < implementationSupportData.implementationCycle.length - 1 && (
-                      <span className="text-amber-400 text-xs">&rarr;</span>
-                    )}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <p className="text-[11px] text-slate-400 border-t border-slate-800 pt-3 italic">
-              "{implementationSupportData.objective}"
-            </p>
-          </div>
-        </div>
+        )}
 
       </div>
     </section>
