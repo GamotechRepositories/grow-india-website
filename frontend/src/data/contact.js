@@ -26,7 +26,7 @@ export const contactDetails = {
     facebook: {
       name: 'GROW India',
       display: 'GROW India',
-      url: 'https://www.facebook.com/GROWIndia',
+      url: 'https://www.facebook.com/share/18xajKVzg7/?mibextid=wwXIfr',
       subtext: 'facebook.com/GROWIndia'
     },
     linkedin: {
