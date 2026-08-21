@@ -16,6 +16,10 @@ import { brandIdentity } from '../data/brand';
 export default function ClientsPartnersPage() {
   const [activeTab, setActiveTab] = useState('clients');
 
+  const principlesList = Array.isArray(strategicDeliveryPrinciples)
+    ? strategicDeliveryPrinciples
+    : strategicDeliveryPrinciples.principles || [];
+
   return (
     <PageLayout
       title={`Clients & Strategic Partners – ${brandIdentity.shortName} | ${brandIdentity.officialName}`}
@@ -155,7 +159,7 @@ export default function ClientsPartnersPage() {
               </p>
               <div className="inline-flex items-center gap-2 text-xs font-bold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-3.5 py-1.5 rounded-full">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>{strategicPartnersOverview.focus}</span>
+                <span>{strategicPartnersOverview.subtitle}</span>
               </div>
             </div>
 
@@ -175,9 +179,6 @@ export default function ClientsPartnersPage() {
                         <h3 className="font-display text-xl sm:text-2xl font-bold text-white">
                           {partner.name}
                         </h3>
-                        <span className="text-xs text-slate-400 block mt-0.5">
-                          {partner.role}
-                        </span>
                       </div>
                       <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 text-amber-400 flex items-center justify-center shrink-0">
                         {partner.id === 'gamotech-solutions' ? (
@@ -188,16 +189,12 @@ export default function ClientsPartnersPage() {
                       </div>
                     </div>
 
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      {partner.description}
-                    </p>
-
                     <div>
                       <strong className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-2">
                         Core Technical Capabilities:
                       </strong>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {partner.capabilities.map((cap, idx) => (
+                        {(partner.expertise || []).map((cap, idx) => (
                           <div
                             key={idx}
                             className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 flex items-center gap-2"
@@ -209,25 +206,39 @@ export default function ClientsPartnersPage() {
                       </div>
                     </div>
 
-                    <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
-                      <strong className="block font-bold text-amber-200 mb-1">Collaborative Engagement:</strong>
-                      {partner.synergyWithGrow}
+                    <div>
+                      <strong className="text-xs font-bold uppercase tracking-wider text-amber-300 block mb-2">
+                        GROW Consulting Role:
+                      </strong>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                        {(partner.growRole || []).slice(0, 6).map((role, idx) => (
+                          <div key={idx} className="text-xs text-slate-300 flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+                            <span className="truncate">{role}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 space-y-1">
+                      <strong className="block font-bold text-amber-200">Joint Deliverable Outcomes:</strong>
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {(partner.jointOutcomes || []).slice(0, 4).map((outc, idx) => (
+                          <span key={idx} className="px-2 py-0.5 rounded bg-slate-900 border border-amber-400/30 text-[11px] text-amber-200">
+                            {outc}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
                   <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
                     <span className="text-xs text-slate-400 font-mono">
-                      {partner.website}
+                      Strategic Alliance
                     </span>
-                    <a
-                      href={partner.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-400 hover:text-amber-300 hover:underline"
-                    >
-                      <span>Visit Partner Website</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                    <Button to="/contact" variant="gold" size="sm" icon={ArrowRight}>
+                      Inquire Joint Project
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -245,7 +256,7 @@ export default function ClientsPartnersPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {strategicDeliveryPrinciples.map((prin, idx) => (
+                {principlesList.map((prin, idx) => (
                   <div
                     key={idx}
                     className="p-5 rounded-2xl bg-slate-950 border border-slate-800 text-xs text-slate-300 flex items-start gap-3"
