@@ -195,7 +195,6 @@ export default function ContactPage() {
                         rows={3}
                         value={formData.primaryFriction}
                         onChange={(e) => setFormData({ ...formData, primaryFriction: e.target.value })}
-                        placeholder="Briefly describe your key pain points (e.g. person-dependent operations, compliance risks, lack of MIS reports, or multi-branch expansion needs)..."
                         className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-400"
                       />
                     </div>
