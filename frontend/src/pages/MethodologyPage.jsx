@@ -86,11 +86,16 @@ export default function MethodologyPage() {
                     Phase {p.phase}
                   </span>
                   <h3 className="font-display text-base font-bold text-white mb-2">
-                    {p.name}
+                    {p.title}
                   </h3>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    {p.desc}
-                  </p>
+                  <div className="space-y-1.5 pt-1">
+                    {p.points.map((pt, pIdx) => (
+                      <div key={pIdx} className="flex items-start gap-2 text-xs text-slate-300">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                        <span>{pt}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             ))}
@@ -115,26 +120,29 @@ export default function MethodologyPage() {
             align="center"
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
-            {implementationSupportData.pillars.map((pil, idx) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3.5 mt-8">
+            {implementationSupportData.implementationCycle.map((step, idx) => (
               <div
                 key={idx}
-                className="p-6 rounded-3xl bg-slate-50 border border-slate-200/90 shadow-sm space-y-3"
+                className="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 shadow-sm flex items-center gap-3"
               >
-                <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-700 flex items-center justify-center font-mono font-bold text-sm">
+                <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-700 flex items-center justify-center font-mono font-bold text-xs shrink-0">
                   0{idx + 1}
                 </div>
-                <h3 className="font-display text-base font-bold text-slate-900">
-                  {pil.title}
-                </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  {pil.desc}
-                </p>
+                <h4 className="font-display text-xs sm:text-sm font-bold text-slate-900">
+                  {step}
+                </h4>
               </div>
             ))}
           </div>
 
-          <div className="mt-12 text-center">
+          <div className="p-5 rounded-2xl bg-slate-950 text-white border border-slate-800 text-center max-w-2xl mx-auto mt-8">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              "{implementationSupportData.objective}"
+            </p>
+          </div>
+
+          <div className="mt-8 text-center">
             <Button to="/contact" variant="primary" size="lg" icon={ArrowRight}>
               Initiate Diagnostic Assessment
             </Button>
