@@ -261,10 +261,19 @@ export default function ClientsPartnersPage() {
                     key={idx}
                     className="p-5 rounded-2xl bg-slate-950 border border-slate-800 text-xs text-slate-300 flex items-start gap-3"
                   >
-                    <span className="w-6 h-6 rounded-lg bg-amber-400 text-slate-950 font-bold flex items-center justify-center shrink-0 text-xs">
+                    <span className="w-6 h-6 rounded-lg bg-amber-400 text-slate-950 font-bold flex items-center justify-center shrink-0 text-xs mt-0.5">
                       {idx + 1}
                     </span>
-                    <span className="leading-relaxed">{prin}</span>
+                    <div>
+                      <strong className="font-display text-xs sm:text-sm font-bold text-white block mb-1">
+                        {typeof prin === 'string' ? prin : prin.title}
+                      </strong>
+                      {typeof prin === 'object' && prin.description && (
+                        <p className="text-xs text-slate-400 leading-relaxed">
+                          {prin.description}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
