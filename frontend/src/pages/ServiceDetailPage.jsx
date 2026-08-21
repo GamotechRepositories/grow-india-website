@@ -224,26 +224,40 @@ export default function ServiceDetailPage() {
                 </div>
               </div>
 
-              {/* 3. Phased Implementation Roadmap */}
-              <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-sm">
-                <span className="text-xs font-bold uppercase tracking-widest text-amber-700 block mb-2">
-                  Structured Execution
-                </span>
-                <h3 className="font-display text-xl font-bold text-slate-900 mb-6">
-                  3-Stage Implementation Framework
-                </h3>
+              {/* 3. Phased Implementation Roadmap Flowchart */}
+              <div className="p-6 sm:p-8 rounded-3xl bg-slate-950 text-white border border-slate-800 shadow-xl space-y-6">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400 block mb-0.5">
+                      Execution Blueprint
+                    </span>
+                    <h3 className="font-display text-lg sm:text-xl font-bold text-white">
+                      3-Stage Implementation Flowchart
+                    </h3>
+                  </div>
+                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/20">
+                    Phased Methodology
+                  </span>
+                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 relative">
                   {extra.executionPhases.map((phase, idx) => (
-                    <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+                    <div key={idx} className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col justify-between relative hover:border-amber-400/50 transition-colors">
                       <div>
-                        <span className="font-mono text-xs font-bold text-amber-700 block mb-1">
-                          Phase 0{idx + 1}
-                        </span>
-                        <h4 className="font-display text-sm font-bold text-slate-900 mb-2">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-mono text-xs font-bold text-amber-400">
+                            PHASE 0{idx + 1}
+                          </span>
+                          {idx < 2 && (
+                            <span className="text-slate-500 font-bold hidden md:inline text-xs">
+                              →
+                            </span>
+                          )}
+                        </div>
+                        <h4 className="font-display text-sm font-bold text-white mb-2">
                           {phase.name}
                         </h4>
-                        <p className="text-xs text-slate-600 leading-relaxed">
+                        <p className="text-xs text-slate-300 leading-relaxed">
                           {phase.desc}
                         </p>
                       </div>

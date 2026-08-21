@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { 
   ArrowRight, CheckCircle2, ShieldCheck, Workflow, Layers, 
-  RotateCw, ChevronRight, Activity, Sparkles, Target, Landmark, ArrowDown 
+  RotateCw, ChevronRight, Activity, Sparkles, Target, Landmark, ArrowDown, FileSearch, ShieldAlert, CheckCircle 
 } from 'lucide-react';
 import { growOperatingModel, grcMethodology, growIntegratedCycle, implementationSupportData } from '../../data/methodology';
 import { whyGovernmentSystemsMatter } from '../../data/government';
@@ -192,8 +192,81 @@ export function GovernmentContributionFlowchart() {
   );
 }
 
+export function CorporateEngagementFlowchart() {
+  const steps = [
+    { num: '01', title: 'Diagnostic Discovery', desc: '360° audit of current operations, bottlenecks, compliance gaps, and growth readiness.' },
+    { num: '02', title: 'Systems & SOP Codification', desc: 'Drafting structured SOPs, RACI matrices, KPI dashboards, and internal controls.' },
+    { num: '03', title: 'Governance & MMR Cadence', desc: 'Handover training, monthly management review setup, and ongoing course correction.' }
+  ];
+
+  return (
+    <div className="p-6 sm:p-8 rounded-3xl bg-slate-950 text-white border border-slate-800 shadow-xl space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+        <div>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400 block mb-0.5">
+            Engagement Roadmap
+          </span>
+          <h3 className="font-display text-lg sm:text-xl font-bold text-white">
+            3-Stage Corporate Transformation Flowchart
+          </h3>
+        </div>
+        <Workflow className="w-5 h-5 text-amber-400" />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {steps.map((st, idx) => (
+          <div key={idx} className="p-4 rounded-2xl bg-slate-900 border border-slate-800 relative flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-mono text-xs font-bold text-amber-400">PHASE {st.num}</span>
+                {idx < 2 && <span className="text-slate-500 font-bold hidden md:inline">→</span>}
+              </div>
+              <h4 className="font-display text-sm font-bold text-white mb-1.5">{st.title}</h4>
+              <p className="text-xs text-slate-300 leading-relaxed">{st.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function AuditProcessFlowchart() {
+  const stages = [
+    { step: '1', title: 'Intake Survey', desc: '5-vector structured diagnostic questionnaire' },
+    { step: '2', title: 'Score Computation', desc: 'Algorithmic 0-100 system resilience score' },
+    { step: '3', title: 'Gap Profiling', desc: 'Identification of person-dependencies & risks' },
+    { step: '4', title: 'Advisory Roadmap', desc: '1-on-1 strategic diagnostic debrief with consultant' }
+  ];
+
+  return (
+    <div className="p-5 sm:p-6 rounded-3xl bg-slate-900 border border-slate-800 text-white space-y-4">
+      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <span className="text-xs font-bold uppercase tracking-widest text-amber-400">
+          Diagnostic Workflow Process
+        </span>
+        <Activity className="w-4 h-4 text-amber-400" />
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        {stages.map((st, idx) => (
+          <div key={idx} className="p-3 rounded-2xl bg-slate-950 border border-slate-800 text-center">
+            <span className="font-mono text-xs font-bold text-amber-400 block mb-1">
+              Step 0{st.step}
+            </span>
+            <strong className="text-xs font-bold text-white block mb-0.5">{st.title}</strong>
+            <span className="text-[10.5px] text-slate-400 block leading-tight">{st.desc}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default {
   GrowCycleFlowchart,
   OperatingModelFlowchart,
-  GovernmentContributionFlowchart
+  GovernmentContributionFlowchart,
+  CorporateEngagementFlowchart,
+  AuditProcessFlowchart
 };

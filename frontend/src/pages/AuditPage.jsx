@@ -6,6 +6,7 @@ import {
 import PageLayout from '../components/layout/PageLayout';
 import SectionTitle from '../components/ui/SectionTitle';
 import Button from '../components/ui/Button';
+import { AuditProcessFlowchart } from '../components/common/FlowchartDiagram';
 import { brandIdentity } from '../data/brand';
 import { contactDetails } from '../data/contact';
 
@@ -99,143 +100,149 @@ export default function AuditPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-slate-900 border border-amber-500/40 text-amber-300 text-xs font-bold uppercase tracking-wider mb-4">
             <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-            <span>Interactive Diagnostic Assessment</span>
+            <span>Interactive Self-Diagnostic</span>
           </span>
 
           <h1 className="font-display text-3xl sm:text-5xl font-black tracking-tight text-white max-w-4xl mx-auto leading-tight mb-4">
             360° SYSTEMS & COMPLIANCE <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500">HEALTH AUDIT</span>
           </h1>
 
-          <p className="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed">
-            Evaluate your enterprise across 5 critical institutional dimensions: Governance, SOPs, KPI Visibility, Contractual Protection, and Scalability.
+          <p className="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed mb-6">
+            Evaluate your enterprise vulnerability across Governance, SOPs, KPI visibility, Contracts, and Scalability in 2 minutes.
           </p>
+
+          <div className="max-w-3xl mx-auto">
+            <AuditProcessFlowchart />
+          </div>
         </div>
       </section>
 
-      {/* Main Audit Diagnostic Section */}
+      {/* Main Audit Tool */}
       <section className="py-12 lg:py-16 bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Progress Indicator */}
           <div className="mb-8 p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block">
-                Assessment Progress
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 block">
+                Audit Progress
               </span>
-              <span className="font-display text-base font-bold text-slate-900">
-                {answeredCount} of {totalQuestions} Dimensions Evaluated
+              <span className="font-display text-sm font-bold text-slate-900">
+                {answeredCount} of {totalQuestions} Vectors Answered
               </span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-sm font-bold text-amber-600">
-                {Math.round((answeredCount / totalQuestions) * 100)}%
-              </span>
-              {answeredCount > 0 && (
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  className="text-xs text-slate-500 hover:text-amber-600 flex items-center gap-1 cursor-pointer"
-                >
-                  <RefreshCcw className="w-3 h-3" />
-                  <span>Reset</span>
-                </button>
-              )}
+            <div className="w-32 h-2.5 rounded-full bg-slate-200 overflow-hidden">
+              <div
+                className="h-full bg-amber-500 rounded-full transition-all duration-300"
+                style={{ width: `${(answeredCount / totalQuestions) * 100}%` }}
+              />
             </div>
           </div>
 
-          {/* Questions Stack */}
-          <div className="space-y-6">
-            {auditQuestions.map((q, idx) => {
-              const currentVal = answers[q.id];
-              return (
+          {!submitted ? (
+            <div className="space-y-8">
+              {auditQuestions.map((q, idx) => (
                 <div
                   key={q.id}
-                  className="p-6 sm:p-7 rounded-3xl bg-slate-50 border border-slate-200/90 shadow-sm space-y-4"
+                  className="p-6 sm:p-8 rounded-3xl bg-slate-50 border border-slate-200/90 shadow-sm space-y-4"
                 >
                   <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                    <span className="text-xs font-bold uppercase tracking-widest text-amber-700">
-                      Pillar 0{idx + 1}: {q.category}
+                    <span className="font-mono text-xs font-bold text-amber-700 uppercase">
+                      Vector 0{idx + 1} • {q.category}
                     </span>
-                    {currentVal !== undefined && (
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 flex items-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Selected</span>
+                    {answers[q.id] !== undefined && (
+                      <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Answered
                       </span>
                     )}
                   </div>
 
-                  <h3 className="font-display text-base sm:text-lg font-bold text-slate-900">
+                  <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 leading-snug">
                     {q.question}
                   </h3>
 
-                  <div className="space-y-2">
+                  <div className="space-y-2.5 pt-1">
                     {q.options.map((opt, oIdx) => {
-                      const isSelected = currentVal === opt.score;
+                      const isSelected = answers[q.id] === opt.score;
                       return (
                         <button
                           key={oIdx}
                           type="button"
                           onClick={() => handleSelect(q.id, opt.score)}
-                          className={`w-full p-3.5 rounded-2xl text-xs sm:text-sm text-left transition-all duration-150 cursor-pointer flex items-start gap-3 border ${
+                          className={`w-full p-4 rounded-2xl text-left transition-all duration-150 cursor-pointer border flex items-center justify-between ${
                             isSelected
-                              ? 'bg-slate-950 text-white border-slate-950 shadow-md ring-1 ring-amber-400/40 font-semibold'
-                              : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-950'
+                              ? 'bg-slate-950 text-white border-slate-950 shadow-md ring-1 ring-amber-400/40'
+                              : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-100/70'
                           }`}
                         >
-                          <span className={`w-4 h-4 rounded-full mt-0.5 border flex items-center justify-center shrink-0 ${
-                            isSelected ? 'border-amber-400 bg-amber-400 text-slate-950' : 'border-slate-400'
-                          }`}>
-                            {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-slate-950" />}
+                          <span className="text-xs sm:text-sm font-medium pr-3">{opt.text}</span>
+                          <span
+                            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                              isSelected
+                                ? 'border-amber-400 bg-amber-400 text-slate-950'
+                                : 'border-slate-300 bg-transparent'
+                            }`}
+                          >
+                            {isSelected && <span className="w-2 h-2 rounded-full bg-slate-950" />}
                           </span>
-                          <span>{opt.text}</span>
                         </button>
                       );
                     })}
                   </div>
                 </div>
-              );
-            })}
-          </div>
+              ))}
 
-          {/* Results Reveal Card */}
-          {answeredCount === totalQuestions && (
-            <div className="mt-10 p-6 sm:p-10 rounded-3xl bg-slate-950 text-white border-2 border-amber-500/40 shadow-2xl space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-widest text-amber-400 block mb-1">
-                    Assessment Diagnostic Result
-                  </span>
-                  <h3 className="font-display text-2xl font-bold text-white">
-                    Overall Systems Health Score: {totalScore} / 100
-                  </h3>
-                </div>
-                <span className={`text-xs font-bold px-3.5 py-1.5 rounded-full border ${statusBadge.color}`}>
+              <div className="pt-4 text-center">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  icon={ArrowRight}
+                  disabled={answeredCount < totalQuestions}
+                  onClick={() => setSubmitted(true)}
+                  className="w-full sm:w-auto"
+                >
+                  Generate Systems Health Score & Diagnosis
+                </Button>
+              </div>
+            </div>
+          ) : (
+            /* Audit Result Certificate */
+            <div className="p-8 sm:p-12 rounded-3xl bg-slate-950 text-white border border-slate-800 shadow-2xl space-y-8 text-center animate-in fade-in duration-300">
+              <div className="w-20 h-20 rounded-full bg-amber-500/10 border-2 border-amber-400/40 text-amber-400 flex items-center justify-center mx-auto">
+                <Award className="w-10 h-10" />
+              </div>
+
+              <div className="space-y-2">
+                <span className="text-xs font-bold uppercase tracking-widest text-amber-400 block">
+                  Diagnostic Result
+                </span>
+                <h3 className="font-display text-4xl sm:text-6xl font-black text-white">
+                  {totalScore} <span className="text-2xl text-slate-500 font-normal">/ 100</span>
+                </h3>
+                <span className={`inline-block px-4 py-1 rounded-full text-xs font-bold border mt-2 ${statusBadge.color}`}>
                   {statusBadge.title}
                 </span>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-slate-300 leading-relaxed">
-                {totalScore < 50 ? (
-                  <p>
-                    Your enterprise shows critical reliance on specific individuals and informal processes. Engaging <strong>GROW SHIELD</strong> and <strong>GROW ENGINE</strong> can eliminate compliance blindspots and codify departmental standard operating procedures.
-                  </p>
-                ) : (
-                  <p>
-                    Your organization has solid operational basics in place. To unlock predictable scale, focus on <strong>GROW SYSTEMS (KPI / MIS)</strong> and <strong>GROW SCALE</strong> to replicate multi-branch efficiency.
-                  </p>
-                )}
-              </div>
+              <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed">
+                {totalScore >= 70
+                  ? 'Your enterprise exhibits strong process adherence. GROW can assist in advanced MIS dashboard automation, institutional scaling manuals, and board-level risk oversight.'
+                  : totalScore >= 40
+                  ? 'Your enterprise has notable person-dependencies and moderate compliance risk. GROW Engine & Shield can codify standard SOPs and insulation registers to prevent revenue leakages.'
+                  : 'Your enterprise operates with critical person-dependency and elevated compliance vulnerability. Immediate intervention via GROW Shield, Engine, and DoA governance matrices is recommended.'}
+              </p>
 
-              <div className="pt-2 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
                 <Button to="/contact" variant="gold" size="lg" icon={ArrowRight}>
-                  Book 1-on-1 Diagnostic Review with Consultant
+                  Schedule Free 1-on-1 Diagnostic Debrief
                 </Button>
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="text-xs text-slate-400 hover:text-amber-400 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
                 >
-                  Retake Assessment
+                  <RefreshCcw className="w-4 h-4" />
+                  <span>Retake Audit</span>
                 </button>
               </div>
             </div>

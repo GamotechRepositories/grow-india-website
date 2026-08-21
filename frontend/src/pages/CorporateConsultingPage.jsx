@@ -6,6 +6,7 @@ import {
 import PageLayout from '../components/layout/PageLayout';
 import SectionTitle from '../components/ui/SectionTitle';
 import Button from '../components/ui/Button';
+import { CorporateEngagementFlowchart } from '../components/common/FlowchartDiagram';
 import { corporateConsulting, whoGrowCorporateServes } from '../data/corporate';
 import { brandIdentity } from '../data/brand';
 
@@ -50,6 +51,13 @@ export default function CorporateConsultingPage() {
               </Button>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Engagement Flowchart Presentation */}
+      <section className="py-12 bg-slate-900 text-white border-b border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <CorporateEngagementFlowchart />
         </div>
       </section>
 
@@ -102,40 +110,44 @@ export default function CorporateConsultingPage() {
               })}
             </div>
 
-            {/* Right Active Area Details */}
-            <div className="lg:col-span-8 bg-slate-950 text-white rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 blur-[90px] pointer-events-none" />
-
-              <div className="space-y-6 relative">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+            {/* Right Active Discipline Canvas */}
+            <div className="lg:col-span-8">
+              <div className="bg-slate-950 text-white p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-xl space-y-6">
+                
+                <div className="border-b border-slate-800 pb-4 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400 block mb-1">
-                      Capability Discipline 0{selectedAreaIdx + 1}
+                    <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest block">
+                      Discipline #{selectedAreaIdx + 1}
                     </span>
-                    <h3 className="font-display text-2xl font-bold text-white">
+                    <h3 className="font-display text-2xl font-bold text-white mt-1">
                       {activeArea.category}
                     </h3>
                   </div>
-                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/20">
-                    {activeArea.items.length} Scope Items
-                  </span>
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center">
+                    <Building2 className="w-6 h-6" />
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {activeArea.items.map((item, idx) => (
-                    <div key={idx} className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 flex items-center gap-3">
-                      <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                      <span className="text-xs sm:text-sm text-slate-200 font-medium">{item}</span>
-                    </div>
-                  ))}
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-3">
+                    Scope of Professional Intervention:
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {activeArea.items.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-xl bg-slate-900 border border-slate-800/90 text-xs font-semibold text-slate-200 flex items-start gap-2.5"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                        <span>{item}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4">
-                  <span className="text-xs text-slate-400">
-                    Engineered according to institutional standards & client growth stages.
-                  </span>
+                <div className="pt-4 border-t border-slate-800 flex justify-end">
                   <Button to="/contact" variant="gold" size="sm" icon={ArrowRight}>
-                    Consult for {activeArea.category}
+                    Inquire for {activeArea.category}
                   </Button>
                 </div>
               </div>
@@ -146,38 +158,30 @@ export default function CorporateConsultingPage() {
       </section>
 
       {/* Section VI: Who GROW Corporate Serves */}
-      <section className="py-12 lg:py-16 bg-slate-50 border-b border-slate-200">
+      <section className="py-12 lg:py-16 bg-slate-950 text-white border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            badge="Client Spectrum"
+            badge="Client Footprint"
             title={`VI. ${whoGrowCorporateServes.title}`}
             subtitle={whoGrowCorporateServes.subtitle}
+            theme="dark"
             align="center"
           />
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-10">
-            {whoGrowCorporateServes.clientTypes.map((client, idx) => (
+            {whoGrowCorporateServes.clientTypes.map((type, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-2xl bg-white border border-slate-200 shadow-xs hover:border-amber-400 hover:bg-amber-50/20 transition-all flex flex-col justify-between"
+                className="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-amber-400/40 transition-colors flex flex-col justify-between"
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-mono text-[10px] font-bold text-slate-400">
-                    #{idx + 1}
-                  </span>
-                  <Building2 className="w-3.5 h-3.5 text-amber-600" />
-                </div>
-                <span className="font-display text-xs font-bold text-slate-800 leading-snug">
-                  {client}
+                <span className="font-mono text-[10px] font-bold text-amber-400/80 mb-2">
+                  0{idx + 1}
+                </span>
+                <span className="font-display text-xs font-bold text-slate-200 leading-snug">
+                  {type}
                 </span>
               </div>
             ))}
-          </div>
-
-          <div className="mt-12 text-center">
-            <Button to="/contact" variant="primary" size="md" icon={ArrowRight}>
-              Inquire Corporate Consultation
-            </Button>
           </div>
         </div>
       </section>
