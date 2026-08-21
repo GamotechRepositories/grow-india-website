@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { 
   Phone, Mail, MessageSquare, MapPin, Clock, ShieldCheck, 
-  CheckCircle2, ArrowRight, Sparkles, Building2, HelpCircle, Send, ExternalLink 
+  CheckCircle2, ArrowRight, Sparkles, Building2, HelpCircle, Send, ExternalLink, Loader2 
 } from 'lucide-react';
 import PageLayout from '../components/layout/PageLayout';
 import SectionTitle from '../components/ui/SectionTitle';
@@ -23,13 +23,15 @@ export default function ContactPage() {
     primaryFriction: ''
   });
 
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [lastWhatsAppUrl, setLastWhatsAppUrl] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsRedirecting(true);
 
-    // Clean destination phone digits
+    // Clean destination phone digits (+91 94057 51665)
     const targetPhone = contactDetails.phone.replace(/[^0-9]/g, '');
 
     // Construct Clean Structured WhatsApp Message for Principal Consultant
@@ -54,6 +56,9 @@ Submitted via GROW India Official Portal`;
 
     setLastWhatsAppUrl(waUrl);
     setSubmitted(true);
+
+    // Direct Auto-Redirect to WhatsApp without creating extra blank browser tabs
+    window.location.href = waUrl;
   };
 
   const handleReset = () => {
@@ -67,6 +72,7 @@ Submitted via GROW India Official Portal`;
       primaryFriction: ''
     });
     setSubmitted(false);
+    setIsRedirecting(false);
   };
 
   return (
@@ -112,27 +118,25 @@ Submitted via GROW India Official Portal`;
                     
                     <div className="space-y-1">
                       <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 block">
-                        Inquiry Prepared Successfully
+                        Redirecting to WhatsApp
                       </span>
                       <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
-                        Inquiry Ready for Consultation
+                        Opening WhatsApp Consultation...
                       </h3>
                     </div>
 
                     <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                      Thank you, <strong>{formData.fullName}</strong>. Your inquiry for <strong>{formData.organization}</strong> has been structured. Click below to connect instantly with GROW India's principal advisory team on WhatsApp.
+                      Thank you, <strong>{formData.fullName}</strong>. Your inquiry for <strong>{formData.organization}</strong> is being redirected directly to WhatsApp.
                     </p>
 
                     {lastWhatsAppUrl && (
                       <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
                         <a
                           href={lastWhatsAppUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
                           className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-emerald-600/30 transition-all hover:scale-105"
                         >
                           <MessageSquare className="w-4 h-4" />
-                          <span>Chat on WhatsApp (+91 94057 51665)</span>
+                          <span>Click here if WhatsApp didn't open</span>
                           <ExternalLink className="w-3.5 h-3.5" />
                         </a>
                       </div>
@@ -261,8 +265,8 @@ Submitted via GROW India Official Portal`;
                     </div>
 
                     <div className="pt-2">
-                      <Button type="submit" variant="primary" size="lg" icon={Send} className="w-full">
-                        Submit Diagnostic Request
+                      <Button type="submit" variant="primary" size="lg" icon={Send} className="w-full" disabled={isRedirecting}>
+                        {isRedirecting ? 'Redirecting to WhatsApp...' : 'Submit Diagnostic Request'}
                       </Button>
                     </div>
 
