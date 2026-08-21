@@ -1,4 +1,4 @@
-import { Phone, Mail, MessageSquare, ExternalLink, Sparkles } from 'lucide-react';
+import { Phone, Mail, ExternalLink, Sparkles } from 'lucide-react';
 import growLogo from '../../assets/logo/grow-india-logo.png';
 import { contactDetails } from '../../data/contact';
 
@@ -39,57 +39,57 @@ function WhatsAppIcon({ className = "w-4 h-4" }) {
 
 export default function DigitalVisitingCard({ className = "" }) {
   return (
-    <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#060B1C] via-[#09112A] to-[#040816] text-white border-2 border-amber-400/40 p-6 sm:p-8 shadow-2xl backdrop-blur-xl ${className}`}>
+    <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#060B1C] via-[#09112A] to-[#040816] text-white border-2 border-amber-400/40 p-5 sm:p-7 shadow-2xl backdrop-blur-xl ${className}`}>
       {/* Decorative Golden Ambient Glows */}
       <div className="absolute -top-12 -right-12 w-48 h-48 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Decorative Corner Filigree Highlights */}
-      <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-amber-400/50 rounded-tl-lg" />
-      <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-amber-400/50 rounded-tr-lg" />
-      <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-amber-400/50 rounded-bl-lg" />
-      <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-amber-400/50 rounded-br-lg" />
+      <div className="absolute top-2.5 left-2.5 w-3.5 h-3.5 border-t-2 border-l-2 border-amber-400/50 rounded-tl-md" />
+      <div className="absolute top-2.5 right-2.5 w-3.5 h-3.5 border-t-2 border-r-2 border-amber-400/50 rounded-tr-md" />
+      <div className="absolute bottom-2.5 left-2.5 w-3.5 h-3.5 border-b-2 border-l-2 border-amber-400/50 rounded-bl-md" />
+      <div className="absolute bottom-2.5 right-2.5 w-3.5 h-3.5 border-b-2 border-r-2 border-amber-400/50 rounded-br-md" />
 
       {/* Center Golden Brand Emblem & Title */}
-      <div className="text-center space-y-3 relative z-10 pb-5 border-b border-amber-500/20">
+      <div className="text-center space-y-2.5 relative z-10 pb-4 border-b border-amber-500/20">
         <div className="inline-flex justify-center items-center">
           <img
             src={growLogo}
             alt={contactDetails.officialName}
-            className="h-20 sm:h-24 w-auto object-contain drop-shadow-[0_8px_16px_rgba(217,175,55,0.3)] hover:scale-105 transition-transform duration-300"
+            className="h-16 sm:h-20 w-auto object-contain drop-shadow-[0_8px_16px_rgba(217,175,55,0.3)] hover:scale-105 transition-transform duration-300"
           />
         </div>
 
-        <div className="space-y-1">
-          <h2 className="font-display font-extrabold text-lg sm:text-xl text-white tracking-wider uppercase leading-tight">
+        <div className="space-y-0.5">
+          <h2 className="font-display font-extrabold text-base sm:text-lg text-white tracking-wider uppercase leading-snug">
             {contactDetails.officialName}
           </h2>
-          <p className="font-sans font-bold text-[10px] sm:text-xs text-amber-300/90 tracking-widest uppercase">
+          <p className="font-sans font-bold text-[9.5px] sm:text-[11px] text-amber-300/90 tracking-widest uppercase">
             {contactDetails.subtitle}
           </p>
         </div>
 
         {/* Golden Tagline Pills */}
-        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-[10px] sm:text-[11px] font-bold text-amber-300 tracking-wider">
+        <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-[10px] sm:text-[11px] font-bold text-amber-300 tracking-wider">
           <Sparkles className="w-3 h-3 text-amber-400" />
           <span>GRC • Transformation • SOP • KRA</span>
         </div>
       </div>
 
-      {/* Interactive Clickable Verified Channels */}
-      <div className="py-5 space-y-2.5 relative z-10">
+      {/* Redesigned Clean Clickable Verified Channels */}
+      <div className="py-4 space-y-2 relative z-10">
         
         {/* 1. Phone */}
         <a
           href={`tel:${contactDetails.phone}`}
-          className="p-2.5 sm:p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-amber-400/60 hover:bg-slate-800/80 flex items-center justify-between group transition-all"
+          className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-amber-400 hover:bg-slate-800/90 flex items-center justify-between group transition-all"
         >
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-8 h-8 rounded-lg bg-amber-400/10 text-amber-400 flex items-center justify-center shrink-0 group-hover:bg-amber-400 group-hover:text-slate-950 transition-colors">
               <Phone className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <span className="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold">Phone</span>
+              <span className="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold leading-tight">Phone</span>
               <span className="text-xs sm:text-sm font-bold text-white group-hover:text-amber-300 transition-colors truncate block">
                 {contactDetails.phoneDisplay}
               </span>
@@ -101,15 +101,15 @@ export default function DigitalVisitingCard({ className = "" }) {
         {/* 2. Email */}
         <a
           href={`mailto:${contactDetails.email}`}
-          className="p-2.5 sm:p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-amber-400/60 hover:bg-slate-800/80 flex items-center justify-between group transition-all"
+          className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-amber-400 hover:bg-slate-800/90 flex items-center justify-between group transition-all"
         >
           <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
             <div className="w-8 h-8 rounded-lg bg-amber-400/10 text-amber-400 flex items-center justify-center shrink-0 group-hover:bg-amber-400 group-hover:text-slate-950 transition-colors">
               <Mail className="w-4 h-4" />
             </div>
             <div className="min-w-0 flex-1">
-              <span className="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold">Email</span>
-              <span className="text-xs font-bold text-white group-hover:text-amber-300 transition-colors break-all leading-snug block">
+              <span className="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold leading-tight">Email</span>
+              <span className="text-xs sm:text-sm font-bold text-white group-hover:text-amber-300 transition-colors break-all leading-tight block">
                 {contactDetails.email}
               </span>
             </div>
@@ -117,21 +117,21 @@ export default function DigitalVisitingCard({ className = "" }) {
           <ExternalLink className="w-3.5 h-3.5 text-slate-500 group-hover:text-amber-400 shrink-0 transition-colors" />
         </a>
 
-        {/* 3. WhatsApp Business */}
+        {/* 3. WhatsApp Business (Single Number Clean Display) */}
         <a
           href={contactDetails.whatsappLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="p-2.5 sm:p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 hover:border-emerald-400 hover:bg-emerald-900/40 flex items-center justify-between group transition-all"
+          className="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 hover:border-emerald-400 hover:bg-emerald-900/40 flex items-center justify-between group transition-all"
         >
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-colors">
               <WhatsAppIcon className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <span className="text-[9px] uppercase tracking-wider text-emerald-300 block font-semibold">WhatsApp Business</span>
+              <span className="text-[9px] uppercase tracking-wider text-emerald-300 block font-semibold leading-tight">WhatsApp Business</span>
               <span className="text-xs sm:text-sm font-bold text-white group-hover:text-emerald-300 transition-colors truncate block">
-                wa.me/919405751665 ({contactDetails.phoneDisplay})
+                {contactDetails.phoneDisplay}
               </span>
             </div>
           </div>
@@ -143,16 +143,16 @@ export default function DigitalVisitingCard({ className = "" }) {
           href={contactDetails.socialMedia.instagram.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="p-2.5 sm:p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-pink-500/60 hover:bg-slate-800/80 flex items-center justify-between group transition-all"
+          className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-pink-500/60 hover:bg-slate-800/90 flex items-center justify-between group transition-all"
         >
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-8 h-8 rounded-lg bg-pink-500/10 text-pink-400 flex items-center justify-center shrink-0 group-hover:bg-gradient-to-tr group-hover:from-amber-500 group-hover:via-pink-500 group-hover:to-purple-500 group-hover:text-white transition-colors">
               <InstagramIcon className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <span className="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold">Instagram</span>
+              <span className="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold leading-tight">Instagram</span>
               <span className="text-xs sm:text-sm font-bold text-white group-hover:text-pink-300 transition-colors truncate block">
-                {contactDetails.socialMedia.instagram.handle} | {contactDetails.socialMedia.instagram.subtext}
+                {contactDetails.socialMedia.instagram.handle}
               </span>
             </div>
           </div>
@@ -164,16 +164,16 @@ export default function DigitalVisitingCard({ className = "" }) {
           href={contactDetails.socialMedia.facebook.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="p-2.5 sm:p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-blue-500/60 hover:bg-slate-800/80 flex items-center justify-between group transition-all"
+          className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-blue-500/60 hover:bg-slate-800/90 flex items-center justify-between group transition-all"
         >
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
               <FacebookIcon className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <span className="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold">Facebook</span>
+              <span className="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold leading-tight">Facebook</span>
               <span className="text-xs sm:text-sm font-bold text-white group-hover:text-blue-300 transition-colors truncate block">
-                {contactDetails.socialMedia.facebook.name} | {contactDetails.socialMedia.facebook.subtext}
+                {contactDetails.socialMedia.facebook.name}
               </span>
             </div>
           </div>
@@ -185,14 +185,14 @@ export default function DigitalVisitingCard({ className = "" }) {
           href={contactDetails.socialMedia.linkedin.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="p-2.5 sm:p-3 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-sky-500/60 hover:bg-slate-800/80 flex items-center justify-between group transition-all"
+          className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-sky-500/60 hover:bg-slate-800/90 flex items-center justify-between group transition-all"
         >
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-8 h-8 rounded-lg bg-sky-500/10 text-sky-400 flex items-center justify-center shrink-0 group-hover:bg-sky-600 group-hover:text-white transition-colors">
               <LinkedInIcon className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <span className="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold">LinkedIn</span>
+              <span className="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold leading-tight">LinkedIn</span>
               <span className="text-xs sm:text-sm font-bold text-white group-hover:text-sky-300 transition-colors truncate block">
                 {contactDetails.socialMedia.linkedin.name}
               </span>
@@ -204,7 +204,7 @@ export default function DigitalVisitingCard({ className = "" }) {
       </div>
 
       {/* Bottom Golden Divider Filigree & Udyam Footnote */}
-      <div className="pt-4 border-t border-amber-500/20 text-center relative z-10">
+      <div className="pt-3 border-t border-amber-500/20 text-center relative z-10">
         <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-mono">
           <span>UDYAM: {contactDetails.udyamRegistration}</span>
           <span>•</span>
