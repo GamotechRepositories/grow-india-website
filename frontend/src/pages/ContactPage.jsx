@@ -54,9 +54,6 @@ Submitted via GROW India Official Portal`;
 
     setLastWhatsAppUrl(waUrl);
     setSubmitted(true);
-
-    // Open WhatsApp Chat with prefilled message in a new window/tab
-    window.open(waUrl, '_blank', 'noopener,noreferrer');
   };
 
   const handleReset = () => {
@@ -108,22 +105,22 @@ Submitted via GROW India Official Portal`;
               <div className="p-5 sm:p-8 lg:p-10 rounded-3xl bg-slate-50 border border-slate-200 shadow-sm">
                 
                 {submitted ? (
-                  <div className="text-center py-8 space-y-4">
+                  <div className="text-center py-8 space-y-5">
                     <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
                       <CheckCircle2 className="w-8 h-8" />
                     </div>
                     
                     <div className="space-y-1">
                       <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 block">
-                        Direct Delivery Forwarded
+                        Inquiry Prepared Successfully
                       </span>
                       <h3 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
-                        Inquiry Sent to WhatsApp Advisory
+                        Inquiry Ready for Consultation
                       </h3>
                     </div>
 
                     <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                      Thank you, <strong>{formData.fullName}</strong>. Your consultation request for <strong>{formData.organization}</strong> has been prepared and opened in WhatsApp for instant review by GROW India's principal consultants.
+                      Thank you, <strong>{formData.fullName}</strong>. Your inquiry for <strong>{formData.organization}</strong> has been structured. Click below to connect instantly with GROW India's principal advisory team on WhatsApp.
                     </p>
 
                     {lastWhatsAppUrl && (
@@ -132,10 +129,10 @@ Submitted via GROW India Official Portal`;
                           href={lastWhatsAppUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all"
+                          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-emerald-600/30 transition-all hover:scale-105"
                         >
                           <MessageSquare className="w-4 h-4" />
-                          <span>Open WhatsApp Chat Directly</span>
+                          <span>Chat on WhatsApp (+91 94057 51665)</span>
                           <ExternalLink className="w-3.5 h-3.5" />
                         </a>
                       </div>
