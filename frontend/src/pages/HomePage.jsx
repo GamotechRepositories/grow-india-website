@@ -5,6 +5,7 @@ import CoreDivisionsSection from '../components/sections/CoreDivisionsSection';
 import DualMethodologySection from '../components/sections/DualMethodologySection';
 import PracticeAreasSection from '../components/sections/PracticeAreasSection';
 import IndustrySectorsSection from '../components/sections/IndustrySectorsSection';
+import PartnerEcosystemSection from '../components/sections/PartnerEcosystemSection';
 import StrategicDiagnosticCtaSection from '../components/sections/StrategicDiagnosticCtaSection';
 import { brandIdentity } from '../data/brand';
 
@@ -32,7 +33,10 @@ export default function HomePage() {
       {/* 6. Industry Sectors Footprint */}
       <IndustrySectorsSection />
 
-      {/* 7. High-Impact Strategic Diagnostic Consultation CTA & WhatsApp Contact */}
+      {/* 7. Strategic Alliance & Partner Ecosystem (Gamotech, Digital Buddies, Engagement Models, Training) */}
+      <PartnerEcosystemSection />
+
+      {/* 8. High-Impact Strategic Diagnostic Consultation CTA & WhatsApp Contact */}
       <StrategicDiagnosticCtaSection />
     </PageLayout>
   );
