@@ -29,27 +29,28 @@ export default function ContactPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Construct Clean Structured WhatsApp Message for Principal Consultant
+    // Clean destination phone digits
     const targetPhone = contactDetails.phone.replace(/[^0-9]/g, '');
-    const messageLines = [
-      `*NEW ENTERPRISE DIAGNOSTIC INQUIRY*`,
-      `*GROW INDIA ADVISORY*`,
-      `----------------------------------------`,
-      `👤 *Full Name:* ${formData.fullName.trim()}`,
-      `🏢 *Enterprise / Org:* ${formData.organization.trim()}`,
-      `📧 *Email:* ${formData.email.trim()}`,
-      `📞 *Phone:* ${formData.phone.trim()}`,
-      `🏭 *Industry Sector:* ${formData.sector}`,
-      `🏷️ *Practice Division:* ${formData.division}`,
-      formData.primaryFriction.trim() 
-        ? `⚠️ *Primary Challenge / Scope:*\n${formData.primaryFriction.trim()}`
-        : null,
-      `----------------------------------------`,
-      `_Submitted via GROW India Official Portal_`
-    ].filter(Boolean);
 
-    const fullMessage = messageLines.join('\n');
-    const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(fullMessage)}`;
+    // Construct Clean Structured WhatsApp Message for Principal Consultant
+    const challengeSection = formData.primaryFriction?.trim()
+      ? `⚠️ *Primary Challenge / Scope:*\n${formData.primaryFriction.trim()}\n`
+      : '';
+
+    const message = `*NEW ENTERPRISE DIAGNOSTIC INQUIRY*
+*GROW INDIA ADVISORY*
+----------------------------------------
+👤 *Full Name:* ${formData.fullName.trim()}
+🏢 *Enterprise / Org:* ${formData.organization.trim()}
+📧 *Email:* ${formData.email.trim()}
+📞 *Phone:* ${formData.phone.trim()}
+🏭 *Industry Sector:* ${formData.sector}
+🏷️ *Practice Division:* ${formData.division}
+${challengeSection}----------------------------------------
+Submitted via GROW India Official Portal`;
+
+    // Universal WhatsApp Web & Mobile API endpoint
+    const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(message)}`;
 
     setLastWhatsAppUrl(waUrl);
     setSubmitted(true);
