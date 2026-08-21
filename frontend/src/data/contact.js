@@ -11,6 +11,8 @@ export const contactDetails = {
   whatsappLink: 'https://wa.me/919405751665',
   email: 'growindia.corporateconsultants@gmail.com',
   geographicScope: 'Serving Businesses Across India',
+  location: 'Pan-India Delivery • Maharashtra, India',
+  workingHours: 'Mon – Sat: 9:30 AM – 6:30 PM IST',
   socialMedia: {
     instagram: {
       handle: '@growbusinesspartner',
