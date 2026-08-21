@@ -81,6 +81,12 @@ export const mainNavLinks = [
         subtitle: '8 Sector Frameworks Across India',
         href: '/industries',
         icon: 'Factory'
+      },
+      {
+        label: 'Clients & Partners',
+        subtitle: 'Corporate Spectrum & Tech Ecosystem',
+        href: '/clients-and-partners',
+        icon: 'Handshake'
       }
     ]
   },
@@ -120,40 +126,30 @@ export const mainNavLinks = [
 
 export const footerLinks = {
   company: [
-    { label: 'About GROW India', href: '/about' },
-    { label: 'Core Purpose & Philosophy', href: '/about#purpose' },
-    { label: 'Ethics & Integrity', href: '/about#ethics' },
-    { label: 'Our Methodology', href: '/methodology' },
-    { label: 'Strategic Partners', href: '/partners' },
+    { label: 'Institutional Profile', href: '/about' },
+    { label: 'Purpose, Vision & Mission', href: '/about' },
+    { label: '10 Ethical Principles', href: '/about' },
+    { label: 'Corporate Social Responsibility', href: '/about' },
+    { label: 'Clients & Strategic Partners', href: '/clients-and-partners' },
     { label: 'Contact & Advisory', href: '/contact' }
   ],
   services: [
     { label: 'GROW Shield (Compliance & Risk)', href: '/services/grow-shield' },
-    { label: 'GROW Engine (SOPs & Processes)', href: '/services/grow-engine' },
+    { label: 'GROW Engine (Process & SOPs)', href: '/services/grow-engine' },
     { label: 'GROW Consulting (Strategy)', href: '/services/grow-consulting' },
-    { label: 'GROW Systems (KPI & MIS)', href: '/services/grow-systems' },
+    { label: 'GROW Systems (KPIs & MIS)', href: '/services/grow-systems' },
     { label: 'GROW Marketing (Branding & Leads)', href: '/services/grow-marketing' },
-    { label: 'GROW Scale (Business Expansion)', href: '/services/grow-scale' },
-    { label: 'GROW Legal (Documentation Support)', href: '/services/grow-legal' }
+    { label: 'GROW Scale (Expansion Models)', href: '/services/grow-scale' },
+    { label: 'GROW Legal (Contracts & Docs)', href: '/services/grow-legal' }
   ],
   practiceAreas: [
-    { label: 'Corporate Consulting Practice', href: '/corporate-consulting' },
-    { label: 'Government Consulting Practice', href: '/government-consulting' },
-    { label: 'Industry Sector Groups', href: '/industries' },
-    { label: 'Systems & Compliance Audit', href: '/audit' },
-    { label: 'Executive Training Programs', href: '/training' },
-    { label: 'Engagement Models', href: '/contact' }
+    { label: 'Corporate & MSME Practice', href: '/corporate-consulting' },
+    { label: 'Government & Public Sector', href: '/government-consulting' },
+    { label: 'Industry Sectors & Frameworks', href: '/industries' },
+    { label: 'Consulting Methodology', href: '/methodology' },
+    { label: '360° Systems Diagnostic Audit', href: '/audit' },
+    { label: 'Executive Training Programs', href: '/training' }
   ]
 };
 
-export const quickContact = {
-  phone: contactDetails.phone,
-  phoneDisplay: contactDetails.phoneDisplay,
-  email: contactDetails.email,
-  whatsapp: contactDetails.whatsapp,
-  whatsappLink: contactDetails.whatsappLink,
-  udyam: contactDetails.udyamRegistration,
-  geographicScope: contactDetails.geographicScope
-};
-
-export default mainNavLinks;
+export default { mainNavLinks, footerLinks };

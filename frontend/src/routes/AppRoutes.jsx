@@ -10,6 +10,7 @@ import MethodologyPage from '../pages/MethodologyPage';
 import AuditPage from '../pages/AuditPage';
 import TrainingPage from '../pages/TrainingPage';
 import PartnersPage from '../pages/PartnersPage';
+import ClientsPartnersPage from '../pages/ClientsPartnersPage';
 import ContactPage from '../pages/ContactPage';
 import PlaceholderPage from '../pages/PlaceholderPage';
 
@@ -35,7 +36,9 @@ export default function AppRoutes() {
       <Route path="/methodology" element={<MethodologyPage />} />
       <Route path="/audit" element={<AuditPage />} />
       <Route path="/training" element={<TrainingPage />} />
-      <Route path="/partners" element={<PartnersPage />} />
+      <Route path="/partners" element={<ClientsPartnersPage />} />
+      <Route path="/clients" element={<ClientsPartnersPage />} />
+      <Route path="/clients-and-partners" element={<ClientsPartnersPage />} />
 
       {/* 6. Contact */}
       <Route path="/contact" element={<ContactPage />} />

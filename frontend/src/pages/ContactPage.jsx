@@ -6,6 +6,7 @@ import {
 import PageLayout from '../components/layout/PageLayout';
 import SectionTitle from '../components/ui/SectionTitle';
 import Button from '../components/ui/Button';
+import DigitalVisitingCard from '../components/common/DigitalVisitingCard';
 import { contactDetails } from '../data/contact';
 import { brandIdentity, callToActionData } from '../data/brand';
 import { services } from '../data/services';
@@ -214,125 +215,36 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Right Information Channels (5 Columns) */}
+            {/* Right Information Channels: The Digital Visiting Card */}
             <div className="lg:col-span-5 space-y-6">
-              
-              {/* Direct Channels Box */}
-              <div className="p-5 sm:p-7 rounded-3xl bg-slate-950 text-white border border-slate-800 shadow-xl space-y-5">
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400 block mb-0.5">
-                    Direct Corporate Access
-                  </span>
-                  <h3 className="font-display text-lg sm:text-xl font-bold text-white">
-                    Verified Advisory Channels
-                  </h3>
-                </div>
+              <DigitalVisitingCard />
 
-                <div className="space-y-3">
-                  {/* Telephone */}
-                  <a
-                    href={`tel:${contactDetails.phone}`}
-                    className="p-3 sm:p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-amber-400 flex items-center justify-between gap-2.5 transition-all group"
-                  >
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="w-9 h-9 rounded-xl bg-amber-400/10 text-amber-400 flex items-center justify-center shrink-0 group-hover:bg-amber-400 group-hover:text-slate-950 transition-colors">
-                        <Phone className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Direct Line</span>
-                        <span className="text-xs sm:text-sm font-bold text-white group-hover:text-amber-400 transition-colors truncate block">
-                          {contactDetails.phoneDisplay}
-                        </span>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-amber-400 shrink-0 transition-transform group-hover:translate-x-1" />
-                  </a>
-
-                  {/* Email */}
-                  <a
-                    href={`mailto:${contactDetails.email}`}
-                    className="p-3 sm:p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-amber-400 flex items-center justify-between gap-2.5 transition-all group"
-                  >
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="w-9 h-9 rounded-xl bg-amber-400/10 text-amber-400 flex items-center justify-center shrink-0 group-hover:bg-amber-400 group-hover:text-slate-950 transition-colors">
-                        <Mail className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Official Inquiries</span>
-                        <span className="text-xs sm:text-sm font-bold text-white group-hover:text-amber-400 transition-colors break-all leading-snug block">
-                          {contactDetails.email}
-                        </span>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-amber-400 shrink-0 transition-transform group-hover:translate-x-1" />
-                  </a>
-
-                  {/* WhatsApp */}
-                  <a
-                    href={contactDetails.whatsappLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 sm:p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 hover:border-emerald-400 flex items-center justify-between gap-2.5 transition-all group"
-                  >
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-colors">
-                        <MessageSquare className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 block">Instant WhatsApp Advisory</span>
-                        <span className="text-xs sm:text-sm font-bold text-white group-hover:text-emerald-400 transition-colors truncate block">
-                          Connect on WhatsApp
-                        </span>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-emerald-400 shrink-0 transition-transform group-hover:translate-x-1" />
-                  </a>
-                </div>
-
-                {/* Location & Working Hours (Clean Multi-line Stacking) */}
-                <div className="pt-4 border-t border-slate-800 space-y-3 text-xs text-slate-300">
-                  <div className="flex items-start gap-2.5">
-                    <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <div>
-                      <strong className="text-white block font-semibold text-[11px] uppercase tracking-wider mb-0.5">
-                        Location:
-                      </strong>
-                      <span className="text-slate-400 text-xs leading-relaxed block">
-                        {contactDetails.location}
-                      </span>
-                    </div>
+              {/* Location & Entity Credential Card */}
+              <div className="p-5 sm:p-6 rounded-3xl bg-slate-50 border border-slate-200 space-y-3">
+                <div className="flex items-start gap-2.5">
+                  <MapPin className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-slate-900 block font-semibold text-[11px] uppercase tracking-wider">
+                      Operational Location:
+                    </strong>
+                    <span className="text-slate-600 text-xs leading-relaxed">
+                      {contactDetails.location}
+                    </span>
                   </div>
+                </div>
 
-                  <div className="flex items-start gap-2.5">
-                    <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <div>
-                      <strong className="text-white block font-semibold text-[11px] uppercase tracking-wider mb-0.5">
-                        Working Hours:
-                      </strong>
-                      <span className="text-slate-400 text-xs leading-relaxed block">
-                        {contactDetails.workingHours}
-                      </span>
-                    </div>
+                <div className="flex items-start gap-2.5 pt-2 border-t border-slate-200">
+                  <Clock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-slate-900 block font-semibold text-[11px] uppercase tracking-wider">
+                      Advisory Hours:
+                    </strong>
+                    <span className="text-slate-600 text-xs leading-relaxed">
+                      {contactDetails.workingHours}
+                    </span>
                   </div>
                 </div>
               </div>
-
-              {/* Entity Registration Card */}
-              <div className="p-5 sm:p-6 rounded-3xl bg-slate-50 border border-slate-200">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-amber-700 block mb-1">
-                  Official Entity Credential
-                </span>
-                <h4 className="font-display text-xs sm:text-sm font-bold text-slate-900 mb-1">
-                  {brandIdentity.officialName} ({brandIdentity.shortName})
-                </h4>
-                <div className="text-xs font-mono text-slate-700 bg-white p-2.5 rounded-xl border border-slate-200 mb-2 break-all">
-                  UDYAM REGISTRATION: {contactDetails.udyamRegistration}
-                </div>
-                <p className="text-xs text-slate-500 italic">
-                  "{contactDetails.motto}"
-                </p>
-              </div>
-
             </div>
 
           </div>

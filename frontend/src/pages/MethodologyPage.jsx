@@ -6,6 +6,7 @@ import {
 import PageLayout from '../components/layout/PageLayout';
 import SectionTitle from '../components/ui/SectionTitle';
 import Button from '../components/ui/Button';
+import { GrowCycleFlowchart, OperatingModelFlowchart } from '../components/common/FlowchartDiagram';
 import { growOperatingModel, grcMethodology, growIntegratedCycle, implementationSupportData } from '../data/methodology';
 import { brandIdentity } from '../data/brand';
 
@@ -13,7 +14,6 @@ export default function MethodologyPage() {
   const [activeStageIdx, setActiveStageIdx] = useState(0);
   const [activePhaseIdx, setActivePhaseIdx] = useState(0);
   const activeStage = growOperatingModel.stages[activeStageIdx];
-  const activePhase = grcMethodology.phases[activePhaseIdx];
 
   return (
     <PageLayout
@@ -41,9 +41,9 @@ export default function MethodologyPage() {
         </div>
       </section>
 
-      {/* 1. The 6-Stage Operating Model (XIX) */}
+      {/* 1. Operating Model Diagrammatic Presentation (XIX) */}
       <section className="py-12 lg:py-16 bg-white border-b border-slate-200" id="operating-model">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           <SectionTitle
             badge="Operating Architecture"
             title={`XIX. ${growOperatingModel.title}`}
@@ -51,75 +51,14 @@ export default function MethodologyPage() {
             align="center"
           />
 
-          {/* Interactive Stepper Navigation */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mt-10 mb-6 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
-            {growOperatingModel.stages.map((st, idx) => {
-              const isSelected = idx === activeStageIdx;
-              return (
-                <button
-                  key={st.stage}
-                  type="button"
-                  onClick={() => setActiveStageIdx(idx)}
-                  className={`p-3 rounded-xl text-left transition-all duration-150 cursor-pointer border ${
-                    isSelected
-                      ? 'bg-slate-950 text-white border-slate-950 shadow-md ring-1 ring-amber-400/40'
-                      : 'bg-white text-slate-700 border-slate-200/80 hover:bg-slate-100 hover:text-slate-950'
-                  }`}
-                >
-                  <span className={`font-mono text-xs font-bold block mb-0.5 ${
-                    isSelected ? 'text-amber-400' : 'text-amber-600'
-                  }`}>
-                    Stage {st.stage}
-                  </span>
-                  <span className="font-display text-xs font-bold block truncate">
-                    {st.name}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Active Stage Detail Canvas */}
-          <div className="p-6 sm:p-10 rounded-3xl bg-slate-950 text-white border border-slate-800 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 blur-[90px] pointer-events-none" />
-
-            <div className="space-y-6 relative">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
-                <div className="flex items-center gap-3">
-                  <span className="font-mono text-3xl font-black text-amber-400">
-                    {activeStage.stage}
-                  </span>
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
-                      Operating Stage
-                    </span>
-                    <h3 className="font-display text-2xl font-bold text-white">
-                      {activeStage.name}
-                    </h3>
-                  </div>
-                </div>
-                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/20">
-                  Phased Execution
-                </span>
-              </div>
-
-              <p className="text-base sm:text-lg text-slate-200 leading-relaxed font-medium">
-                {activeStage.summary}
-              </p>
-
-              <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex items-center gap-3 text-xs text-amber-400 font-semibold">
-                <CheckCircle2 className="w-5 h-5 shrink-0" />
-                <span>Enforces ground-level operational discipline, employee accountability, and leadership alignment.</span>
-              </div>
-            </div>
-          </div>
-
+          {/* Diagrammatic Stepper Flowchart */}
+          <OperatingModelFlowchart />
         </div>
       </section>
 
       {/* 2. The 9-Phase GRC Methodology (XI) */}
       <section className="py-12 lg:py-16 bg-slate-900 text-white border-b border-slate-800" id="grc-methodology">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           <SectionTitle
             badge="GRC Implementation"
             title={`XI. ${grcMethodology.title}`}
@@ -128,7 +67,7 @@ export default function MethodologyPage() {
             align="center"
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {grcMethodology.phases.map((ph, idx) => (
               <div
                 key={ph.phase}
@@ -157,77 +96,52 @@ export default function MethodologyPage() {
         </div>
       </section>
 
-      {/* 3. The Integrated GROW Cycle & Implementation Cycle */}
+      {/* 3. The 10-Node Integrated GROW Cycle (Diagrammatic) & Implementation Loop */}
       <section className="py-12 lg:py-16 bg-slate-950 text-white border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Section X: GROW Cycle */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 flex flex-col justify-between shadow-xl">
+          {/* Diagrammatic Flowchart */}
+          <GrowCycleFlowchart />
+
+          {/* Implementation Support Loop Card */}
+          <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
               <div>
-                <span className="text-xs font-bold text-amber-400 uppercase tracking-widest block mb-1">
-                  X. {growIntegratedCycle.title}
-                </span>
-                <h3 className="font-display text-xl font-bold text-white mb-2">
-                  THE GROW CYCLE (10 NODES)
-                </h3>
-                <p className="text-xs text-slate-300 mb-6">
-                  {growIntegratedCycle.subtitle}
-                </p>
-
-                <div className="flex flex-wrap items-center gap-1.5 mb-6">
-                  {growIntegratedCycle.cycleSteps.map((step, idx) => (
-                    <span key={idx} className="flex items-center gap-1 text-xs font-semibold">
-                      <span className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-200">
-                        {step}
-                      </span>
-                      {idx < growIntegratedCycle.cycleSteps.length - 1 && (
-                        <span className="text-amber-400">&rarr;</span>
-                      )}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <p className="text-xs text-slate-400 border-t border-slate-800 pt-4 italic">
-                "{growIntegratedCycle.objective}"
-              </p>
-            </div>
-
-            {/* Section XVIII: Implementation Support Cycle */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 flex flex-col justify-between shadow-xl">
-              <div>
-                <span className="text-xs font-bold text-amber-400 uppercase tracking-widest block mb-1">
+                <span className="text-xs font-bold text-amber-400 uppercase tracking-widest block mb-0.5">
                   XVIII. {implementationSupportData.title}
                 </span>
-                <h3 className="font-display text-xl font-bold text-white mb-2">
-                  IMPLEMENTATION SUPPORT CYCLE
+                <h3 className="font-display text-lg sm:text-xl font-bold text-white">
+                  9-Step Implementation Support Cycle
                 </h3>
-                <p className="text-xs text-slate-300 mb-6">
-                  {implementationSupportData.subtitle}
-                </p>
-
-                <div className="flex flex-wrap items-center gap-1.5 mb-6">
-                  {implementationSupportData.implementationCycle.map((step, idx) => (
-                    <span key={idx} className="flex items-center gap-1 text-xs font-semibold">
-                      <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300">
-                        {step}
-                      </span>
-                      {idx < implementationSupportData.implementationCycle.length - 1 && (
-                        <span className="text-amber-400">&rarr;</span>
-                      )}
-                    </span>
-                  ))}
-                </div>
               </div>
-
-              <p className="text-xs text-slate-400 border-t border-slate-800 pt-4 italic">
-                "{implementationSupportData.objective}"
-              </p>
+              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/20">
+                Adoption & Validation
+              </span>
             </div>
+
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              {implementationSupportData.subtitle}
+            </p>
+
+            <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2 pt-2">
+              {implementationSupportData.implementationCycle.map((step, idx) => (
+                <div key={idx} className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-center">
+                  <span className="font-mono text-[10px] font-bold text-amber-400 block mb-0.5">
+                    0{idx + 1}
+                  </span>
+                  <span className="text-[11px] font-bold text-slate-200 block truncate">
+                    {step}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-xs text-slate-400 pt-3 border-t border-slate-800 italic text-center">
+              "{implementationSupportData.objective}"
+            </p>
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center pt-4">
             <Button to="/contact" variant="gold" size="lg" icon={ArrowRight}>
               Schedule Methodology Consultation
             </Button>

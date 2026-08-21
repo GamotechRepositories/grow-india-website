@@ -1,6 +1,6 @@
-import { Phone, Mail, MessageSquare, ArrowRight, CheckCircle2, Shield, MapPin, Clock } from 'lucide-react';
+import { CheckCircle2, Shield } from 'lucide-react';
 import SectionTitle from '../ui/SectionTitle';
-import Button from '../ui/Button';
+import DigitalVisitingCard from '../common/DigitalVisitingCard';
 import { contactDetails } from '../../data/contact';
 import { brandPromiseSection, callToActionData } from '../../data/brand';
 
@@ -37,20 +37,20 @@ export default function StrategicDiagnosticCtaSection() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left: What GROW Can Help Identify */}
-          <div className="lg:col-span-6 p-5 sm:p-7 rounded-3xl bg-slate-900 border border-slate-800 flex flex-col justify-between">
-            <div>
+          <div className="lg:col-span-6 p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 flex flex-col justify-between h-full">
+            <div className="space-y-4">
               <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400 block mb-1">
                 Diagnostic Scope
               </span>
-              <h3 className="font-display text-lg sm:text-xl font-bold text-white mb-4">
+              <h3 className="font-display text-xl sm:text-2xl font-bold text-white mb-4">
                 GROW Can Help Identify:
               </h3>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {callToActionData.identifyPoints.map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-xs text-slate-300">
+                  <div key={idx} className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-300">
                     <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
                     <span>{item}</span>
                   </div>
@@ -58,120 +58,22 @@ export default function StrategicDiagnosticCtaSection() {
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-800">
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-300 block mb-0.5">
+            <div className="mt-8 pt-6 border-t border-slate-800 space-y-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-300 block">
                 Official Entity Registration:
               </span>
               <div className="text-xs text-slate-400 font-mono break-all">
                 UDYAM: {contactDetails.udyamRegistration}
               </div>
-              <p className="text-xs text-slate-400 mt-0.5 italic">
+              <p className="text-xs text-slate-400 italic">
                 "{contactDetails.motto}"
               </p>
             </div>
           </div>
 
-          {/* Right: Direct Verified Communication Channels */}
-          <div className="lg:col-span-6 p-5 sm:p-7 rounded-3xl bg-gradient-to-br from-amber-500/20 via-slate-900 to-slate-900 border-2 border-amber-500/40 flex flex-col justify-between shadow-2xl">
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-amber-300 block mb-1">
-                Direct Corporate Advisory
-              </span>
-              <h3 className="font-display text-lg sm:text-xl font-extrabold text-white mb-1.5">
-                Initiate Confidential Diagnostic
-              </h3>
-              <p className="text-xs text-slate-300 mb-4">
-                Connect directly with principal consultants to discuss organizational restructuring, compliance, or scaling systems.
-              </p>
-
-              <div className="space-y-2.5">
-                {/* Telephone */}
-                <a
-                  href={`tel:${contactDetails.phone}`}
-                  className="p-3 sm:p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 hover:border-amber-400 flex items-center justify-between gap-2.5 transition-all group"
-                >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
-                      <Phone className="w-4 h-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Direct Line</span>
-                      <span className="text-xs sm:text-sm font-bold text-white group-hover:text-amber-400 transition-colors truncate block">
-                        {contactDetails.phoneDisplay}
-                      </span>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-amber-400 shrink-0 transition-transform group-hover:translate-x-1" />
-                </a>
-
-                {/* Email */}
-                <a
-                  href={`mailto:${contactDetails.email}`}
-                  className="p-3 sm:p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 hover:border-amber-400 flex items-center justify-between gap-2.5 transition-all group"
-                >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 group-hover:bg-amber-500 group-hover:text-slate-950 transition-colors">
-                      <Mail className="w-4 h-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Official Inquiries</span>
-                      <span className="text-xs sm:text-sm font-bold text-white group-hover:text-amber-400 transition-colors break-all leading-snug block">
-                        {contactDetails.email}
-                      </span>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-amber-400 shrink-0 transition-transform group-hover:translate-x-1" />
-                </a>
-
-                {/* WhatsApp */}
-                <a
-                  href={contactDetails.whatsappLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 sm:p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 hover:border-emerald-400 flex items-center justify-between gap-2.5 transition-all group"
-                >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-colors">
-                      <MessageSquare className="w-4 h-4" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 block">Instant Messaging</span>
-                      <span className="text-xs sm:text-sm font-bold text-white group-hover:text-emerald-400 transition-colors truncate block">
-                        WhatsApp Consultation Channel
-                      </span>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-emerald-400 shrink-0 transition-transform group-hover:translate-x-1" />
-                </a>
-              </div>
-            </div>
-
-            {/* Location & Working Hours (Clean Multi-line Stacking) */}
-            <div className="mt-4 pt-3 border-t border-slate-800 space-y-2 text-xs text-slate-300">
-              <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-white block font-semibold text-[10px] uppercase tracking-wider mb-0.5">
-                    Location:
-                  </strong>
-                  <span className="text-slate-400 text-xs leading-relaxed block">
-                    {contactDetails.location}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2.5">
-                <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-white block font-semibold text-[10px] uppercase tracking-wider mb-0.5">
-                    Working Hours:
-                  </strong>
-                  <span className="text-slate-400 text-xs leading-relaxed block">
-                    {contactDetails.workingHours}
-                  </span>
-                </div>
-              </div>
-            </div>
+          {/* Right: The Exact Digital Visiting Card as Requested */}
+          <div className="lg:col-span-6">
+            <DigitalVisitingCard />
           </div>
         </div>
 
