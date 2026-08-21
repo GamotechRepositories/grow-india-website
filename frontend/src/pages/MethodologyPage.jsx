@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { 
   Workflow, Layers, ShieldCheck, CheckCircle2, ArrowRight, 
-  RotateCw, Sparkles, Target, Compass, ChevronRight 
+  RotateCw, Sparkles, Target, Compass, ChevronRight, PieChart as PieIcon 
 } from 'lucide-react';
 import PageLayout from '../components/layout/PageLayout';
 import SectionTitle from '../components/ui/SectionTitle';
 import Button from '../components/ui/Button';
 import { GrowCycleFlowchart, OperatingModelFlowchart } from '../components/common/FlowchartDiagram';
+import { PracticeWeightagePieChart } from '../components/common/PieChartDiagram';
 import { growOperatingModel, grcMethodology, growIntegratedCycle, implementationSupportData } from '../data/methodology';
 import { brandIdentity } from '../data/brand';
 
@@ -56,39 +57,40 @@ export default function MethodologyPage() {
         </div>
       </section>
 
-      {/* 2. The 9-Phase GRC Methodology (XI) */}
+      {/* 2. Consulting Weightage Pie Chart Presentation */}
+      <section className="py-12 lg:py-16 bg-slate-950 text-white border-b border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <PracticeWeightagePieChart />
+        </div>
+      </section>
+
+      {/* 3. The 9-Phase GRC Methodology (XI) */}
       <section className="py-12 lg:py-16 bg-slate-900 text-white border-b border-slate-800" id="grc-methodology">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            badge="GRC Implementation"
+            badge="Governance Architecture"
             title={`XI. ${grcMethodology.title}`}
             subtitle={grcMethodology.subtitle}
             theme="dark"
             align="center"
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {grcMethodology.phases.map((ph, idx) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
+            {grcMethodology.phases.map((p, idx) => (
               <div
-                key={ph.phase}
-                className="p-5 rounded-3xl bg-slate-950 border border-slate-800 hover:border-amber-400/40 transition-all flex flex-col justify-between"
+                key={p.phase}
+                className="p-6 rounded-3xl bg-slate-950 border border-slate-800/90 shadow-sm hover:border-amber-400/40 transition-colors flex flex-col justify-between"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-3 border-b border-slate-800 pb-2.5">
-                    <span className="font-mono text-xs font-black text-amber-400">
-                      {ph.title}
-                    </span>
-                    <ShieldCheck className="w-4 h-4 text-amber-400" />
-                  </div>
-
-                  <ul className="space-y-1.5 pt-1">
-                    {ph.points.map((pt, pIdx) => (
-                      <li key={pIdx} className="text-xs text-slate-300 flex items-start gap-2">
-                        <span className="text-amber-400 font-bold">•</span>
-                        <span>{pt}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <span className="font-mono text-xs font-bold text-amber-400 mb-2 block">
+                    Phase {p.phase}
+                  </span>
+                  <h3 className="font-display text-base font-bold text-white mb-2">
+                    {p.name}
+                  </h3>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    {p.desc}
+                  </p>
                 </div>
               </div>
             ))}
@@ -96,57 +98,47 @@ export default function MethodologyPage() {
         </div>
       </section>
 
-      {/* 3. The 10-Node Integrated GROW Cycle (Diagrammatic) & Implementation Loop */}
+      {/* 4. The 10-Node Integrated Cycle Flowchart */}
       <section className="py-12 lg:py-16 bg-slate-950 text-white border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          
-          {/* Diagrammatic Flowchart */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <GrowCycleFlowchart />
+        </div>
+      </section>
 
-          {/* Implementation Support Loop Card */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
-              <div>
-                <span className="text-xs font-bold text-amber-400 uppercase tracking-widest block mb-0.5">
-                  XVIII. {implementationSupportData.title}
-                </span>
-                <h3 className="font-display text-lg sm:text-xl font-bold text-white">
-                  9-Step Implementation Support Cycle
-                </h3>
-              </div>
-              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-400/10 text-amber-300 border border-amber-400/20">
-                Adoption & Validation
-              </span>
-            </div>
+      {/* 5. Implementation Support & Next Steps */}
+      <section className="py-12 lg:py-16 bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionTitle
+            badge="Execution Guarantee"
+            title={implementationSupportData.title}
+            subtitle={implementationSupportData.subtitle}
+            align="center"
+          />
 
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              {implementationSupportData.subtitle}
-            </p>
-
-            <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2 pt-2">
-              {implementationSupportData.implementationCycle.map((step, idx) => (
-                <div key={idx} className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-center">
-                  <span className="font-mono text-[10px] font-bold text-amber-400 block mb-0.5">
-                    0{idx + 1}
-                  </span>
-                  <span className="text-[11px] font-bold text-slate-200 block truncate">
-                    {step}
-                  </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
+            {implementationSupportData.pillars.map((pil, idx) => (
+              <div
+                key={idx}
+                className="p-6 rounded-3xl bg-slate-50 border border-slate-200/90 shadow-sm space-y-3"
+              >
+                <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-700 flex items-center justify-center font-mono font-bold text-sm">
+                  0{idx + 1}
                 </div>
-              ))}
-            </div>
-
-            <p className="text-xs text-slate-400 pt-3 border-t border-slate-800 italic text-center">
-              "{implementationSupportData.objective}"
-            </p>
+                <h3 className="font-display text-base font-bold text-slate-900">
+                  {pil.title}
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  {pil.desc}
+                </p>
+              </div>
+            ))}
           </div>
 
-          <div className="text-center pt-4">
-            <Button to="/contact" variant="gold" size="lg" icon={ArrowRight}>
-              Schedule Methodology Consultation
+          <div className="mt-12 text-center">
+            <Button to="/contact" variant="primary" size="lg" icon={ArrowRight}>
+              Initiate Diagnostic Assessment
             </Button>
           </div>
-
         </div>
       </section>
     </PageLayout>

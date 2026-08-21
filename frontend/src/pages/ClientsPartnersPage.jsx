@@ -6,6 +6,7 @@ import {
 import PageLayout from '../components/layout/PageLayout';
 import SectionTitle from '../components/ui/SectionTitle';
 import Button from '../components/ui/Button';
+import { ClientPortfolioPieChart } from '../components/common/PieChartDiagram';
 import { industryOverview, industries } from '../data/industries';
 import { strategicPartnersOverview, verifiedPartners, strategicDeliveryPrinciples } from '../data/partners';
 import { whoGrowCorporateServes } from '../data/corporate';
@@ -76,6 +77,9 @@ export default function ClientsPartnersPage() {
         <section className="py-12 lg:py-16 bg-white border-b border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             
+            {/* Pie Chart Representation */}
+            <ClientPortfolioPieChart />
+
             {/* Corporate & MSME Section */}
             <div>
               <SectionTitle
@@ -149,108 +153,107 @@ export default function ClientsPartnersPage() {
               <p className="text-sm text-slate-300 leading-relaxed mb-4">
                 {strategicPartnersOverview.description}
               </p>
-              <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-amber-300 font-semibold">
-                {strategicPartnersOverview.deliveryModel.description}
+              <div className="inline-flex items-center gap-2 text-xs font-bold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-3.5 py-1.5 rounded-full">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{strategicPartnersOverview.focus}</span>
               </div>
             </div>
 
-            {/* 2 Strategic Partner Cards */}
+            {/* Strategic Partners Cards */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {verifiedPartners.map((partner) => {
-                const isTech = partner.id === 'gamotech-solutions';
-                return (
-                  <div
-                    key={partner.id}
-                    className="p-8 sm:p-10 rounded-3xl bg-slate-950 border border-slate-800 hover:border-amber-500/50 transition-all flex flex-col justify-between shadow-2xl"
-                  >
-                    <div className="space-y-6">
-                      <div className="flex items-start justify-between gap-4 border-b border-slate-800 pb-4">
-                        <div>
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400 block mb-1">
-                            STRATEGIC PARTNER
-                          </span>
-                          <h3 className="font-display text-2xl font-bold text-white">
-                            {partner.name}
-                          </h3>
-                          <span className="text-xs font-semibold text-slate-400 block mt-0.5">
-                            {partner.category}
-                          </span>
-                        </div>
-                        <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shrink-0">
-                          {isTech ? <Code2 className="w-6 h-6" /> : <Share2 className="w-6 h-6" />}
-                        </div>
-                      </div>
-
-                      {/* Expertise */}
-                      <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-                        <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2.5">
-                          {partner.name}'S TECHNICAL EXPERTISE:
-                        </h4>
-                        <div className="grid grid-cols-2 gap-2">
-                          {partner.expertise.map((exp, idx) => (
-                            <div key={idx} className="text-xs text-slate-300 flex items-center gap-1.5">
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
-                              <span>{exp}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* GROW Role */}
-                      <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80">
-                        <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2.5">
-                          GROW'S BUSINESS & GOVERNANCE ROLE:
-                        </h4>
-                        <div className="grid grid-cols-2 gap-2">
-                          {partner.growRole.map((role, idx) => (
-                            <div key={idx} className="text-xs text-slate-300 flex items-center gap-1.5">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                              <span>{role}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Outcomes */}
-                      <div className="space-y-2">
-                        <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
-                          Joint Client Outcomes:
+              {verifiedPartners.map((partner) => (
+                <div
+                  key={partner.id}
+                  className="p-6 sm:p-8 rounded-3xl bg-slate-950 border border-slate-800 shadow-xl space-y-6 flex flex-col justify-between"
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-start justify-between gap-4 border-b border-slate-800 pb-4">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400 block mb-1">
+                          {partner.category}
                         </span>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                          {partner.jointOutcomes.map((out, idx) => (
-                            <div key={idx} className="text-xs text-slate-300 flex items-start gap-2">
-                              <span className="text-amber-400 font-bold">•</span>
-                              <span>{out}</span>
-                            </div>
-                          ))}
-                        </div>
+                        <h3 className="font-display text-xl sm:text-2xl font-bold text-white">
+                          {partner.name}
+                        </h3>
+                        <span className="text-xs text-slate-400 block mt-0.5">
+                          {partner.role}
+                        </span>
+                      </div>
+                      <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 text-amber-400 flex items-center justify-center shrink-0">
+                        {partner.id === 'gamotech-solutions' ? (
+                          <Code2 className="w-6 h-6" />
+                        ) : (
+                          <Share2 className="w-6 h-6" />
+                        )}
                       </div>
                     </div>
 
-                    <div className="mt-8 pt-4 border-t border-slate-800">
-                      <Button to="/contact" variant="gold" size="sm" className="w-full" icon={ArrowRight}>
-                        Inquire for Joint {partner.name} Project
-                      </Button>
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      {partner.description}
+                    </p>
+
+                    <div>
+                      <strong className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-2">
+                        Core Technical Capabilities:
+                      </strong>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {partner.capabilities.map((cap, idx) => (
+                          <div
+                            key={idx}
+                            className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 flex items-center gap-2"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            <span className="truncate">{cap}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
+                      <strong className="block font-bold text-amber-200 mb-1">Collaborative Engagement:</strong>
+                      {partner.synergyWithGrow}
                     </div>
                   </div>
-                );
-              })}
+
+                  <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
+                    <span className="text-xs text-slate-400 font-mono">
+                      {partner.website}
+                    </span>
+                    <a
+                      href={partner.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-400 hover:text-amber-300 hover:underline"
+                    >
+                      <span>Visit Partner Website</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Strategic Delivery Principles */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-slate-950 border border-slate-800">
-              <span className="text-xs font-bold text-amber-400 uppercase tracking-widest block mb-4 text-center md:text-left">
-                {strategicDeliveryPrinciples.title}
-              </span>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {strategicDeliveryPrinciples.principles.map((p, idx) => (
-                  <div key={idx} className="p-4 rounded-2xl bg-slate-900 border border-slate-800/80">
-                    <span className="font-mono text-xs font-bold text-amber-400 block mb-1">
-                      0{idx + 1}. {p.title}
+            <div className="pt-8 border-t border-slate-800 space-y-6">
+              <div className="text-center max-w-2xl mx-auto">
+                <span className="text-xs font-bold uppercase tracking-widest text-amber-400 block mb-1">
+                  Governance Matrix
+                </span>
+                <h3 className="font-display text-2xl font-bold text-white">
+                  6 Strategic Delivery Principles
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {strategicDeliveryPrinciples.map((prin, idx) => (
+                  <div
+                    key={idx}
+                    className="p-5 rounded-2xl bg-slate-950 border border-slate-800 text-xs text-slate-300 flex items-start gap-3"
+                  >
+                    <span className="w-6 h-6 rounded-lg bg-amber-400 text-slate-950 font-bold flex items-center justify-center shrink-0 text-xs">
+                      {idx + 1}
                     </span>
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      {p.description}
-                    </p>
+                    <span className="leading-relaxed">{prin}</span>
                   </div>
                 ))}
               </div>
@@ -260,21 +263,18 @@ export default function ClientsPartnersPage() {
         </section>
       )}
 
-      {/* Direct Diagnostic Call to Action */}
-      <section className="py-12 bg-slate-950 text-white text-center">
+      {/* Global Consultation CTA */}
+      <section className="py-12 bg-slate-950 text-white text-center border-t border-slate-800">
         <div className="max-w-4xl mx-auto px-4 space-y-4">
-          <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-white">
-            Ready to Institutionalize Your Business Systems?
+          <h2 className="font-display text-2xl sm:text-3xl font-bold text-white">
+            Explore a Strategic Partnership or Enterprise Engagement
           </h2>
-          <p className="text-xs sm:text-sm text-slate-300">
-            Connect with GROW India to structure your governance, SOPs, and performance frameworks.
+          <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">
+            Whether you represent a corporation, an MSME, a public department, or a technology vendor, GROW India welcomes strategic collaboration.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <Button to="/contact" variant="gold" size="md" icon={ArrowRight}>
-              Schedule Diagnostic Consultation
-            </Button>
-            <Button to="/audit" variant="outline" size="md" className="border-slate-700 text-white hover:bg-slate-900">
-              Take Free Systems Audit
+          <div className="pt-2">
+            <Button to="/contact" variant="gold" size="lg" icon={ArrowRight}>
+              Schedule Exploratory Discussion
             </Button>
           </div>
         </div>
