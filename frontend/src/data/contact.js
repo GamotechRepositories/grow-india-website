@@ -32,8 +32,8 @@ export const contactDetails = {
     linkedin: {
       name: 'Govind Raadhaa Organizational Wonders',
       display: 'Govind Raadhaa Organizational Wonders',
-      url: 'https://www.linkedin.com/search/results/all/?keywords=Govind+Raadhaa+Organizational+Wonders',
-      subtext: 'LinkedIn: Govind Raadhaa Organizational Wonders'
+      url: 'https://www.linkedin.com/in/govind-raadhaa-organizational-wonders-grow-business-growth-and-systems-partner-india-20087b418/',
+      subtext: 'LinkedIn Profile'
     }
   },
   motto: 'Communicate with GROW to Grow.',
