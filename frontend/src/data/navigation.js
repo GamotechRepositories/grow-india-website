@@ -120,7 +120,8 @@ export const mainNavLinks = [
         icon: 'Handshake'
       }
     ]
-  }
+  },
+  { label: 'Contact', href: '/contact' }
 ];
 
 export const footerLinks = {
