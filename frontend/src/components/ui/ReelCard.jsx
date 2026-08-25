@@ -155,36 +155,50 @@ export default function ReelCard({
     `Hello GROW India team,\nI watched your video reel: "${video.title}" (${video.division || 'GROW Systems'}).\nI would like to consult with your team for our business.`
   );
 
+  // Cloudinary video poster thumbnail
+  const posterUrl = video.videoUrl.replace(/\.mp4$/i, '.jpg');
+
   return (
     <div
       ref={cardRef}
       onClick={handleCardClick}
-      className={`group relative flex-none w-[270px] sm:w-[290px] md:w-[310px] aspect-[9/16] rounded-3xl overflow-hidden bg-slate-900 border transition-all duration-300 shadow-md cursor-pointer snap-start flex flex-col justify-between select-none ${
+      className={`group relative flex-none w-[270px] sm:w-[290px] md:w-[310px] aspect-[9/16] rounded-3xl overflow-hidden bg-slate-100 border transition-all duration-300 shadow-md cursor-pointer snap-start flex flex-col justify-between select-none ${
         isActive 
           ? 'border-amber-500 ring-4 ring-amber-400/20 shadow-2xl scale-[1.02]' 
-          : 'border-slate-200/90 hover:border-amber-400 hover:shadow-xl hover:-translate-y-1'
+          : 'border-slate-200 hover:border-amber-400 hover:shadow-xl hover:-translate-y-1'
       }`}
     >
-      {/* Video Element */}
-      <div className="absolute inset-0 bg-slate-950 overflow-hidden">
+      {/* Video & Poster Preview Stage */}
+      <div className="absolute inset-0 bg-slate-900 overflow-hidden">
+        {/* Instant Bright Poster Preview (Guarantees no black screen on mobile) */}
+        <img
+          src={posterUrl}
+          alt={video.title}
+          loading="lazy"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+            isActive && isPlaying ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+        />
+
+        {/* Video Element */}
         <video
           ref={videoRef}
           src={video.videoUrl}
+          poster={posterUrl}
           preload="metadata"
           playsInline
           webkit-playsinline="true"
           x5-playsinline="true"
           onTimeUpdate={handleTimeUpdate}
           onEnded={handleVideoEnded}
-          className="w-full h-full object-cover"
+          className={`w-full h-full object-cover transition-opacity duration-300 ${
+            isActive && isPlaying ? 'opacity-100' : 'opacity-90'
+          }`}
         />
-        {/* Crisp Gradient Overlay */}
+
+        {/* Crisp Subtle Gradient (Only bottom text area, no dark haze over whole video) */}
         <div 
-          className={`absolute inset-0 transition-opacity duration-300 ${
-            isActive && isPlaying 
-              ? 'bg-gradient-to-t from-slate-950 via-transparent to-slate-950/50 opacity-80' 
-              : 'bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/60 opacity-90'
-          }`} 
+          className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-slate-950/30 pointer-events-none" 
         />
       </div>
 
