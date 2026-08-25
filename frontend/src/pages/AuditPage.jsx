@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Landmark, Target, IndianRupee, Users, Cpu, TrendingUp, 
   ShoppingCart, Monitor, Scale, ShieldAlert, Award, CheckCircle2,
   Printer, MessageCircle, Mail, Sparkles, AlertCircle, FileCheck,
   RefreshCcw, ArrowRight, ArrowLeft, Building2, Check, ShieldCheck, 
-  CheckCircle, AlertTriangle, XCircle, MinusCircle, User,
-  Phone, Clock, HelpCircle, FileText, ChevronRight, BarChart3
+  Download, CheckCircle, AlertTriangle, XCircle, MinusCircle, 
+  Send, User, Phone, Play, HelpCircle, Eye
 } from 'lucide-react';
 import PageLayout from '../components/layout/PageLayout';
-import { auditSections } from '../data/auditQuestionnaire';
+import { auditQuestionnaireMeta, auditSections } from '../data/auditQuestionnaire';
 import { brandIdentity } from '../data/brand';
 import { contactDetails } from '../data/contact';
 
@@ -27,610 +27,705 @@ const iconMap = {
   CheckCircle2
 };
 
-const answerChoices = [
+const ratingOptions = [
   {
     code: 'A',
-    title: 'Yes, Fully Established',
-    desc: 'Clearly documented, active & followed by team',
+    label: 'Fully Established',
+    description: 'Documented SOPs, active controls & institutional workflows are fully in place.',
     points: 4,
-    badgeColor: 'bg-emerald-500 text-white',
-    cardBorder: 'hover:border-emerald-500 hover:bg-emerald-50/40',
-    selectedStyle: 'border-emerald-600 bg-emerald-50/80 ring-2 ring-emerald-500 shadow-md',
-    icon: CheckCircle
+    color: 'emerald',
+    badgeClass: 'bg-emerald-500 text-white',
+    cardActive: 'bg-emerald-50/80 border-emerald-500 ring-2 ring-emerald-400 shadow-md',
+    cardIdle: 'bg-white border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/30'
   },
   {
     code: 'B',
-    title: 'Partially Established',
-    desc: 'Work in progress / partial systems exist',
+    label: 'Partially Established',
+    description: 'Work-in-progress or partial documentation exists; still relies on verbal instructions.',
     points: 3,
-    badgeColor: 'bg-amber-500 text-slate-950 font-bold',
-    cardBorder: 'hover:border-amber-500 hover:bg-amber-50/40',
-    selectedStyle: 'border-amber-500 bg-amber-50/80 ring-2 ring-amber-400 shadow-md',
-    icon: AlertTriangle
+    color: 'amber',
+    badgeClass: 'bg-amber-500 text-slate-950 font-black',
+    cardActive: 'bg-amber-50/80 border-amber-500 ring-2 ring-amber-400 shadow-md',
+    cardIdle: 'bg-white border-slate-200 hover:border-amber-300 hover:bg-amber-50/30'
   },
   {
     code: 'C',
-    title: 'No, Major Gaps / Informal',
-    desc: 'Unwritten, ad-hoc, or person-dependent',
+    label: 'Not Established',
+    description: 'Informal / ad-hoc practices with major vulnerability or owner dependency gaps.',
     points: 1,
-    badgeColor: 'bg-rose-500 text-white',
-    cardBorder: 'hover:border-rose-500 hover:bg-rose-50/40',
-    selectedStyle: 'border-rose-600 bg-rose-50/80 ring-2 ring-rose-400 shadow-md',
-    icon: XCircle
+    color: 'rose',
+    badgeClass: 'bg-rose-500 text-white',
+    cardActive: 'bg-rose-50/80 border-rose-500 ring-2 ring-rose-400 shadow-md',
+    cardIdle: 'bg-white border-slate-200 hover:border-rose-300 hover:bg-rose-50/30'
   },
   {
     code: 'D',
-    title: 'Not Applicable',
-    desc: 'Not relevant to our current business stage',
+    label: 'Not Applicable',
+    description: 'Not relevant or not applicable to our current organizational stage.',
     points: 0,
-    badgeColor: 'bg-slate-600 text-white',
-    cardBorder: 'hover:border-slate-400 hover:bg-slate-50',
-    selectedStyle: 'border-slate-600 bg-slate-100 ring-2 ring-slate-400 shadow-md',
-    icon: MinusCircle
+    color: 'slate',
+    badgeClass: 'bg-slate-600 text-white',
+    cardActive: 'bg-slate-100 border-slate-600 ring-2 ring-slate-400 shadow-md',
+    cardIdle: 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
   }
 ];
 
 export default function AuditPage() {
-  // View mode: 'step' (interactive wizard) or 'list' (all questions on one page)
-  const [viewMode, setViewMode] = useState('step');
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  // Current Flow Step: 'register' | 'exam' | 'result'
+  const [currentStep, setCurrentStep] = useState('register');
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  // Client Answers
-  const [answers, setAnswers] = useState({});
-  const [notes, setNotes] = useState({});
-
-  // Client Contact Details
-  const [contactInfo, setContactInfo] = useState({
-    companyName: '',
-    contactName: '',
+  // Client Organization Registration Data
+  const [clientInfo, setClientInfo] = useState({
+    orgName: '',
+    orgNature: 'MSME',
+    contactPerson: '',
+    designation: '',
     phone: '',
     email: '',
     city: '',
-    businessType: 'MSME'
+    turnover: ''
   });
 
-  const [formError, setFormError] = useState('');
+  // User MCQ Answers ({ gov: 'A', strat: 'B', ... })
+  const [answers, setAnswers] = useState({});
+  const [notes, setNotes] = useState({});
+  const [priorityAreas, setPriorityAreas] = useState('');
+  const [overallHealth, setOverallHealth] = useState('B');
+  const [validationError, setValidationError] = useState('');
 
   const totalQuestions = auditSections.length;
   const answeredCount = Object.keys(answers).length;
 
-  // Calculate Score
-  const calculateScore = () => {
-    let score = 0;
-    Object.values(answers).forEach((code) => {
-      const choice = answerChoices.find((c) => c.code === code);
-      if (choice) score += choice.points;
-    });
-    return score;
-  };
-
-  const currentScore = calculateScore();
-  const maxScore = totalQuestions * 4; // 48
-  const scorePercent = Math.round((currentScore / maxScore) * 100);
-
-  // Health diagnosis
-  let healthDiagnosis = {
-    title: 'High Vulnerability & Person Dependency',
-    color: 'text-rose-600',
-    badgeClass: 'bg-rose-100 text-rose-800 border-rose-300',
-    desc: 'Critical gaps detected in daily operations and compliance. Standardized SOPs and accountability matrices are urgently needed.'
-  };
-
-  if (currentScore >= 38) {
-    healthDiagnosis = {
-      title: 'Strong Institutional Governance',
-      color: 'text-emerald-600',
-      badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-      desc: 'High process maturity. Ready for automated digital ERP workflows, expansion models, and market scaling.'
-    };
-  } else if (currentScore >= 24) {
-    healthDiagnosis = {
-      title: 'Moderate Operational Health',
-      color: 'text-amber-600',
-      badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
-      desc: 'Good foundation, but certain departments depend heavily on informal memory. Departmental KPIs and written playbooks will unlock growth.'
-    };
-  }
-
-  // Answer selection handler
-  const handleSelectAnswer = (sectionId, code) => {
-    setAnswers((prev) => ({ ...prev, [sectionId]: code }));
-
-    // In step mode, smoothly move to next question after small delay
-    if (viewMode === 'step' && currentStepIndex < totalQuestions) {
-      setTimeout(() => {
-        setCurrentStepIndex((prev) => Math.min(prev + 1, totalQuestions));
-      }, 250);
-    }
-  };
-
-  const handleInputChange = (e) => {
+  const handleInfoChange = (e) => {
     const { name, value } = e.target;
-    setContactInfo((prev) => ({ ...prev, [name]: value }));
-    if (formError) setFormError('');
+    setClientInfo((prev) => ({ ...prev, [name]: value }));
+    if (validationError) setValidationError('');
   };
 
-  // Formatted WhatsApp Message
-  const getWhatsAppMessage = () => {
-    let msg = `*GROW BUSINESS HEALTH AUDIT REPORT*\n`;
-    msg += `----------------------------------------\n`;
-    msg += `*Company:* ${contactInfo.companyName || 'Not Provided'}\n`;
-    msg += `*Contact:* ${contactInfo.contactName || 'Not Provided'}\n`;
-    msg += `*Phone:* ${contactInfo.phone || 'Not Provided'}\n`;
-    if (contactInfo.email) msg += `*Email:* ${contactInfo.email}\n`;
-    if (contactInfo.city) msg += `*City:* ${contactInfo.city}\n`;
-    msg += `*Type:* ${contactInfo.businessType}\n\n`;
-
-    msg += `*OVERALL DIAGNOSTIC SCORE:* ${currentScore} / ${maxScore} (${scorePercent}%)\n`;
-    msg += `*Diagnosis:* ${healthDiagnosis.title}\n\n`;
-
-    msg += `*12 FUNCTIONAL AREA RATINGS:*\n`;
-    auditSections.forEach((sec) => {
-      const code = answers[sec.id] || 'Not Answered';
-      const choice = answerChoices.find((c) => c.code === code);
-      const note = notes[sec.id] ? ` (Note: ${notes[sec.id]})` : '';
-      msg += `• ${sec.no}. ${sec.area}: *${choice ? choice.title : code}*${note}\n`;
-    });
-
-    msg += `\n_Submitted via GROW India Web Portal._\n`;
-    msg += `Please review our audit and share recommendations.`;
-    return encodeURIComponent(msg);
-  };
-
-  const handleWhatsAppSend = () => {
-    if (!contactInfo.companyName.trim() && !contactInfo.phone.trim()) {
-      setFormError('Please enter your Company Name and Phone Number to submit.');
+  const handleStartExam = (e) => {
+    e.preventDefault();
+    if (!clientInfo.orgName.trim() || !clientInfo.phone.trim()) {
+      setValidationError('Please enter your Organization Name and Contact Phone Number to start the diagnostic test.');
       return;
     }
-    const url = `https://wa.me/${contactDetails.whatsapp.replace('+', '')}?text=${getWhatsAppMessage()}`;
-    window.open(url, '_blank');
+    setValidationError('');
+    setCurrentStep('exam');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleEmailSend = () => {
-    if (!contactInfo.companyName.trim() && !contactInfo.phone.trim()) {
-      setFormError('Please enter your Company Name and Phone Number to submit.');
-      return;
-    }
-    const subject = encodeURIComponent(`Business Health Audit - ${contactInfo.companyName}`);
-    const body = decodeURIComponent(getWhatsAppMessage()).replace(/\*/g, '').replace(/_/g, '');
-    window.location.href = `mailto:${contactDetails.email}?subject=${subject}&body=${encodeURIComponent(body)}`;
+  const handleSelectOption = (questionId, code) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: code }));
   };
 
-  const handleReset = () => {
-    if (window.confirm('Do you want to reset all responses?')) {
-      setAnswers({});
-      setNotes({});
-      setContactInfo({
-        companyName: '',
-        contactName: '',
-        phone: '',
-        email: '',
-        city: '',
-        businessType: 'MSME'
-      });
-      setCurrentStepIndex(0);
-      setFormError('');
+  const handleNext = () => {
+    if (currentQuestionIndex < totalQuestions - 1) {
+      setCurrentQuestionIndex((prev) => prev + 1);
+      window.scrollTo({ top: 150, behavior: 'smooth' });
+    } else {
+      // Finished all questions -> go to result
+      setCurrentStep('result');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  const currentSection = auditSections[currentStepIndex] || auditSections[0];
-  const CurrentIcon = iconMap[currentSection?.icon] || CheckCircle2;
-  const isFinalStep = currentStepIndex >= totalQuestions;
+  const handlePrev = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prev) => prev - 1);
+      window.scrollTo({ top: 150, behavior: 'smooth' });
+    }
+  };
+
+  const handleJumpToQuestion = (index) => {
+    setCurrentQuestionIndex(index);
+    window.scrollTo({ top: 150, behavior: 'smooth' });
+  };
+
+  // Calculate Diagnostic Score (out of 48)
+  const calculateTotalScore = () => {
+    let score = 0;
+    Object.values(answers).forEach((code) => {
+      const opt = ratingOptions.find((o) => o.code === code);
+      if (opt) score += opt.points;
+    });
+    return score;
+  };
+
+  const totalScore = calculateTotalScore();
+  const maxScore = totalQuestions * 4; // 48
+  const scorePercentage = Math.round((totalScore / maxScore) * 100);
+
+  // Health diagnosis details
+  let diagnosis = {
+    grade: 'C (High Risk)',
+    title: 'High Person-Dependency & Compliance Gaps',
+    badgeColor: 'bg-rose-100 text-rose-800 border-rose-300',
+    summary: 'Critical operational and risk vulnerabilities detected. Standardized SOPs, RACI matrices, and internal controls are urgently needed.'
+  };
+
+  if (totalScore >= 38) {
+    diagnosis = {
+      grade: 'A (Excellent)',
+      title: 'Strong Institutional Governance & Scalable Systems',
+      badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+      summary: 'Your organization shows strong system maturity. Focus on digital automation, advanced MIS reporting, and multi-unit replication.'
+    };
+  } else if (totalScore >= 24) {
+    diagnosis = {
+      grade: 'B (Moderate)',
+      title: 'Moderate Operational Maturity (Work-In-Progress)',
+      badgeColor: 'bg-amber-100 text-amber-800 border-amber-300',
+      summary: 'Partial systems exist but lack full documentation and management oversight. Departmental KPIs and master compliance registers recommended.'
+    };
+  }
+
+  // Format WhatsApp Submission Message
+  const getWhatsAppReportMessage = () => {
+    let msg = `*GROW BUSINESS HEALTH DIAGNOSTIC TEST REPORT*\n`;
+    msg += `========================================\n`;
+    msg += `*Organization:* ${clientInfo.orgName}\n`;
+    msg += `*Sector:* ${clientInfo.orgNature}\n`;
+    msg += `*Contact Person:* ${clientInfo.contactPerson || 'Lead'} (${clientInfo.designation || 'Leader'})\n`;
+    msg += `*Phone:* ${clientInfo.phone} | *City:* ${clientInfo.city || 'N/A'}\n`;
+    if (clientInfo.email) msg += `*Email:* ${clientInfo.email}\n`;
+    msg += `\n*EXAM SCORECARD:* ${totalScore} / ${maxScore} Points (${scorePercentage}% Score)\n`;
+    msg += `*Diagnostic Result:* ${diagnosis.title} [Grade: ${diagnosis.grade}]\n\n`;
+
+    msg += `*12 DEPARTMENT MCQ RESULTS:*\n`;
+    auditSections.forEach((sec) => {
+      const code = answers[sec.id] || 'Not Answered';
+      const opt = ratingOptions.find((o) => o.code === code);
+      const note = notes[sec.id] ? ` (Note: ${notes[sec.id]})` : '';
+      msg += `Q${sec.no}. ${sec.area}: *Option ${code}* - ${opt ? opt.label : 'Pending'}${note}\n`;
+    });
+
+    if (priorityAreas.trim()) {
+      msg += `\n*Top Priority Areas Requested:*\n${priorityAreas.trim()}\n`;
+    }
+
+    msg += `\n_Submitted via GROW India Web Diagnostic Portal._\n`;
+    msg += `Please analyze this report and provide structured recommendations.`;
+    return encodeURIComponent(msg);
+  };
+
+  const handleWhatsAppSend = () => {
+    const url = `https://wa.me/${contactDetails.whatsapp.replace('+', '')}?text=${getWhatsAppReportMessage()}`;
+    window.open(url, '_blank');
+  };
+
+  const handleEmailSend = () => {
+    const subject = encodeURIComponent(`Business Health Test Report - ${clientInfo.orgName}`);
+    const body = decodeURIComponent(getWhatsAppReportMessage()).replace(/\*/g, '').replace(/=/g, '-');
+    window.location.href = `mailto:${contactDetails.email}?subject=${subject}&body=${encodeURIComponent(body)}`;
+  };
+
+  const currentQuestion = auditSections[currentQuestionIndex] || auditSections[0];
+  const CurrentIcon = iconMap[currentQuestion.icon] || CheckCircle2;
+  const currentAnswer = answers[currentQuestion.id];
 
   return (
     <PageLayout
-      title={`Free Business Health Audit – ${brandIdentity.shortName}`}
-      description="2-Minute simple self-assessment for businesses. Discover your operational health score and find system gaps."
+      title={`Business Health Diagnostic Exam – ${brandIdentity.shortName}`}
+      description="Take the 12-question interactive business health check test. Assess your company's SOPs, risk controls, and systems maturity with instant grading."
     >
-      {/* Header */}
-      <section className="bg-white border-b border-slate-200 py-8 sm:py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-300 text-amber-800 text-xs font-bold uppercase tracking-wider">
-            <Clock className="w-3.5 h-3.5 text-amber-600" />
-            <span>2-Minute Free Assessment</span>
+      {/* Header Banner */}
+      <section className="bg-slate-900 text-white py-8 sm:py-12 border-b border-slate-800 print:bg-white print:text-slate-900 print:py-2">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-xs font-bold uppercase tracking-wider">
+            <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+            <span>Interactive Self-Diagnostic Test</span>
           </div>
 
-          <h1 className="font-display text-2xl sm:text-4xl font-extrabold text-slate-900 leading-tight">
-            GROW Business Health Audit
+          <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white print:text-slate-900 leading-tight">
+            GROW Business Health Diagnostic Test
           </h1>
-          <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
-            Is your business running on predictable systems or person-dependent hustle? Answer 12 quick questions to find out.
+          <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto print:text-slate-600">
+            A structured 12-question diagnostic test to evaluate your organizational systems, governance, and risk controls.
           </p>
-
-          {/* View Mode Toggle: Interactive Stepper vs Full Sheet */}
-          <div className="pt-3 flex items-center justify-center gap-2">
-            <button
-              onClick={() => setViewMode('step')}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                viewMode === 'step'
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              Step-by-Step (Easy)
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                viewMode === 'list'
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              View All 12 Questions
-            </button>
-          </div>
         </div>
       </section>
 
-      {/* Main Assessment Container */}
-      <section className="py-8 sm:py-12 bg-slate-50 min-h-[70vh]">
+      {/* Main Container */}
+      <section className="py-8 sm:py-12 bg-slate-50 min-h-[700px]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
 
-          {/* ========================================================= */}
-          {/* MODE 1: STEP-BY-STEP INTERACTIVE WIZARD (SUPER EASY) */}
-          {/* ========================================================= */}
-          {viewMode === 'step' && (
-            <div className="space-y-6">
-
-              {/* Progress Bar & Counter */}
-              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
-                <div className="flex items-center justify-between text-xs font-bold text-slate-700">
-                  <span>
-                    {isFinalStep 
-                      ? 'Assessment Complete! Review & Submit' 
-                      : `Question ${currentStepIndex + 1} of ${totalQuestions}`}
-                  </span>
-                  <span className="text-amber-600 font-extrabold font-mono">
-                    {answeredCount} of {totalQuestions} Answered ({scorePercent}% Health Score)
-                  </span>
+          {/* ========================================================================= */}
+          {/* STEP 1: REGISTRATION / START SCREEN                                       */}
+          {/* ========================================================================= */}
+          {currentStep === 'register' && (
+            <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-9 shadow-sm space-y-6">
+              
+              <div className="text-center space-y-2 pb-4 border-b border-slate-100">
+                <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center mx-auto shadow-md shadow-amber-500/20">
+                  <Play className="w-6 h-6 fill-slate-950 ml-0.5" />
                 </div>
-
-                <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-300"
-                    style={{ width: `${(answeredCount / totalQuestions) * 100}%` }}
-                  />
-                </div>
+                <h2 className="font-display text-xl sm:text-2xl font-bold text-slate-900">
+                  Start Your 12-Question Diagnostic Test
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto">
+                  Takes less than 3 minutes. Answer 12 simple multiple-choice questions to receive your instant systems health score and actionable report.
+                </p>
               </div>
 
-              {/* QUESTION CARD (Step 0 to 11) */}
-              {!isFinalStep ? (
-                <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
-                  
-                  {/* Department Badge & Title */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center">
-                        {currentSection.no}
-                      </span>
-                      <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-800 text-xs font-bold flex items-center gap-1.5 border border-slate-200">
-                        <CurrentIcon className="w-3.5 h-3.5 text-amber-600" />
-                        <span>{currentSection.area}</span>
-                      </span>
-                    </div>
+              {validationError && (
+                <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>{validationError}</span>
+                </div>
+              )}
 
-                    {/* Clear Questions */}
-                    <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-1.5 text-slate-800 text-sm sm:text-base font-semibold">
-                      {currentSection.questions.map((q, idx) => (
-                        <p key={idx} className="leading-snug">
-                          {q}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* 4 Big, Tap-Friendly Choices */}
-                  <div className="space-y-2.5">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">
-                      Select status in your organization:
+              <form onSubmit={handleStartExam} className="space-y-4 text-xs sm:text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Organization Name */}
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      Organization / Company Name *
                     </label>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {answerChoices.map((choice) => {
-                        const isSelected = answers[currentSection.id] === choice.code;
-                        const ChoiceIcon = choice.icon;
-
-                        return (
-                          <button
-                            key={choice.code}
-                            type="button"
-                            onClick={() => handleSelectAnswer(currentSection.id, choice.code)}
-                            className={`p-4 rounded-2xl border text-left transition-all duration-150 cursor-pointer flex flex-col justify-between select-none ${
-                              isSelected 
-                                ? choice.selectedStyle 
-                                : `bg-white border-slate-200 ${choice.cardBorder}`
-                            }`}
-                          >
-                            <div className="flex items-center justify-between mb-2">
-                              <span className={`text-xs px-2.5 py-0.5 rounded-md font-extrabold ${choice.badgeColor}`}>
-                                {choice.code}
-                              </span>
-                              <ChoiceIcon className={`w-4 h-4 ${isSelected ? 'text-slate-900' : 'text-slate-400'}`} />
-                            </div>
-
-                            <div>
-                              <div className="font-bold text-sm sm:text-base text-slate-900 leading-tight">
-                                {choice.title}
-                              </div>
-                              <div className="text-xs text-slate-500 mt-1 leading-snug">
-                                {choice.desc}
-                              </div>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Optional Note */}
-                  <div>
                     <input
                       type="text"
-                      placeholder="Optional remark / specific note for this area..."
-                      value={notes[currentSection.id] || ''}
-                      onChange={(e) => setNotes((prev) => ({ ...prev, [currentSection.id]: e.target.value }))}
-                      className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-400"
+                      name="orgName"
+                      value={clientInfo.orgName}
+                      onChange={handleInfoChange}
+                      placeholder="e.g. Zenith Tech Solutions Pvt Ltd"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
                     />
                   </div>
 
-                  {/* Navigation Buttons (Back & Next) */}
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                    <button
-                      type="button"
-                      disabled={currentStepIndex === 0}
-                      onClick={() => setCurrentStepIndex((prev) => Math.max(0, prev - 1))}
-                      className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold flex items-center gap-1.5 disabled:opacity-40 cursor-pointer"
+                  {/* Nature of Organization */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      Sector / Business Type
+                    </label>
+                    <select
+                      name="orgNature"
+                      value={clientInfo.orgNature}
+                      onChange={handleInfoChange}
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:border-amber-500"
                     >
-                      <ArrowLeft className="w-3.5 h-3.5" />
-                      <span>Previous</span>
-                    </button>
+                      <option value="MSME">MSME / Small Business</option>
+                      <option value="Private Limited / Corporate">Private Limited / Corporate</option>
+                      <option value="Start-up">Start-up</option>
+                      <option value="Family Business">Family Business</option>
+                      <option value="Manufacturing & Plant">Manufacturing & Plant</option>
+                      <option value="Trading / Retail">Trading / Retail</option>
+                      <option value="Services / IT">Services / IT / BPO</option>
+                      <option value="Healthcare / Hospital">Healthcare / Hospital</option>
+                      <option value="Educational Institution">Educational Institution</option>
+                      <option value="NGO / Trust">NGO / Trust</option>
+                      <option value="Government / PSU">Government / PSU</option>
+                    </select>
+                  </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStepIndex((prev) => prev + 1)}
-                      className="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow-xs"
-                    >
-                      <span>{currentStepIndex === totalQuestions - 1 ? 'Review & Submit' : 'Next Question'}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
+                  {/* Contact Person */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      Your Full Name
+                    </label>
+                    <input
+                      type="text"
+                      name="contactPerson"
+                      value={clientInfo.contactPerson}
+                      onChange={handleInfoChange}
+                      placeholder="e.g. Rahul Sharma"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
+                    />
+                  </div>
+
+                  {/* WhatsApp / Phone */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      WhatsApp / Mobile Number *
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={clientInfo.phone}
+                      onChange={handleInfoChange}
+                      placeholder="+91 98765 43210"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
+                    />
+                  </div>
+
+                  {/* City */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                      City / Location
+                    </label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={clientInfo.city}
+                      onChange={handleInfoChange}
+                      placeholder="e.g. Mumbai, Pune"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
+                    />
                   </div>
                 </div>
-              ) : (
-                /* FINAL SUMMARY & 1-CLICK SUBMIT CARD */
-                <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
-                  
-                  {/* Score & Diagnosis Banner */}
-                  <div className="p-5 rounded-2xl bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-                    <div className="space-y-1">
-                      <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-                        Assessment Completed
-                      </span>
-                      <h3 className="text-xl sm:text-2xl font-black font-display">
-                        Health Score: {currentScore} / {maxScore} ({scorePercent}%)
-                      </h3>
-                      <p className="text-xs text-slate-300">
-                        {healthDiagnosis.desc}
-                      </p>
-                    </div>
 
-                    <div className={`px-4 py-2 rounded-xl border text-xs font-bold shrink-0 ${healthDiagnosis.badgeClass}`}>
-                      {healthDiagnosis.title}
-                    </div>
-                  </div>
-
-                  {/* Contact Details Form to Send */}
-                  <div className="space-y-4 pt-2">
-                    <div className="border-b border-slate-100 pb-2">
-                      <h4 className="font-display font-bold text-base text-slate-900">
-                        Where should we send your detailed diagnostic report?
-                      </h4>
-                      <p className="text-xs text-slate-500">
-                        Enter your contact details so our senior partner can review and share recommendations.
-                      </p>
-                    </div>
-
-                    {formError && (
-                      <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
-                        <AlertCircle className="w-4 h-4 shrink-0" />
-                        <span>{formError}</span>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
-                      <div>
-                        <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">
-                          Company / Organization Name *
-                        </label>
-                        <input
-                          type="text"
-                          name="companyName"
-                          value={contactInfo.companyName}
-                          onChange={handleInputChange}
-                          placeholder="e.g. ABC Manufacturing Pvt Ltd"
-                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:border-amber-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">
-                          Your Name *
-                        </label>
-                        <input
-                          type="text"
-                          name="contactName"
-                          value={contactInfo.contactName}
-                          onChange={handleInputChange}
-                          placeholder="Full Name"
-                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:border-amber-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">
-                          WhatsApp Mobile Number *
-                        </label>
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={contactInfo.phone}
-                          onChange={handleInputChange}
-                          placeholder="+91 98765 43210"
-                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:border-amber-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-[11px] font-bold text-slate-600 uppercase mb-1">
-                          Email Address
-                        </label>
-                        <input
-                          type="email"
-                          name="email"
-                          value={contactInfo.email}
-                          onChange={handleInputChange}
-                          placeholder="name@company.com"
-                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:border-amber-500"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Submission Action Buttons */}
-                  <div className="space-y-3 pt-4 border-t border-slate-100">
-                    <button
-                      type="button"
-                      onClick={handleWhatsAppSend}
-                      className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold text-sm sm:text-base shadow-lg shadow-emerald-900/30 transition-all cursor-pointer"
-                    >
-                      <MessageCircle className="w-5 h-5 fill-current" />
-                      <span>Send My Audit on WhatsApp (+91 94057 51665)</span>
-                    </button>
-
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={handleEmailSend}
-                        className="flex-1 py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors"
-                      >
-                        <Mail className="w-4 h-4 text-amber-600" />
-                        <span>Send via Email</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setCurrentStepIndex(0)}
-                        className="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-                      >
-                        <span>Edit Answers</span>
-                      </button>
-                    </div>
-                  </div>
+                <div className="pt-4">
+                  <button
+                    type="submit"
+                    className="w-full py-4 px-6 rounded-2xl bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 font-black text-sm sm:text-base shadow-lg shadow-amber-500/30 flex items-center justify-center gap-2 cursor-pointer transition-all"
+                  >
+                    <span>Begin 12-Question Diagnostic Test</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
                 </div>
-              )}
+              </form>
+
+              <div className="pt-2 text-center text-xs text-slate-500 flex items-center justify-center gap-1.5">
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
+                <span>100% Free & Confidential • No Credit Card Required</span>
+              </div>
             </div>
           )}
 
-          {/* ========================================================= */}
-          {/* MODE 2: ALL 12 QUESTIONS IN ONE CLEAN VIEW */}
-          {/* ========================================================= */}
-          {viewMode === 'list' && (
+          {/* ========================================================================= */}
+          {/* STEP 2: INTERACTIVE EXAM QUESTION PLAYER (One Question at a Time)         */}
+          {/* ========================================================================= */}
+          {currentStep === 'exam' && (
             <div className="space-y-6">
               
-              {/* Contact Info Header Box */}
-              <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-7 shadow-xs space-y-4">
-                <h3 className="font-display font-bold text-base text-slate-900 flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-amber-600" />
-                  <span>Company Details</span>
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs sm:text-sm">
-                  <input
-                    type="text"
-                    name="companyName"
-                    value={contactInfo.companyName}
-                    onChange={handleInputChange}
-                    placeholder="Company Name *"
-                    className="px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
+              {/* Exam Top Bar: Progress & Question Palette */}
+              <div className="bg-white rounded-3xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-3">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+                  <span className="flex items-center gap-1.5 text-amber-700">
+                    <HelpCircle className="w-4 h-4 text-amber-600" />
+                    <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
+                  </span>
+                  <span className="text-slate-500 font-mono">
+                    {answeredCount} / {totalQuestions} Answered ({Math.round((answeredCount / totalQuestions) * 100)}%)
+                  </span>
+                </div>
+
+                {/* Progress Bar Line */}
+                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-amber-500 to-amber-400 transition-all duration-300 rounded-full"
+                    style={{ width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }}
                   />
-                  <input
-                    type="text"
-                    name="contactName"
-                    value={contactInfo.contactName}
-                    onChange={handleInputChange}
-                    placeholder="Your Name *"
-                    className="px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={contactInfo.phone}
-                    onChange={handleInputChange}
-                    placeholder="WhatsApp Number *"
-                    className="px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl"
-                  />
+                </div>
+
+                {/* Question Bubbles Palette (1 to 12) */}
+                <div className="flex items-center justify-between gap-1 pt-1 overflow-x-auto pb-1 scrollbar-none">
+                  {auditSections.map((sec, idx) => {
+                    const isAnswered = Boolean(answers[sec.id]);
+                    const isCurrent = idx === currentQuestionIndex;
+
+                    return (
+                      <button
+                        key={sec.id}
+                        type="button"
+                        onClick={() => handleJumpToQuestion(idx)}
+                        className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl font-bold text-xs flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                          isCurrent
+                            ? 'bg-slate-900 text-amber-400 ring-2 ring-amber-400 shadow-sm'
+                            : isAnswered
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        }`}
+                        title={`Question ${idx + 1}: ${sec.area}`}
+                      >
+                        {idx + 1}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* 12 Question Cards List */}
-              <div className="space-y-4">
-                {auditSections.map((sec) => {
-                  const IconComp = iconMap[sec.icon] || CheckCircle2;
-                  const currentSelected = answers[sec.id];
-
-                  return (
-                    <div key={sec.id} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
-                      <div className="flex items-center gap-2 font-bold text-sm text-slate-900">
-                        <span className="w-6 h-6 rounded-md bg-slate-900 text-amber-400 font-bold text-xs flex items-center justify-center shrink-0">
-                          {sec.no}
-                        </span>
-                        <IconComp className="w-4 h-4 text-amber-600" />
-                        <span>{sec.area}</span>
-                      </div>
-
-                      <div className="text-xs text-slate-600 space-y-0.5 pl-8">
-                        {sec.questions.map((q, idx) => (
-                          <p key={idx}>{q}</p>
-                        ))}
-                      </div>
-
-                      {/* 4 Choices */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 pl-0 sm:pl-8">
-                        {answerChoices.map((c) => {
-                          const isSel = currentSelected === c.code;
-                          return (
-                            <button
-                              key={c.code}
-                              type="button"
-                              onClick={() => handleSelectAnswer(sec.id, c.code)}
-                              className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all ${
-                                isSel ? c.selectedStyle : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
-                              }`}
-                            >
-                              <span className="font-extrabold text-xs block mb-0.5">{c.code}</span>
-                              <span className="font-bold text-xs block">{c.title.split(',')[0]}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
+              {/* Main Question Box */}
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+                
+                {/* Department Header */}
+                <div className="flex items-center justify-between gap-2 pb-4 border-b border-slate-100">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center font-bold text-xs">
+                      Q{currentQuestion.no}
                     </div>
-                  );
-                })}
+                    <div>
+                      <span className="text-[11px] font-bold text-amber-600 uppercase tracking-wider block">
+                        Functional Area
+                      </span>
+                      <h3 className="font-display font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2">
+                        <CurrentIcon className="w-4 h-4 text-amber-600" />
+                        <span>{currentQuestion.area}</span>
+                      </h3>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Question Text Box */}
+                <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200/90 text-slate-800 text-xs sm:text-sm space-y-2">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                    Assessment Questions:
+                  </span>
+                  {currentQuestion.questions.map((q, i) => (
+                    <p key={i} className="font-medium leading-relaxed">
+                      {q}
+                    </p>
+                  ))}
+                </div>
+
+                {/* MCQ Options (A, B, C, D) */}
+                <div className="space-y-2.5">
+                  <span className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                    Select the option that best describes your organization:
+                  </span>
+
+                  <div className="space-y-2.5">
+                    {ratingOptions.map((opt) => {
+                      const isSelected = currentAnswer === opt.code;
+
+                      return (
+                        <div
+                          key={opt.code}
+                          onClick={() => handleSelectOption(currentQuestion.id, opt.code)}
+                          className={`p-4 rounded-2xl border transition-all duration-150 cursor-pointer flex items-start gap-3.5 select-none ${
+                            isSelected ? opt.cardActive : opt.cardIdle
+                          }`}
+                        >
+                          {/* Radio / Code Badge */}
+                          <div className={`w-7 h-7 rounded-xl flex items-center justify-center font-black text-xs shrink-0 mt-0.5 shadow-xs ${
+                            isSelected ? opt.badgeClass : 'bg-slate-100 text-slate-700 border border-slate-300'
+                          }`}>
+                            {opt.code}
+                          </div>
+
+                          {/* Option Details */}
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-bold text-sm text-slate-900 leading-tight">
+                                {opt.label}
+                              </h4>
+                              {isSelected && (
+                                <span className="text-xs font-bold text-emerald-700 flex items-center gap-1">
+                                  <Check className="w-3.5 h-3.5" />
+                                  <span>Selected</span>
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                              {opt.description}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Optional Note */}
+                <div className="pt-2">
+                  <input
+                    type="text"
+                    placeholder="Optional: Add a specific note or observation for this department..."
+                    value={notes[currentQuestion.id] || ''}
+                    onChange={(e) => setNotes((prev) => ({ ...prev, [currentQuestion.id]: e.target.value }))}
+                    className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-400"
+                  />
+                </div>
               </div>
 
-              {/* Bottom Send Box */}
-              <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 space-y-4 text-center">
-                <div className="text-lg font-bold">
-                  Score: {currentScore} / {maxScore} ({scorePercent}%) - {healthDiagnosis.title}
-                </div>
+              {/* Question Navigation Controls */}
+              <div className="flex items-center justify-between gap-3">
                 <button
                   type="button"
-                  onClick={handleWhatsAppSend}
-                  className="w-full max-w-md mx-auto flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm sm:text-base cursor-pointer"
+                  onClick={handlePrev}
+                  disabled={currentQuestionIndex === 0}
+                  className="px-4 sm:px-5 py-3 rounded-2xl bg-white border border-slate-200 text-slate-700 font-bold text-xs sm:text-sm hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer shadow-xs"
                 >
-                  <MessageCircle className="w-5 h-5 fill-current" />
-                  <span>Send Completed Audit via WhatsApp</span>
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Previous</span>
                 </button>
+
+                <div className="text-xs font-bold text-slate-500 hidden sm:block">
+                  Question {currentQuestionIndex + 1} of {totalQuestions}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="px-5 sm:px-6 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-md"
+                >
+                  <span>{currentQuestionIndex === totalQuestions - 1 ? 'Review & View Result' : 'Next Question'}</span>
+                  <ArrowRight className="w-4 h-4 text-amber-400" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* STEP 3: EXAM SCORECARD & REPORT CARD RESULT                               */}
+          {/* ========================================================================= */}
+          {currentStep === 'result' && (
+            <div className="space-y-6">
+              
+              {/* Scorecard Header Card */}
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6 text-center">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-emerald-600/30">
+                  <Award className="w-7 h-7" />
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-xs font-bold text-amber-600 uppercase tracking-wider">
+                    Diagnostic Exam Completed
+                  </span>
+                  <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900">
+                    {clientInfo.orgName || 'Your Organization'} Health Report
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Candidate: {clientInfo.contactPerson || 'Lead'} • Sector: {clientInfo.orgNature}
+                  </p>
+                </div>
+
+                {/* Big Score Box */}
+                <div className="max-w-md mx-auto p-5 rounded-2xl bg-slate-900 text-white space-y-3">
+                  <div className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+                    Overall Systems Maturity Score
+                  </div>
+                  <div className="flex items-baseline justify-center gap-2">
+                    <span className="text-4xl sm:text-5xl font-black font-display text-amber-400">
+                      {totalScore}
+                    </span>
+                    <span className="text-slate-400 font-bold text-lg">/ {maxScore}</span>
+                    <span className="text-emerald-400 font-bold text-sm ml-1">({scorePercentage}%)</span>
+                  </div>
+
+                  <div className={`p-2.5 rounded-xl border text-xs font-bold ${diagnosis.badgeColor}`}>
+                    Grade: {diagnosis.grade} — {diagnosis.title}
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    {diagnosis.summary}
+                  </p>
+                </div>
+              </div>
+
+              {/* Department Breakdown Matrix */}
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm space-y-4">
+                <h3 className="font-display font-bold text-base text-slate-900 flex items-center gap-2">
+                  <FileCheck className="w-4 h-4 text-amber-600" />
+                  <span>12-Department MCQ Score Breakdown</span>
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {auditSections.map((sec) => {
+                    const ans = answers[sec.id] || 'Not Answered';
+                    const opt = ratingOptions.find((o) => o.code === ans);
+
+                    return (
+                      <div 
+                        key={sec.id}
+                        className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="w-6 h-6 rounded-lg bg-slate-900 text-amber-400 font-bold text-[10px] flex items-center justify-center shrink-0">
+                            {sec.no}
+                          </span>
+                          <span className="text-xs font-bold text-slate-800 line-clamp-1">
+                            {sec.area}
+                          </span>
+                        </div>
+
+                        <span className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold shrink-0 ${
+                          ans === 'A' ? 'bg-emerald-100 text-emerald-800' :
+                          ans === 'B' ? 'bg-amber-100 text-amber-800' :
+                          ans === 'C' ? 'bg-rose-100 text-rose-800' : 'bg-slate-200 text-slate-700'
+                        }`}>
+                          Option {ans} ({opt ? opt.points : 0} pts)
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Top Priority Areas Notes */}
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm space-y-3">
+                <h3 className="font-display font-bold text-sm sm:text-base text-slate-900">
+                  Priority Areas (Optional note for GROW Consultants):
+                </h3>
+                <textarea
+                  rows={3}
+                  value={priorityAreas}
+                  onChange={(e) => setPriorityAreas(e.target.value)}
+                  placeholder="Mention any specific challenges e.g. Sales team follow-ups, finance reconciliation, employee attendance tracking..."
+                  className="w-full p-3 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              {/* SEND REPORT TO GROW (1-Click Action Center) */}
+              <div className="bg-slate-900 text-white rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-xl space-y-5 text-center">
+                <div className="space-y-1">
+                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                    Official Advisory Handover
+                  </span>
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-white">
+                    Send This Diagnostic Report to GROW India
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto">
+                    Click below to send your completed diagnostic report via WhatsApp or Email. Our senior consultants will analyze your department scores and contact you with targeted recommendations.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto pt-2">
+                  <button
+                    type="button"
+                    onClick={handleWhatsAppSend}
+                    className="flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-950/60 cursor-pointer transition-all"
+                  >
+                    <MessageCircle className="w-5 h-5 fill-current" />
+                    <span>Send via WhatsApp</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleEmailSend}
+                    className="flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 cursor-pointer transition-all"
+                  >
+                    <Mail className="w-5 h-5 text-amber-400" />
+                    <span>Send via Email</span>
+                  </button>
+                </div>
+
+                <div className="pt-3 flex items-center justify-center gap-4 text-xs text-slate-400 border-t border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCurrentStep('exam');
+                      setCurrentQuestionIndex(0);
+                    }}
+                    className="hover:text-white flex items-center gap-1 cursor-pointer"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Review Answers</span>
+                  </button>
+                  <span>•</span>
+                  <button
+                    type="button"
+                    onClick={() => window.print()}
+                    className="hover:text-white flex items-center gap-1 cursor-pointer"
+                  >
+                    <Printer className="w-3.5 h-3.5" />
+                    <span>Print PDF</span>
+                  </button>
+                  <span>•</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (window.confirm('Retake diagnostic test from start?')) {
+                        setAnswers({});
+                        setNotes({});
+                        setPriorityAreas('');
+                        setCurrentStep('register');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
+                    }}
+                    className="hover:text-rose-400 flex items-center gap-1 cursor-pointer"
+                  >
+                    <RefreshCcw className="w-3.5 h-3.5" />
+                    <span>Retake Test</span>
+                  </button>
+                </div>
               </div>
 
             </div>
