@@ -113,13 +113,13 @@ export default function Navbar() {
         aria-label="Main Navigation"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20 sm:h-22">
+          <div className="flex items-center justify-between h-20 sm:h-22 gap-2 xl:gap-4">
             
             {/* Official Brand Logo */}
-            <BrandLogo variant="dark" size="md" onClick={closeMenu} />
+            <BrandLogo variant="dark" size="md" onClick={closeMenu} className="shrink-0" />
 
             {/* Desktop Navigation Links */}
-            <div className="hidden lg:flex items-center space-x-1 xl:space-x-2">
+            <div className="hidden lg:flex items-center space-x-0.5 xl:space-x-1.5 shrink-0">
               {mainNavLinks.map((item) => {
                 if (item.children) {
                   const isServices = item.label === 'Services';
@@ -130,16 +130,16 @@ export default function Navbar() {
                       <button
                         type="button"
                         onClick={() => toggleDropdown(item.label)}
-                        className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer ${
+                        className={`inline-flex items-center gap-1 xl:gap-1.5 px-2 xl:px-3 py-2 text-xs xl:text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer whitespace-nowrap ${
                           isActiveParent
                             ? 'text-amber-400 bg-amber-500/10 font-bold border border-amber-500/30'
                             : 'text-slate-200 hover:text-amber-400 hover:bg-slate-900/80'
                         }`}
                         aria-expanded={openDropdown === item.label}
                       >
-                        <span>{item.label}</span>
+                        <span className="whitespace-nowrap">{item.label}</span>
                         <ChevronDown
-                          className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-400 transition-transform duration-200 group-hover:rotate-180"
+                          className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-400 transition-transform duration-200 group-hover:rotate-180 shrink-0"
                           aria-hidden="true"
                         />
                       </button>
@@ -214,7 +214,7 @@ export default function Navbar() {
                     key={item.href}
                     to={item.href}
                     onClick={closeMenu}
-                    className={`px-3.5 py-2 text-sm font-semibold rounded-lg transition-colors ${
+                    className={`px-2 xl:px-3 py-2 text-xs xl:text-sm font-semibold rounded-lg transition-colors whitespace-nowrap ${
                       isCurrent
                         ? 'text-amber-400 bg-amber-500/10 font-bold border border-amber-500/30'
                         : 'text-slate-200 hover:text-amber-400 hover:bg-slate-900/80'
@@ -227,8 +227,8 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Consultation CTA */}
-            <div className="hidden sm:flex items-center gap-3">
-              <Button to="/contact" variant="gold" size="sm" icon={ArrowRight}>
+            <div className="hidden lg:flex items-center gap-2 xl:gap-3 shrink-0">
+              <Button to="/contact" variant="gold" size="sm" icon={ArrowRight} className="whitespace-nowrap text-xs xl:text-sm px-3 xl:px-4 py-2">
                 Schedule Diagnostic
               </Button>
             </div>
