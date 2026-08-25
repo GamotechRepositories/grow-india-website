@@ -102,8 +102,8 @@ export const mainNavLinks = [
         icon: 'Workflow'
       },
       {
-        label: 'Systems & Compliance Audit',
-        subtitle: 'Comprehensive 360° Diagnostic Health Check',
+        label: 'Free Business Health Audit',
+        subtitle: 'Official 12-Area Questionnaire & Health Check',
         href: '/audit',
         icon: 'ShieldCheck'
       },
