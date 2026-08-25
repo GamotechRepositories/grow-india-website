@@ -12,6 +12,7 @@ import TrainingPage from '../pages/TrainingPage';
 import PartnersPage from '../pages/PartnersPage';
 import ClientsPartnersPage from '../pages/ClientsPartnersPage';
 import ContactPage from '../pages/ContactPage';
+import ReelsPage from '../pages/ReelsPage';
 import PlaceholderPage from '../pages/PlaceholderPage';
 
 export default function AppRoutes() {
@@ -40,7 +41,11 @@ export default function AppRoutes() {
       <Route path="/clients" element={<ClientsPartnersPage />} />
       <Route path="/clients-and-partners" element={<ClientsPartnersPage />} />
 
-      {/* 6. Contact */}
+      {/* 6. Video Reels & Ads Showcase */}
+      <Route path="/reels" element={<ReelsPage />} />
+      <Route path="/videos" element={<ReelsPage />} />
+
+      {/* 7. Contact */}
       <Route path="/contact" element={<ContactPage />} />
 
       {/* 404 Fallback */}

@@ -20,7 +20,8 @@ import {
   Factory,
   Workflow,
   GraduationCap,
-  Handshake
+  Handshake,
+  Film
 } from 'lucide-react';
 import { mainNavLinks } from '../../data/navigation';
 import { contactDetails } from '../../data/contact';
@@ -41,7 +42,8 @@ const iconMap = {
   Factory,
   Workflow,
   GraduationCap,
-  Handshake
+  Handshake,
+  Film
 };
 
 export default function Navbar() {

@@ -108,6 +108,12 @@ export const mainNavLinks = [
         icon: 'ShieldCheck'
       },
       {
+        label: 'Video Insights & Reels',
+        subtitle: '20+ Strategic Video Ads & Educational Shorts',
+        href: '/reels',
+        icon: 'Film'
+      },
+      {
         label: 'Executive Training',
         subtitle: 'Institutional Capacity Building & Workshops',
         href: '/training',
@@ -121,6 +127,7 @@ export const mainNavLinks = [
       }
     ]
   },
+  { label: 'Video Reels', href: '/reels' },
   { label: 'Contact', href: '/contact' }
 ];
 
@@ -128,6 +135,7 @@ export const footerLinks = {
   company: [
     { label: 'Institutional Profile', href: '/about' },
     { label: 'Purpose, Vision & Mission', href: '/about' },
+    { label: 'Strategic Video Reels', href: '/reels' },
     { label: '10 Ethical Principles', href: '/about' },
     { label: 'Corporate Social Responsibility', href: '/about' },
     { label: 'Clients & Strategic Partners', href: '/clients-and-partners' },
@@ -146,6 +154,7 @@ export const footerLinks = {
     { label: 'Corporate & MSME Practice', href: '/corporate-consulting' },
     { label: 'Government & Public Sector', href: '/government-consulting' },
     { label: 'Industry Sectors & Frameworks', href: '/industries' },
+    { label: 'Video Knowledge Hub', href: '/reels' },
     { label: 'Consulting Methodology', href: '/methodology' },
     { label: '360° Systems Diagnostic Audit', href: '/audit' },
     { label: 'Executive Training Programs', href: '/training' }

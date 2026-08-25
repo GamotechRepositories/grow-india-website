@@ -2,6 +2,7 @@ import PageLayout from '../components/layout/PageLayout';
 import HeroSection from '../components/sections/HeroSection';
 import BusinessChallengesSection from '../components/sections/BusinessChallengesSection';
 import CoreDivisionsSection from '../components/sections/CoreDivisionsSection';
+import VideoReelsSection from '../components/sections/VideoReelsSection';
 import DualMethodologySection from '../components/sections/DualMethodologySection';
 import PracticeAreasSection from '../components/sections/PracticeAreasSection';
 import IndustrySectorsSection from '../components/sections/IndustrySectorsSection';
@@ -24,19 +25,22 @@ export default function HomePage() {
       {/* 3. The 7 Core GROW Practice Hub (Interactive Division Canvas) */}
       <CoreDivisionsSection />
 
-      {/* 4. Structured Methodologies & Practice Weightage (Interactive Pie Chart & Flowcharts) */}
+      {/* 4. Strategic Video Reels & Masterclass Shorts Showcase (20 Educational Videos) */}
+      <VideoReelsSection />
+
+      {/* 5. Structured Methodologies & Practice Weightage (Interactive Pie Chart & Flowcharts) */}
       <DualMethodologySection />
 
-      {/* 5. Corporate & Government Practice Groups + Client Spectrum Pie Chart */}
+      {/* 6. Corporate & Government Practice Groups + Client Spectrum Pie Chart */}
       <PracticeAreasSection />
 
-      {/* 6. Industry Sectors Footprint */}
+      {/* 7. Industry Sectors Footprint */}
       <IndustrySectorsSection />
 
-      {/* 7. Strategic Alliance & Partner Ecosystem (Gamotech, Digital Buddies, Engagement Models, Training) */}
+      {/* 8. Strategic Alliance & Partner Ecosystem (Gamotech, Digital Buddies, Engagement Models, Training) */}
       <PartnerEcosystemSection />
 
-      {/* 8. High-Impact Strategic Diagnostic Consultation CTA & WhatsApp Contact */}
+      {/* 9. High-Impact Strategic Diagnostic Consultation CTA & WhatsApp Contact */}
       <StrategicDiagnosticCtaSection />
     </PageLayout>
   );
