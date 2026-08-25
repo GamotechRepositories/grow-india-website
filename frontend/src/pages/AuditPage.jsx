@@ -3,11 +3,11 @@ import {
   Landmark, Target, IndianRupee, Users, Cpu, TrendingUp, 
   ShoppingCart, Monitor, Scale, ShieldAlert, Award, CheckCircle2,
   Printer, MessageCircle, Mail, Sparkles, AlertCircle, FileCheck,
-  RefreshCcw, ArrowRight, Building, Check, ShieldCheck, Download
+  RefreshCcw, ArrowRight, Building2, Check, ShieldCheck, Download,
+  CheckCircle, AlertTriangle, XCircle, MinusCircle, Send, User,
+  MapPin, Phone, Briefcase
 } from 'lucide-react';
 import PageLayout from '../components/layout/PageLayout';
-import SectionTitle from '../components/ui/SectionTitle';
-import Button from '../components/ui/Button';
 import { auditQuestionnaireMeta, auditSections } from '../data/auditQuestionnaire';
 import { brandIdentity } from '../data/brand';
 import { contactDetails } from '../data/contact';
@@ -27,42 +27,75 @@ const iconMap = {
   CheckCircle2
 };
 
+const ratingConfig = {
+  A: {
+    code: 'A',
+    label: 'Fully Established',
+    subtext: 'Documented & Active',
+    points: 4,
+    icon: CheckCircle,
+    color: 'emerald',
+    activeClass: 'bg-emerald-600 text-white border-emerald-600 shadow-md ring-2 ring-emerald-400',
+    idleClass: 'bg-white text-slate-700 border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/50'
+  },
+  B: {
+    code: 'B',
+    label: 'Partially Established',
+    subtext: 'In Progress / Partial',
+    points: 3,
+    icon: AlertTriangle,
+    color: 'amber',
+    activeClass: 'bg-amber-500 text-slate-950 border-amber-500 shadow-md ring-2 ring-amber-400 font-bold',
+    idleClass: 'bg-white text-slate-700 border-slate-200 hover:border-amber-300 hover:bg-amber-50/50'
+  },
+  C: {
+    code: 'C',
+    label: 'Not Established',
+    subtext: 'Informal / Major Gaps',
+    points: 1,
+    icon: XCircle,
+    color: 'rose',
+    activeClass: 'bg-rose-600 text-white border-rose-600 shadow-md ring-2 ring-rose-400',
+    idleClass: 'bg-white text-slate-700 border-slate-200 hover:border-rose-300 hover:bg-rose-50/50'
+  },
+  D: {
+    code: 'D',
+    label: 'Not Applicable',
+    subtext: 'Not Relevant',
+    points: 0,
+    icon: MinusCircle,
+    color: 'slate',
+    activeClass: 'bg-slate-700 text-white border-slate-700 shadow-md ring-2 ring-slate-400',
+    idleClass: 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+  }
+};
+
 export default function AuditPage() {
-  // Client Organization Info State
+  // Client Organization Info
   const [clientInfo, setClientInfo] = useState({
     orgName: '',
     orgNature: 'MSME',
-    address: '',
     contactPerson: '',
     designation: '',
     city: '',
     state: '',
     email: '',
     phone: '',
-    estYear: '',
     employees: '',
     turnover: ''
   });
 
-  // Ratings & Comments for 12 Functional Areas
+  // Ratings for all 12 areas
   const [ratings, setRatings] = useState({});
   const [comments, setComments] = useState({});
-
-  // Overall Self Assessment & Top 5 Priority Areas
   const [overallHealth, setOverallHealth] = useState('B');
-  const [priorityAreas, setPriorityAreas] = useState({
-    p1: '',
-    p2: '',
-    p3: '',
-    p4: '',
-    p5: ''
-  });
-
-  const [submitted, setSubmitted] = useState(false);
+  const [priorityNotes, setPriorityNotes] = useState('');
+  const [validationError, setValidationError] = useState('');
 
   const handleInfoChange = (e) => {
     const { name, value } = e.target;
     setClientInfo((prev) => ({ ...prev, [name]: value }));
+    if (validationError) setValidationError('');
   };
 
   const handleRatingSelect = (sectionId, ratingCode) => {
@@ -73,19 +106,15 @@ export default function AuditPage() {
     setComments((prev) => ({ ...prev, [sectionId]: value }));
   };
 
-  const handlePriorityChange = (key, value) => {
-    setPriorityAreas((prev) => ({ ...prev, [key]: value }));
-  };
-
-  // Calculate Diagnostic Score
+  // Score Calculation
   const totalSections = auditSections.length;
   const answeredCount = Object.keys(ratings).length;
 
   const calculateScore = () => {
     let score = 0;
     Object.values(ratings).forEach((code) => {
-      const opt = auditQuestionnaireMeta.ratingOptions.find((o) => o.code === code);
-      if (opt) score += opt.points;
+      const cfg = ratingConfig[code];
+      if (cfg) score += cfg.points;
     });
     return score;
   };
@@ -93,70 +122,79 @@ export default function AuditPage() {
   const currentScore = calculateScore();
   const maxPossibleScore = totalSections * 4; // 48 points max
 
-  // Score Health Level
-  let healthDiagnosis = {
-    title: 'High Person-Dependency & Compliance Gaps',
-    badgeClass: 'bg-rose-100 text-rose-800 border-rose-300',
-    description: 'Significant operational risks identified. Standardized SOPs, GRC registers, and management controls are urgently recommended.',
-    color: 'rose'
+  // Diagnostic Status
+  let diagnosisStatus = {
+    title: 'High Vulnerability & Person Dependency',
+    colorText: 'text-rose-600',
+    bgColor: 'bg-rose-50 border-rose-200 text-rose-800',
+    summary: 'Significant gaps in standardized systems. Urgent SOPs and compliance controls needed.'
   };
 
   if (currentScore >= 38) {
-    healthDiagnosis = {
-      title: 'Strong Institutional Governance & Scalable Systems',
-      badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-      description: 'Your organization exhibits strong process maturity. Focus on digital automation, advanced MIS reporting, and unit expansion.',
-      color: 'emerald'
+    diagnosisStatus = {
+      title: 'Strong Institutional Governance',
+      colorText: 'text-emerald-600',
+      bgColor: 'bg-emerald-50 border-emerald-200 text-emerald-800',
+      summary: 'High process maturity. Ready for automated scaling and digital ERP/MIS integration.'
     };
   } else if (currentScore >= 24) {
-    healthDiagnosis = {
-      title: 'Moderate Operational Maturity (Work-In-Progress)',
-      badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
-      description: 'Key processes exist but require formal codification, role-based KPIs, and tighter internal controls to prevent revenue leakages.',
-      color: 'amber'
+    diagnosisStatus = {
+      title: 'Moderate Operational Maturity',
+      colorText: 'text-amber-600',
+      bgColor: 'bg-amber-50 border-amber-200 text-amber-800',
+      summary: 'Partial systems exist. Needs structured departmental KPIs, RACI matrices & SOP playbooks.'
     };
   }
 
-  // Format WhatsApp Return Message
-  const generateWhatsAppMessage = () => {
-    const filledDate = new Date().toLocaleDateString('en-IN');
+  // Format WhatsApp Submission
+  const getFormattedWhatsAppMessage = () => {
     let msg = `*GROW FREE AUDIT QUESTIONNAIRE SUBMISSION*\n`;
     msg += `----------------------------------------\n`;
-    msg += `*Organization:* ${clientInfo.orgName || 'N/A'}\n`;
-    msg += `*Nature:* ${clientInfo.orgNature || 'N/A'}\n`;
-    msg += `*Contact Person:* ${clientInfo.contactPerson || 'N/A'} (${clientInfo.designation || 'N/A'})\n`;
-    msg += `*Phone:* ${clientInfo.phone || 'N/A'} | *Email:* ${clientInfo.email || 'N/A'}\n`;
-    msg += `*Location:* ${clientInfo.city || 'N/A'}, ${clientInfo.state || 'N/A'}\n`;
-    msg += `*Turnover:* ${clientInfo.turnover || 'N/A'} | *Employees:* ${clientInfo.employees || 'N/A'}\n\n`;
-    
-    msg += `*DIAGNOSTIC HEALTH RATINGS (Score: ${currentScore}/${maxPossibleScore}):*\n`;
+    msg += `*Organization:* ${clientInfo.orgName || 'Not specified'}\n`;
+    msg += `*Nature:* ${clientInfo.orgNature || 'MSME'}\n`;
+    msg += `*Contact:* ${clientInfo.contactPerson || 'Not specified'} (${clientInfo.designation || 'Leader'})\n`;
+    msg += `*Phone:* ${clientInfo.phone || 'Not specified'} | *Email:* ${clientInfo.email || 'Not specified'}\n`;
+    msg += `*Location:* ${clientInfo.city || 'City'}, ${clientInfo.state || 'State'}\n`;
+    if (clientInfo.turnover) msg += `*Turnover:* ${clientInfo.turnover} | *Employees:* ${clientInfo.employees || 'N/A'}\n`;
+    msg += `\n*DIAGNOSTIC HEALTH SCORE:* ${currentScore} / ${maxPossibleScore} Points (${answeredCount}/12 Evaluated)\n`;
+    msg += `*Overall Health Rating:* [${overallHealth}]\n\n`;
+
+    msg += `*12 FUNCTIONAL RATINGS:*\n`;
     auditSections.forEach((sec) => {
-      const rate = ratings[sec.id] || 'Not Rated';
-      const opt = auditQuestionnaireMeta.ratingOptions.find((o) => o.code === rate);
-      const comment = comments[sec.id] ? ` (${comments[sec.id]})` : '';
-      msg += `• ${sec.no}. ${sec.area}: *[${rate}]* ${opt ? opt.label : ''}${comment}\n`;
+      const code = ratings[sec.id] || 'Not Rated';
+      const label = ratingConfig[code]?.label || 'Pending';
+      const note = comments[sec.id] ? ` - Note: "${comments[sec.id]}"` : '';
+      msg += `${sec.no}. ${sec.area}: *${label} (${code})*${note}\n`;
     });
 
-    msg += `\n*Overall Self-Assessment:* [${overallHealth}]\n`;
-    
-    const priorities = Object.values(priorityAreas).filter((p) => p.trim() !== '');
-    if (priorities.length > 0) {
-      msg += `*Top Priority Areas:*\n`;
-      priorities.forEach((p, idx) => {
-        msg += ` ${idx + 1}. ${p}\n`;
-      });
+    if (priorityNotes.trim()) {
+      msg += `\n*Top Focus & Priorities:*\n${priorityNotes.trim()}\n`;
     }
 
-    msg += `\n_Submitted via GROW India Web Portal on ${filledDate}._\n`;
-    msg += `Please analyze this questionnaire and provide key observations and improvement recommendations.`;
+    msg += `\n_Submitted via GROW India Web Portal._\n`;
+    msg += `Please analyze our responses and provide recommendations.`;
     return encodeURIComponent(msg);
   };
 
-  // Format Email Link
-  const generateEmailHref = () => {
-    const subject = encodeURIComponent(`Free Business Health Audit Submission - ${clientInfo.orgName || 'Organization Assessment'}`);
-    const body = decodeURIComponent(generateWhatsAppMessage()).replace(/\*/g, '').replace(/_/g, '');
-    return `mailto:${contactDetails.email}?subject=${subject}&body=${encodeURIComponent(body)}`;
+  const handleWhatsAppSubmit = () => {
+    if (!clientInfo.orgName.trim() && !clientInfo.phone.trim()) {
+      setValidationError('Please enter your Organization Name and Contact Phone Number to submit.');
+      window.scrollTo({ top: 300, behavior: 'smooth' });
+      return;
+    }
+    const url = `https://wa.me/${contactDetails.whatsapp.replace('+', '')}?text=${getFormattedWhatsAppMessage()}`;
+    window.open(url, '_blank');
+  };
+
+  const handleEmailSubmit = () => {
+    if (!clientInfo.orgName.trim() && !clientInfo.phone.trim()) {
+      setValidationError('Please enter your Organization Name and Contact Phone Number to submit.');
+      window.scrollTo({ top: 300, behavior: 'smooth' });
+      return;
+    }
+    const subject = encodeURIComponent(`Free Business Health Audit - ${clientInfo.orgName || 'Organization Response'}`);
+    const body = decodeURIComponent(getFormattedWhatsAppMessage()).replace(/\*/g, '').replace(/_/g, '');
+    window.location.href = `mailto:${contactDetails.email}?subject=${subject}&body=${encodeURIComponent(body)}`;
   };
 
   const handlePrint = () => {
@@ -164,25 +202,23 @@ export default function AuditPage() {
   };
 
   const handleReset = () => {
-    if (window.confirm('Are you sure you want to reset the audit questionnaire?')) {
+    if (window.confirm('Reset all questionnaire answers?')) {
       setRatings({});
       setComments({});
       setClientInfo({
         orgName: '',
         orgNature: 'MSME',
-        address: '',
         contactPerson: '',
         designation: '',
         city: '',
         state: '',
         email: '',
         phone: '',
-        estYear: '',
         employees: '',
         turnover: ''
       });
-      setPriorityAreas({ p1: '', p2: '', p3: '', p4: '', p5: '' });
-      setSubmitted(false);
+      setPriorityNotes('');
+      setValidationError('');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -190,164 +226,104 @@ export default function AuditPage() {
   return (
     <PageLayout
       title={`Free Business Health Audit Questionnaire – ${brandIdentity.shortName}`}
-      description="Fill the official GROW Free Audit Questionnaire & Organizational Health Check. Evaluate your organization across 12 key functional areas and send back for expert analysis."
+      description="Simple self-assessment tool for organizations. Rate 12 core functional areas and send back for expert diagnostic recommendations."
     >
-      {/* Header Banner */}
-      <section className="relative overflow-hidden bg-slate-900 text-white py-12 lg:py-16 border-b border-slate-800 print:bg-white print:text-slate-900 print:py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-400/30 text-amber-300 text-xs font-bold uppercase tracking-wider print:border-slate-300 print:text-slate-800">
-            <ShieldCheck className="w-4 h-4 text-amber-400" />
-            <span>Official Self-Assessment Tool</span>
-          </div>
+      {/* Header */}
+      <section className="bg-white border-b border-slate-200 py-10 sm:py-14 print:py-4">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-300 text-amber-800 text-xs font-bold uppercase tracking-wider">
+            <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+            <span>Free Organizational Health Check</span>
+          </span>
 
-          <h1 className="font-display text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white print:text-slate-900 leading-tight">
-            GROW FREE AUDIT QUESTIONNAIRE
+          <h1 className="font-display text-2xl sm:text-4xl font-extrabold text-slate-900 leading-tight">
+            GROW Business Health Audit Questionnaire
           </h1>
-          <p className="font-display text-lg sm:text-2xl font-bold text-amber-400 print:text-amber-600">
-            ORGANIZATIONAL HEALTH CHECK
+          <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
+            A simple self-assessment to identify operational strengths, detect risk gaps, and improve your systems.
           </p>
 
-          <p className="text-sm sm:text-base text-slate-300 max-w-3xl mx-auto leading-relaxed print:text-slate-700">
-            <strong>A Short Self-Assessment Tool for Organizations</strong>: Identify Strengths. Detect Gaps. Improve Systems. Drive Growth.
-          </p>
-
-          {/* Target Sectors Pill Strip */}
-          <div className="pt-2 flex flex-wrap justify-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-semibold text-slate-300 print:text-slate-600">
-            {auditQuestionnaireMeta.targetSectors.map((sector, i) => (
-              <span 
-                key={i} 
-                className="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700/60 print:bg-slate-100 print:border-slate-300"
-              >
-                {sector}
-              </span>
-            ))}
+          {/* Quick Step Guide */}
+          <div className="pt-4 grid grid-cols-3 gap-2 max-w-xl mx-auto text-xs font-semibold text-slate-700">
+            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
+              <span className="text-amber-600 font-bold block mb-0.5">1. Details</span>
+              <span>Your Company</span>
+            </div>
+            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
+              <span className="text-amber-600 font-bold block mb-0.5">2. Rate Areas</span>
+              <span>12 Simple Questions</span>
+            </div>
+            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
+              <span className="text-amber-600 font-bold block mb-0.5">3. Send Back</span>
+              <span>WhatsApp / Email</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Main Interactive Questionnaire Form Container */}
-      <section className="py-10 lg:py-14 bg-slate-50 min-h-screen">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      {/* Main Form Area */}
+      <section className="py-8 sm:py-12 bg-slate-50 min-h-screen">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-8">
 
-          {/* Form Top: Instructions & Scoring Legend Card */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
-              <div className="space-y-1">
-                <h3 className="font-display font-bold text-lg text-slate-900 flex items-center gap-2">
-                  <FileCheck className="w-5 h-5 text-amber-600" />
-                  <span>INSTRUCTIONS</span>
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600">
-                  {auditQuestionnaireMeta.instructions}
-                </p>
+          {/* Validation Alert */}
+          {validationError && (
+            <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-semibold flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              <span>{validationError}</span>
+            </div>
+          )}
+
+          {/* STEP 1: Organization Details Card */}
+          <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-7 shadow-xs space-y-4">
+            <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
+              <div className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center">
+                1
               </div>
-
-              {/* Progress Pill */}
-              <div className="flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-2xl border border-slate-200 shrink-0">
-                <div className="text-right">
-                  <div className="text-xs font-bold text-slate-900">
-                    {answeredCount} of {totalSections} Rated
-                  </div>
-                  <div className="text-[10px] text-slate-500 font-mono">
-                    Score: {currentScore} / {maxPossibleScore}
-                  </div>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-black text-sm shadow-xs">
-                  {Math.round((answeredCount / totalSections) * 100)}%
-                </div>
-              </div>
+              <h2 className="font-display font-bold text-base sm:text-lg text-slate-900">
+                Your Organization & Contact Details
+              </h2>
             </div>
 
-            {/* Rating Code Legend (A, B, C, D) */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {auditQuestionnaireMeta.ratingOptions.map((opt) => (
-                <div 
-                  key={opt.code} 
-                  className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3"
-                >
-                  <div className="w-7 h-7 rounded-lg bg-slate-900 text-amber-400 flex items-center justify-center font-black text-xs shrink-0">
-                    {opt.code}
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-slate-900">{opt.label}</div>
-                    <div className="text-[11px] text-slate-500">{opt.description}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Section 1: Client Organization Information */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
-            <div className="border-b border-slate-200 pb-3">
-              <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-                <Building className="w-5 h-5 text-amber-600" />
-                <span>ORGANIZATION PROFILE & CONTACT DETAILS</span>
-              </h3>
-              <p className="text-xs text-slate-500">
-                Please provide your basic organization profile so we can prepare your personalized diagnostic summary.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
-              {/* Organization Name */}
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  Organization Name *
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs sm:text-sm">
+              <div>
+                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">
+                  Organization / Company Name *
                 </label>
                 <input
                   type="text"
                   name="orgName"
                   value={clientInfo.orgName}
                   onChange={handleInfoChange}
-                  placeholder="e.g. Acme Engineering Solutions Pvt Ltd"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
+                  placeholder="e.g. Acme Tech Solutions Pvt Ltd"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
-              {/* Nature of Organization */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">
                   Nature of Organization
                 </label>
                 <select
                   name="orgNature"
                   value={clientInfo.orgNature}
                   onChange={handleInfoChange}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:outline-none focus:border-amber-500"
                 >
-                  <option value="MSME">MSME</option>
-                  <option value="Corporate / Private Ltd">Corporate / Private Ltd</option>
+                  <option value="MSME">MSME / Small Enterprise</option>
+                  <option value="Private Limited / Corporate">Private Limited / Corporate</option>
                   <option value="Start-up">Start-up</option>
-                  <option value="Family-Owned Business">Family-Owned Business</option>
-                  <option value="Manufacturing & Industrial">Manufacturing & Industrial</option>
+                  <option value="Family Business">Family Business</option>
+                  <option value="Manufacturing">Manufacturing & Industrial</option>
                   <option value="Trading / Retail">Trading / Retail</option>
-                  <option value="Healthcare / Hospital">Healthcare / Hospital</option>
-                  <option value="IT & Software">IT & Software</option>
-                  <option value="Educational Institution">Educational Institution</option>
-                  <option value="NGO / Trust">NGO / Trust</option>
-                  <option value="Government / PSU / Public Sector">Government / PSU / Public Sector</option>
+                  <option value="Services / IT">Services / IT / Consulting</option>
+                  <option value="Healthcare / Education">Healthcare / Education</option>
+                  <option value="NGO / Trust / Institution">NGO / Trust / Institution</option>
+                  <option value="Government / PSU">Government / PSU / Public Sector</option>
                 </select>
               </div>
 
-              {/* Address */}
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  name="address"
-                  value={clientInfo.address}
-                  onChange={handleInfoChange}
-                  placeholder="Office / Plant / Headquarters Address"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
-                />
-              </div>
-
-              {/* Contact Person */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">
                   Contact Person *
                 </label>
                 <input
@@ -355,60 +331,42 @@ export default function AuditPage() {
                   name="contactPerson"
                   value={clientInfo.contactPerson}
                   onChange={handleInfoChange}
-                  placeholder="Name of Key Contact"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
+                  placeholder="Your Full Name"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
-              {/* Designation */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  Designation
+                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">
+                  Designation / Role
                 </label>
                 <input
                   type="text"
                   name="designation"
                   value={clientInfo.designation}
                   onChange={handleInfoChange}
-                  placeholder="e.g. Managing Director / CEO / Head Ops"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
+                  placeholder="e.g. Founder, Director, Manager"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
-              {/* City */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  City
+                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">
+                  Mobile / WhatsApp Number *
                 </label>
                 <input
-                  type="text"
-                  name="city"
-                  value={clientInfo.city}
+                  type="tel"
+                  name="phone"
+                  value={clientInfo.phone}
                   onChange={handleInfoChange}
-                  placeholder="e.g. Mumbai, Pune, Nagpur"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
+                  placeholder="+91 98765 43210"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
-              {/* State */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  State
-                </label>
-                <input
-                  type="text"
-                  name="state"
-                  value={clientInfo.state}
-                  onChange={handleInfoChange}
-                  placeholder="e.g. Maharashtra"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  Email *
+                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">
+                  Email Address
                 </label>
                 <input
                   type="email"
@@ -416,259 +374,140 @@ export default function AuditPage() {
                   value={clientInfo.email}
                   onChange={handleInfoChange}
                   placeholder="name@company.com"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
-              {/* Mobile / Phone */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  Mobile / Phone *
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={clientInfo.phone}
-                  onChange={handleInfoChange}
-                  placeholder="+91 XXXXX XXXXX"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
-                />
-              </div>
-
-              {/* Year of Establishment */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  Year of Establishment
+                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">
+                  City & State
                 </label>
                 <input
                   type="text"
-                  name="estYear"
-                  value={clientInfo.estYear}
+                  name="city"
+                  value={clientInfo.city}
                   onChange={handleInfoChange}
-                  placeholder="e.g. 2018"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
+                  placeholder="e.g. Mumbai, Maharashtra"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
-              {/* No. of Employees */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  No. of Employees
-                </label>
-                <input
-                  type="text"
-                  name="employees"
-                  value={clientInfo.employees}
-                  onChange={handleInfoChange}
-                  placeholder="e.g. 25-50"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
-                />
-              </div>
-
-              {/* Turnover Approx */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                  Turnover (Approx.)
+                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">
+                  Approx. Annual Turnover (Optional)
                 </label>
                 <input
                   type="text"
                   name="turnover"
                   value={clientInfo.turnover}
                   onChange={handleInfoChange}
-                  placeholder="e.g. ₹5 Cr - ₹25 Cr"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
+                  placeholder="e.g. ₹2 Cr to ₹10 Cr"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
                 />
               </div>
             </div>
           </div>
 
-          {/* Section 2: The 12 Functional Areas & Key Questions */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-6 sm:p-8 bg-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-                  Core Diagnostic Matrix
-                </span>
-                <h3 className="font-display text-lg sm:text-xl font-bold text-white">
-                  12 FUNCTIONAL AREAS & KEY SELF-ASSESSMENT QUESTIONS
-                </h3>
-              </div>
-              <div className="text-xs text-slate-300 bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 inline-block">
-                Select A, B, C, or D for each area
-              </div>
-            </div>
+          {/* STEP 2: 12 Functional Areas Health Check */}
+          <div className="space-y-4">
+            <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-7 shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center">
+                    2
+                  </div>
+                  <div>
+                    <h2 className="font-display font-bold text-base sm:text-lg text-slate-900">
+                      12 Functional Areas Health Check
+                    </h2>
+                    <p className="text-xs text-slate-500">
+                      Tap the status option for each area that best describes your organization.
+                    </p>
+                  </div>
+                </div>
 
-            {/* Questions List */}
-            <div className="divide-y divide-slate-200">
-              {auditSections.map((sec) => {
-                const IconComponent = iconMap[sec.icon] || CheckCircle2;
-                const currentRating = ratings[sec.id];
+                {/* Score Counter */}
+                <div className="bg-slate-100 px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 flex items-center gap-2 shrink-0">
+                  <span>Completed:</span>
+                  <span className="text-amber-600 font-extrabold">{answeredCount} / {totalSections}</span>
+                </div>
+              </div>
 
-                return (
-                  <div 
-                    key={sec.id}
-                    className={`p-5 sm:p-7 transition-colors ${
-                      currentRating ? 'bg-amber-50/20' : 'hover:bg-slate-50/80'
-                    }`}
-                  >
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+              {/* Questionnaire Cards */}
+              <div className="divide-y divide-slate-100 mt-2">
+                {auditSections.map((sec) => {
+                  const IconComp = iconMap[sec.icon] || CheckCircle2;
+                  const currentSelected = ratings[sec.id];
+
+                  return (
+                    <div key={sec.id} className="py-5 sm:py-6 space-y-3">
                       
-                      {/* Left: Section Header & Questions */}
-                      <div className="lg:col-span-7 space-y-2.5">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-lg bg-slate-900 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0">
+                      {/* Section Title & Questions */}
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-2 text-slate-900 font-bold text-sm sm:text-base">
+                          <span className="w-6 h-6 rounded-md bg-slate-900 text-amber-400 font-bold text-xs flex items-center justify-center shrink-0">
                             {sec.no}
-                          </div>
-                          <h4 className="font-display font-bold text-sm sm:text-base text-slate-900 flex items-center gap-2">
-                            <IconComponent className="w-4 h-4 text-amber-600" />
-                            <span>{sec.area}</span>
-                          </h4>
+                          </span>
+                          <IconComp className="w-4 h-4 text-amber-600 shrink-0" />
+                          <span>{sec.area}</span>
                         </div>
 
-                        {/* Questions bullet box */}
-                        <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/90 text-xs sm:text-sm text-slate-700 space-y-1.5">
+                        {/* Questions list */}
+                        <div className="pl-8 text-xs sm:text-sm text-slate-600 space-y-0.5">
                           {sec.questions.map((q, idx) => (
-                            <p key={idx} className="leading-relaxed font-medium">
+                            <p key={idx} className="leading-snug">
                               {q}
                             </p>
                           ))}
                         </div>
                       </div>
 
-                      {/* Right: Rating Options Selection (A, B, C, D) + Comments */}
-                      <div className="lg:col-span-5 space-y-3">
-                        <div>
-                          <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-2">
-                            Rating Status (Select One):
-                          </label>
-                          <div className="grid grid-cols-4 gap-2">
-                            {auditQuestionnaireMeta.ratingOptions.map((opt) => {
-                              const isSelected = currentRating === opt.code;
-                              return (
-                                <button
-                                  key={opt.code}
-                                  type="button"
-                                  onClick={() => handleRatingSelect(sec.id, opt.code)}
-                                  className={`p-2 sm:p-2.5 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
-                                    isSelected
-                                      ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-amber-400'
-                                      : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-100'
-                                  }`}
-                                >
-                                  <span className="font-black text-sm sm:text-base mb-0.5">
-                                    {opt.code}
+                      {/* 4 Simple, Tap-Friendly Choice Buttons (Mobile & Desktop) */}
+                      <div className="pl-0 sm:pl-8 pt-1">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          {Object.values(ratingConfig).map((cfg) => {
+                            const isSelected = currentSelected === cfg.code;
+                            const IconElem = cfg.icon;
+
+                            return (
+                              <button
+                                key={cfg.code}
+                                type="button"
+                                onClick={() => handleRatingSelect(sec.id, cfg.code)}
+                                className={`p-2.5 sm:p-3 rounded-2xl border text-left transition-all duration-150 cursor-pointer flex flex-col justify-between select-none ${
+                                  isSelected ? cfg.activeClass : cfg.idleClass
+                                }`}
+                              >
+                                <div className="flex items-center justify-between w-full mb-1">
+                                  <span className="font-extrabold text-xs">
+                                    Option {cfg.code}
                                   </span>
-                                  <span className="text-[9px] sm:text-[10px] leading-tight font-medium opacity-90 line-clamp-1">
-                                    {opt.label.split(' ')[0]}
-                                  </span>
-                                </button>
-                              );
-                            })}
-                          </div>
+                                  <IconElem className="w-3.5 h-3.5 opacity-80" />
+                                </div>
+                                <div>
+                                  <div className="font-bold text-xs sm:text-sm leading-tight">
+                                    {cfg.label}
+                                  </div>
+                                  <div className={`text-[10px] mt-0.5 leading-tight ${isSelected ? 'opacity-90' : 'text-slate-400'}`}>
+                                    {cfg.subtext}
+                                  </div>
+                                </div>
+                              </button>
+                            );
+                          })}
                         </div>
 
-                        {/* Optional Comments */}
-                        <div>
+                        {/* Optional Single Line Note */}
+                        <div className="mt-2">
                           <input
                             type="text"
-                            placeholder="Optional Comments / Specific observations..."
+                            placeholder="Optional note / observation for this department..."
                             value={comments[sec.id] || ''}
                             onChange={(e) => handleCommentChange(sec.id, e.target.value)}
-                            className="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
+                            className="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-400"
                           />
                         </div>
                       </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Section 3: Overall Self-Assessment & Top 5 Priority Areas */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            {/* Overall Rating Box */}
-            <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm space-y-4 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">
-                  <Award className="w-4 h-4" />
-                  <span>OVERALL SELF-ASSESSMENT</span>
-                </div>
-                <h4 className="font-display font-bold text-base text-slate-900 mb-2">
-                  How would you rate your overall organizational health?
-                </h4>
-                <p className="text-xs text-slate-500 mb-4">
-                  Select your subjective executive assessment of the organization's current readiness.
-                </p>
-
-                <div className="grid grid-cols-2 gap-2.5">
-                  {auditQuestionnaireMeta.overallRatingOptions.map((opt) => (
-                    <button
-                      key={opt.code}
-                      type="button"
-                      onClick={() => setOverallHealth(opt.code)}
-                      className={`p-3 rounded-2xl border text-center transition-all cursor-pointer flex items-center justify-center gap-2 ${
-                        overallHealth === opt.code
-                          ? 'bg-amber-500 text-slate-950 font-bold border-amber-500 shadow-md ring-2 ring-amber-400/40'
-                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                      }`}
-                    >
-                      <span className="w-6 h-6 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
-                        {opt.code}
-                      </span>
-                      <span className="text-xs font-bold">{opt.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Diagnostic Score Card */}
-              <div className="p-4 rounded-2xl bg-slate-900 text-white space-y-2 mt-4">
-                <div className="flex items-center justify-between text-xs text-slate-400">
-                  <span>Diagnostic Score</span>
-                  <span className="font-mono font-bold text-amber-400">{answeredCount}/12 Evaluated</span>
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-black font-display text-white">{currentScore}</span>
-                  <span className="text-slate-400 font-bold text-sm">/ {maxPossibleScore} Points</span>
-                </div>
-                <div className={`p-2.5 rounded-xl border text-xs font-bold ${healthDiagnosis.badgeClass}`}>
-                  {healthDiagnosis.title}
-                </div>
-              </div>
-            </div>
-
-            {/* Top 5 Priority Areas */}
-            <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200 p-6 sm:p-7 shadow-sm space-y-4">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">
-                  <Target className="w-4 h-4" />
-                  <span>TOP 5 PRIORITY AREAS</span>
-                </div>
-                <h4 className="font-display font-bold text-base text-slate-900 mb-1">
-                  What are the top 5 areas in your organization requiring immediate systemization?
-                </h4>
-                <p className="text-xs text-slate-500 mb-3">
-                  Specify the key departments, pain points, or processes you want GROW India to prioritize in recommendations.
-                </p>
-              </div>
-
-              <div className="space-y-2.5">
-                {[1, 2, 3, 4, 5].map((num) => {
-                  const key = `p${num}`;
-                  return (
-                    <div key={key} className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0">
-                        {num}
-                      </span>
-                      <input
-                        type="text"
-                        placeholder={`Priority Area ${num} (e.g. Finance approvals, Sales SOPs, Vendor SLAs)`}
-                        value={priorityAreas[key]}
-                        onChange={(e) => handlePriorityChange(key, e.target.value)}
-                        className="flex-1 px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500 transition-colors"
-                      />
                     </div>
                   );
                 })}
@@ -676,84 +515,128 @@ export default function AuditPage() {
             </div>
           </div>
 
-          {/* Section 4: Return The Completed Form (Multi-Channel Action Center) */}
-          <div className="bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900 text-white rounded-3xl border border-slate-800 p-6 sm:p-10 shadow-xl space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-800">
-              <div className="space-y-2">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-bold uppercase tracking-wider">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>OUR CONFIDENTIALITY COMMITMENT</span>
-                </span>
-                <h3 className="font-display text-xl sm:text-2xl font-bold text-white">
-                  PLEASE RETURN THE COMPLETED FORM TO US
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-                  Your responses are strictly confidential and will be used only for organizational improvement recommendations. Our senior consultants will analyze and share a structured summary report with key observations and improvement suggestions.
-                </p>
+          {/* STEP 3: Overall Rating & Priority Focus */}
+          <div className="bg-white rounded-3xl border border-slate-200 p-5 sm:p-7 shadow-xs space-y-4">
+            <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
+              <div className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center">
+                3
               </div>
-
-              {/* Diagnostic Quick Score */}
-              <div className="bg-slate-800/90 p-4 rounded-2xl border border-slate-700 text-center shrink-0">
-                <div className="text-[11px] font-bold text-amber-400 uppercase">Current Audit Score</div>
-                <div className="text-2xl sm:text-3xl font-black font-display text-white mt-1">
-                  {currentScore} <span className="text-xs text-slate-400">/ 48</span>
-                </div>
-                <div className="text-[10px] text-slate-400 mt-1">{answeredCount} of 12 Areas Rated</div>
-              </div>
+              <h2 className="font-display font-bold text-base sm:text-lg text-slate-900">
+                Overall Assessment & Key Priorities
+              </h2>
             </div>
 
-            {/* Submission Action Buttons */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-              
-              {/* WhatsApp Return Button */}
-              <a
-                href={`https://wa.me/${contactDetails.whatsapp.replace('+', '')}?text=${generateWhatsAppMessage()}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2.5 py-3.5 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold text-sm shadow-lg shadow-emerald-950/50 transition-all cursor-pointer text-center"
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-1">
+              {/* Overall Rating */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  How would you rate overall organizational health?
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  {auditQuestionnaireMeta.overallRatingOptions.map((opt) => (
+                    <button
+                      key={opt.code}
+                      type="button"
+                      onClick={() => setOverallHealth(opt.code)}
+                      className={`p-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                        overallHealth === opt.code
+                          ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-amber-400'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                      }`}
+                    >
+                      <span>{opt.label}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 font-black">
+                        {opt.code}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Real-time Health Result Pill */}
+                <div className={`p-3 rounded-2xl border text-xs mt-3 ${diagnosisStatus.bgColor}`}>
+                  <div className="font-bold">{diagnosisStatus.title}</div>
+                  <div className="text-[11px] opacity-90 mt-0.5">{diagnosisStatus.summary}</div>
+                </div>
+              </div>
+
+              {/* Priority Areas Input */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Top Priority Areas (Mention 2 to 5 focus areas)
+                </label>
+                <textarea
+                  rows={4}
+                  value={priorityNotes}
+                  onChange={(e) => setPriorityNotes(e.target.value)}
+                  placeholder="e.g.&#10;1. Sales & Lead follow-up SOPs&#10;2. Finance approvals & cash flow reporting&#10;3. HR JDs and performance scorecards"
+                  className="w-full p-3 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* STEP 4: Simple Submission Box (1-Click Return via WhatsApp / Email) */}
+          <div className="bg-slate-900 text-white rounded-3xl border border-slate-800 p-6 sm:p-8 shadow-xl space-y-6">
+            
+            <div className="text-center space-y-2 max-w-xl mx-auto">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-bold uppercase tracking-wider">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Ready to Submit</span>
+              </span>
+              <h3 className="font-display text-xl sm:text-2xl font-bold text-white">
+                Send Your Completed Audit to GROW
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300">
+                Click below to send your responses. Our consulting team will review your diagnostic scores and share actionable improvement recommendations.
+              </p>
+            </div>
+
+            {/* Main Action Buttons: Super Clear & Big */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-w-2xl mx-auto pt-2">
+              {/* WhatsApp Button */}
+              <button
+                type="button"
+                onClick={handleWhatsAppSubmit}
+                className="flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold text-sm sm:text-base shadow-lg shadow-emerald-950/60 transition-all cursor-pointer"
               >
                 <MessageCircle className="w-5 h-5 fill-current shrink-0" />
                 <span>Send via WhatsApp</span>
-              </a>
+              </button>
 
-              {/* Email Return Button */}
-              <a
-                href={generateEmailHref()}
-                className="flex items-center justify-center gap-2.5 py-3.5 px-5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 transition-all cursor-pointer text-center"
-              >
-                <Mail className="w-5 h-5 shrink-0 text-amber-400" />
-                <span>Email Form to GROW</span>
-              </a>
-
-              {/* Print / Save PDF Button */}
+              {/* Email Button */}
               <button
                 type="button"
-                onClick={handlePrint}
-                className="flex items-center justify-center gap-2.5 py-3.5 px-5 rounded-2xl bg-white text-slate-900 hover:bg-slate-100 font-bold text-sm shadow-sm transition-all cursor-pointer"
+                onClick={handleEmailSubmit}
+                className="flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl bg-slate-800 hover:bg-slate-700 active:bg-slate-850 text-white font-bold text-sm sm:text-base border border-slate-700 transition-all cursor-pointer"
               >
-                <Printer className="w-5 h-5 shrink-0 text-slate-700" />
-                <span>Print / Save as PDF</span>
+                <Mail className="w-5 h-5 text-amber-400 shrink-0" />
+                <span>Send via Email</span>
               </button>
             </div>
 
-            {/* Direct Official Contact Strip */}
-            <div className="pt-4 flex flex-wrap items-center justify-between text-xs text-slate-400 border-t border-slate-800 gap-4">
-              <div className="flex items-center gap-2">
-                <span>Direct WhatsApp Helpline:</span>
-                <strong className="text-amber-400 font-mono">{contactDetails.phoneDisplay}</strong>
-              </div>
-              <div className="flex items-center gap-2">
-                <span>Official Consulting Email:</span>
-                <strong className="text-slate-200">{contactDetails.email}</strong>
-              </div>
+            {/* Secondary Controls: Print & Reset */}
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2 text-xs text-slate-400 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={handlePrint}
+                className="hover:text-white flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Printer className="w-4 h-4" />
+                <span>Print / Save PDF Copy</span>
+              </button>
+              <span>•</span>
               <button
                 type="button"
                 onClick={handleReset}
-                className="text-xs text-slate-400 hover:text-rose-400 flex items-center gap-1 cursor-pointer transition-colors"
+                className="hover:text-rose-400 flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <RefreshCcw className="w-3.5 h-3.5" />
-                <span>Reset Form</span>
+                <span>Clear Form</span>
               </button>
+              <span>•</span>
+              <span className="text-slate-400">
+                Direct Helpline: <strong className="text-amber-400 font-mono">+91 94057 51665</strong>
+              </span>
             </div>
           </div>
 
