@@ -746,13 +746,13 @@ export default function FreeAuditForm() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-700 block mb-0.5">
-              Direct WhatsApp Submission
+              Instant PDF & Direct WhatsApp Submission
             </span>
             <h4 className="font-display text-base sm:text-lg font-bold text-slate-900">
               Submit Audit Responses to GROW India
             </h4>
             <p className="text-xs text-slate-600 mt-0.5 max-w-md">
-              Sends your complete 12-function audit assessment, score, and organization details directly to WhatsApp (+91 94057 51665).
+              Downloads your official 2-page PDF audit certificate and directly opens WhatsApp (+91 94057 51665) with your full responses.
             </p>
           </div>
 
