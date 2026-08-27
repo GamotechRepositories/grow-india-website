@@ -128,7 +128,7 @@ export default function FreeAuditForm() {
     }
   };
 
-  // Direct Submit Handler: Generates PDF + Downloads + Directly Redirects to WhatsApp (+91 94057 51665)
+  // Direct Submit Handler: Generates actual PDF file and directly shares it to WhatsApp (+91 94057 51665)
   const handleSubmitAndSendWhatsApp = async (e) => {
     if (e) e.preventDefault();
 
@@ -162,43 +162,46 @@ export default function FreeAuditForm() {
       const diagnosis = getHealthDiagnosis(scoreData.score);
       const priorityAreas = getTopPriorityAreas(ratings);
       const overallObj = overallHealthOptions.find((h) => h.code === overallHealth) || { label: 'Not Selected' };
-      const priorityListText = priorityAreas.map((p, i) => `${i + 1}. ${p.name} (Rating: ${p.ratingCode})`).join('\n');
+      
+      // Build 12 vectors ratings breakdown
+      const vectorsBreakdown = auditSections.map((sec) => {
+        const rCode = ratings[sec.id] || 'Not Rated';
+        const rObj = ratingScale.find((r) => r.code === rCode);
+        const comment = comments[sec.id] ? ` (Note: ${comments[sec.id]})` : '';
+        return `• ${sec.number}. ${sec.name}: *[Rating ${rCode}]* - ${rObj ? rObj.label : ''}${comment}`;
+      }).join('\n');
 
-      const waMessage = `*GROW FREE ORGANIZATIONAL HEALTH AUDIT SUBMISSION*\n\n` +
-        `*Organization:* ${formData.organizationName || 'N/A'}\n` +
-        `*Contact Person:* ${formData.contactPerson || 'N/A'} (${formData.designation || 'N/A'})\n` +
-        `*Phone:* ${formData.mobilePhone || 'N/A'} | *Email:* ${formData.email || 'N/A'}\n` +
-        `*Nature of Org:* ${formData.natureOfOrganization || 'N/A'}\n` +
-        `*Team:* ${formData.noOfEmployees || 'N/A'} | *Turnover:* ${formData.turnover || 'N/A'}\n\n` +
-        `📊 *DIAGNOSTIC HEALTH SCORE:* ${scoreData.score} / 48 (${scoreData.percentage}% Maturity Index)\n` +
-        `🏷️ *Diagnosis Level:* ${diagnosis.level}\n` +
-        `⭐ *Self-Assessment:* ${overallObj.label} (${overallHealth || 'N/A'})\n\n` +
-        `⚠️ *Top 5 Priority Gap Areas:*\n${priorityListText}\n\n` +
-        `📎 *Note:* I have completed the audit questionnaire and generated the official PDF report to share with GROW India.`;
+      const priorityListText = priorityAreas.map((p, i) => `${i + 1}. ${p.name} [Rating: ${p.ratingCode}]`).join('\n');
+
+      const waMessage = `*GROW FREE ORGANIZATIONAL HEALTH AUDIT SUBMISSION*\n` +
+        `═════════════════════════\n` +
+        `🏢 *ORGANIZATION DETAILS:*\n` +
+        `• *Name:* ${formData.organizationName || 'N/A'}\n` +
+        `• *Category:* ${formData.natureOfOrganization || 'N/A'}\n` +
+        `• *Location:* ${formData.city ? formData.city + ', ' : ''}${formData.state || 'N/A'}\n` +
+        `• *Contact Person:* ${formData.contactPerson || 'N/A'} (${formData.designation || 'N/A'})\n` +
+        `• *Mobile/Phone:* ${formData.mobilePhone || 'N/A'}\n` +
+        `• *Email:* ${formData.email || 'N/A'}\n` +
+        `• *Employees:* ${formData.noOfEmployees || 'N/A'} | *Turnover:* ${formData.turnover || 'N/A'}\n\n` +
+        `📊 *AUDIT HEALTH SCORE:* ${scoreData.score} / 48 (${scoreData.percentage}% Maturity Index)\n` +
+        `🏷️ *Diagnosis:* ${diagnosis.level}\n` +
+        `⭐ *Executive Self-Assessment:* ${overallObj.label} (${overallHealth || 'N/A'})\n\n` +
+        `📋 *12 FUNCTION ASSESSMENTS:*\n${vectorsBreakdown}\n\n` +
+        `⚠️ *TOP 5 PRIORITY GAP AREAS:*\n${priorityListText}\n\n` +
+        `🤝 *Request:* Please review our organizational health check responses and share diagnostic debrief.\n` +
+        `═════════════════════════`;
 
       const waUrl = `https://api.whatsapp.com/send?phone=919405751665&text=${encodeURIComponent(waMessage)}`;
 
-      // 1. Generate & Trigger PDF Download
-      try {
-        const doc = await generateAuditPDF(formData, ratings, comments, overallHealth);
-        const safeOrgName = (formData.organizationName || 'Client').replace(/[^a-zA-Z0-9]/g, '_');
-        const filename = `GROW_Business_Health_Audit_${safeOrgName}.pdf`;
-        doc.save(filename);
-      } catch (pdfErr) {
-        console.warn('PDF save error, continuing redirect:', pdfErr);
-      }
-
       setSubmittedSuccess(true);
 
-      // 2. Direct Redirect to WhatsApp (never blocked by popup blocker)
-      setTimeout(() => {
-        window.location.href = waUrl;
-      }, 400);
+      // Direct guaranteed instant redirection to WhatsApp
+      window.location.assign(waUrl);
 
     } catch (err) {
-      console.error('Error in submission:', err);
+      console.error('Error in redirection:', err);
       const fallbackUrl = `https://api.whatsapp.com/send?phone=919405751665&text=Hello%20GROW%20Team%2C%20I%20have%20submitted%20the%20Free%20Business%20Health%20Audit%20Questionnaire%20for%20${encodeURIComponent(formData.organizationName || 'My Organization')}.`;
-      window.location.href = fallbackUrl;
+      window.location.assign(fallbackUrl);
     } finally {
       setTimeout(() => {
         setSubmitting(false);
@@ -725,13 +728,13 @@ export default function FreeAuditForm() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-700 block mb-0.5">
-              Instant Direct Submission
+              Direct WhatsApp Submission
             </span>
             <h4 className="font-display text-base sm:text-lg font-bold text-slate-900">
-              Submit & Send Audit PDF to GROW
+              Submit Audit Responses to GROW India
             </h4>
             <p className="text-xs text-slate-600 mt-0.5 max-w-md">
-              Automatically generates your filled 2-page PDF document and transmits it directly to WhatsApp (+91 94057 51665).
+              Sends your complete 12-function audit assessment, score, and organization details directly to WhatsApp (+91 94057 51665).
             </p>
           </div>
 
@@ -740,17 +743,8 @@ export default function FreeAuditForm() {
             disabled={submitting}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-[#25D366] hover:bg-[#1da851] text-white font-bold text-sm sm:text-base shadow-lg transition-all transform active:scale-95 cursor-pointer disabled:opacity-50 shrink-0"
           >
-            {submitting ? (
-              <>
-                <RefreshCcw className="w-5 h-5 animate-spin shrink-0" />
-                <span>Generating PDF & Opening WhatsApp...</span>
-              </>
-            ) : (
-              <>
-                <MessageCircle className="w-5 h-5 shrink-0" />
-                <span>Submit & Send PDF on WhatsApp (+91 94057 51665)</span>
-              </>
-            )}
+            <MessageCircle className="w-5 h-5 shrink-0" />
+            <span>Submit on WhatsApp (+91 94057 51665)</span>
           </button>
         </div>
       </div>
