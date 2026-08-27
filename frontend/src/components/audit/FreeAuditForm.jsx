@@ -30,6 +30,7 @@ const iconMap = {
 export default function FreeAuditForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
+  const [showAutoGuide, setShowAutoGuide] = useState(false);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -126,10 +127,11 @@ export default function FreeAuditForm() {
       setComments({});
       setOverallHealth('B');
       setSubmittedSuccess(false);
+      setShowAutoGuide(false);
     }
   };
 
-  // Direct Submit Handler: Generates actual PDF file and shares on mobile / auto-downloads on desktop + opens WhatsApp
+  // Direct Submit Handler: Generates actual PDF file, downloads it, shows guide for 1.8s, then automatically opens WhatsApp
   const handleSubmitAndSendWhatsApp = async (e) => {
     if (e) e.preventDefault();
 
@@ -159,6 +161,7 @@ export default function FreeAuditForm() {
 
     try {
       setSubmitting(true);
+      setShowAutoGuide(true);
 
       const overallObj = overallHealthOptions.find((h) => h.code === overallHealth) || { label: 'Not Selected' };
       
@@ -177,8 +180,6 @@ export default function FreeAuditForm() {
 
       // 1. Generate the official 2-page PDF
       const doc = await generateAuditPDF(formData, ratings, comments, overallHealth);
-      const pdfBlob = doc.output('blob');
-      const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
 
       const waMessage = `*GROW FREE CORPORATE HEALTH CHECK-UP SUBMISSION*\n` +
         `═════════════════════════\n` +
@@ -201,7 +202,7 @@ export default function FreeAuditForm() {
 
       const waUrl = `https://api.whatsapp.com/send?phone=919405751665&text=${encodeURIComponent(waMessage)}`;
 
-      // 2. Automatically generate and download the official 2-page PDF certificate
+      // 2. Automatically download the official 2-page PDF certificate
       try {
         doc.save(filename);
       } catch (pdfErr) {
@@ -210,10 +211,10 @@ export default function FreeAuditForm() {
 
       setSubmittedSuccess(true);
 
-      // 3. Immediately & directly open the WhatsApp chat targeted to +91 94057 51665
+      // 3. Automatically redirect to WhatsApp after 1.6s so client sees the guide
       setTimeout(() => {
         window.location.assign(waUrl);
-      }, 400);
+      }, 1600);
 
     } catch (err) {
       console.error('Error in submission:', err);
@@ -222,7 +223,7 @@ export default function FreeAuditForm() {
     } finally {
       setTimeout(() => {
         setSubmitting(false);
-      }, 1000);
+      }, 2000);
     }
   };
 
@@ -935,6 +936,53 @@ export default function FreeAuditForm() {
         </button>
 
       </div>
+
+      {/* ========================================================================= */}
+      {/* 8. AUTOMATIC ON-SCREEN GUIDE POPUP */}
+      {/* ========================================================================= */}
+      {showAutoGuide && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <div className="bg-white border-2 border-amber-400 rounded-3xl p-6 sm:p-7 max-w-md w-full text-center shadow-2xl space-y-4 animate-in zoom-in-95 duration-150 relative">
+            
+            {/* Animated Success Icon */}
+            <div className="w-16 h-16 rounded-2xl bg-emerald-100 border border-emerald-300 text-emerald-600 mx-auto flex items-center justify-center shadow-inner">
+              <CheckCircle2 className="w-9 h-9 stroke-[2.5] animate-bounce" />
+            </div>
+
+            <div className="space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-amber-900 bg-amber-200 px-3 py-0.5 rounded-full inline-block">
+                PDF Report Downloaded
+              </span>
+              <h3 className="font-display text-xl sm:text-2xl font-black text-slate-900">
+                Opening WhatsApp...
+              </h3>
+              <p className="text-xs text-slate-600 leading-snug">
+                तुमचा २ पानांचा अधिकृत PDF रिपोर्ट डाऊनलोड झाला आहे.
+              </p>
+            </div>
+
+            {/* Guide Step */}
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-2 text-xs">
+              <div className="flex items-center gap-2 text-slate-900 font-bold">
+                <span className="w-5 h-5 rounded-full bg-[#25D366] text-white flex items-center justify-center text-[10px] shrink-0 font-bold">✓</span>
+                <span>WhatsApp (+91 94057 51665) आपोआप ओपन होत आहे</span>
+              </div>
+              <div className="flex items-start gap-2 text-slate-700 bg-amber-50/80 p-2 rounded-xl border border-amber-200/70">
+                <span className="text-base shrink-0">📎</span>
+                <span className="text-[11px] leading-snug font-medium">
+                  व्हॉट्सॲप चॅटमध्ये <strong>📎 (Attach / Paperclip)</strong> वर क्लिक करून डाऊनलोड झालेली PDF सेंड करा.
+                </span>
+              </div>
+            </div>
+
+            {/* Visual countdown progress */}
+            <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+              <div className="h-full bg-emerald-500 rounded-full animate-pulse w-full" />
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </form>
   );
