@@ -202,29 +202,19 @@ export default function FreeAuditForm() {
 
       const waUrl = `https://api.whatsapp.com/send?phone=919405751665&text=${encodeURIComponent(waMessage)}`;
 
-      // 2. Check for mobile native share support (Android/iOS directly attaches PDF into WhatsApp)
-      const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
-      if (isMobile && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-        try {
-          await navigator.share({
-            files: [pdfFile],
-            title: `GROW Business Health Audit - ${formData.organizationName}`,
-            text: waMessage
-          });
-          setSubmittedSuccess(true);
-          return;
-        } catch (shareErr) {
-          console.log('Mobile share dismissed, continuing with WhatsApp direct link:', shareErr);
-        }
+      // 2. Automatically generate and download the official 2-page PDF certificate
+      try {
+        doc.save(filename);
+      } catch (pdfErr) {
+        console.warn('PDF download error:', pdfErr);
       }
 
-      // 3. Desktop / Fallback: Download the official PDF and open WhatsApp Web
-      doc.save(filename);
       setSubmittedSuccess(true);
 
+      // 3. Immediately & directly open the WhatsApp chat targeted to +91 94057 51665
       setTimeout(() => {
         window.location.assign(waUrl);
-      }, 500);
+      }, 400);
 
     } catch (err) {
       console.error('Error in submission:', err);
