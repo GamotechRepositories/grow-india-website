@@ -267,8 +267,15 @@ export default function FreeAuditForm() {
       {/* ========================================================================= */}
       {/* OFFICIAL QUESTIONNAIRE PAPER CONTAINER */}
       {/* ========================================================================= */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl border-2 border-slate-300 shadow-xl overflow-hidden text-slate-900">
+      <div className="bg-white rounded-2xl sm:rounded-3xl border-2 border-amber-400/90 shadow-2xl overflow-hidden text-slate-900">
         
+        {/* Top Gold Highlighting Strip */}
+        <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 px-4 py-2 text-center text-xs sm:text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-xs">
+          <Sparkles className="w-4 h-4 text-slate-950 fill-slate-950 animate-pulse" />
+          <span>★ 100% FREE CORPORATE HEALTH CHECK-UP ★</span>
+          <Sparkles className="w-4 h-4 text-slate-950 fill-slate-950 animate-pulse" />
+        </div>
+
         {/* 1. OFFICIAL QUESTIONNAIRE HEADER (NAVY & GOLD RIBBON) */}
         <div className="bg-gradient-to-r from-slate-950 via-[#0B1528] to-slate-950 text-white p-4 sm:p-6 lg:p-7 border-b-2 border-amber-400 relative">
           
@@ -297,7 +304,7 @@ export default function FreeAuditForm() {
 
             {/* Document Titles */}
             <div className="text-left md:text-right space-y-1 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-slate-800">
-              <span className="inline-block px-2.5 py-0.5 rounded-full bg-amber-400 text-slate-950 font-black text-[9px] sm:text-[10px] uppercase tracking-wider">
+              <span className="inline-block px-3 py-1 rounded-full bg-amber-400 text-slate-950 font-black text-[10px] sm:text-xs uppercase tracking-wider shadow-sm">
                 ★ Free Corporate Health Check-Up ★
               </span>
               <h3 className="font-display text-base sm:text-2xl font-black text-white uppercase tracking-tight">
