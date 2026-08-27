@@ -36,6 +36,10 @@ export default function AppRoutes() {
       {/* 5. Approach & Audit Group */}
       <Route path="/methodology" element={<MethodologyPage />} />
       <Route path="/audit" element={<AuditPage />} />
+      <Route path="/free-audit" element={<AuditPage />} />
+      <Route path="/health-check" element={<AuditPage />} />
+      <Route path="/questionnaire" element={<AuditPage />} />
+      <Route path="/business-audit" element={<AuditPage />} />
       <Route path="/training" element={<TrainingPage />} />
       <Route path="/partners" element={<ClientsPartnersPage />} />
       <Route path="/clients" element={<ClientsPartnersPage />} />
