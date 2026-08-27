@@ -128,20 +128,32 @@ export default function FreeAuditForm() {
     }
   };
 
-  // Direct Submit Handler: Generates PDF + Downloads + Directly Opens WhatsApp to +91 94057 51665
+  // Direct Submit Handler: Generates PDF + Downloads + Directly Redirects to WhatsApp (+91 94057 51665)
   const handleSubmitAndSendWhatsApp = async (e) => {
     if (e) e.preventDefault();
 
-    if (!formData.organizationName.trim() || !formData.email.trim() || !formData.mobilePhone.trim()) {
-      alert('Please fill in your Organization Name, Email, and Mobile Number before submitting.');
+    if (!formData.organizationName.trim()) {
+      alert('Please enter your Organization / Enterprise Name.');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
-    if (scoreData.answeredCount < 12) {
-      if (!window.confirm(`You have rated ${scoreData.answeredCount} of 12 assessment areas. Do you want to submit anyway?`)) {
-        return;
-      }
+    if (!formData.contactPerson.trim()) {
+      alert('Please enter Contact Person Name.');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (!formData.mobilePhone.trim()) {
+      alert('Please enter Mobile / WhatsApp Phone Number.');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      alert('Please enter Email Address.');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
 
     try {
@@ -162,39 +174,35 @@ export default function FreeAuditForm() {
         `🏷️ *Diagnosis Level:* ${diagnosis.level}\n` +
         `⭐ *Self-Assessment:* ${overallObj.label} (${overallHealth || 'N/A'})\n\n` +
         `⚠️ *Top 5 Priority Gap Areas:*\n${priorityListText}\n\n` +
-        `📎 *Note:* I have completed the audit and downloaded the official PDF report to share with GROW India for debriefing.`;
+        `📎 *Note:* I have completed the audit questionnaire and generated the official PDF report to share with GROW India.`;
 
-      const waUrl = `https://wa.me/919405751665?text=${encodeURIComponent(waMessage)}`;
+      const waUrl = `https://api.whatsapp.com/send?phone=919405751665&text=${encodeURIComponent(waMessage)}`;
 
-      // 1. Generate & Save PDF
-      const doc = await generateAuditPDF(formData, ratings, comments, overallHealth);
-      const safeOrgName = (formData.organizationName || 'Client').replace(/[^a-zA-Z0-9]/g, '_');
-      const filename = `GROW_Business_Health_Audit_${safeOrgName}.pdf`;
-      doc.save(filename);
-
-      // 2. Try native mobile share (iOS Safari, Android Chrome) with actual PDF file attached
-      const pdfBlob = doc.output('blob');
-      const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
-
-      if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-        await navigator.share({
-          files: [pdfFile],
-          title: `GROW Business Health Audit - ${formData.organizationName || 'Client'}`,
-          text: waMessage
-        });
-      } else {
-        // Desktop / standard browser: open WhatsApp chat directly
-        window.open(waUrl, '_blank');
+      // 1. Generate & Trigger PDF Download
+      try {
+        const doc = await generateAuditPDF(formData, ratings, comments, overallHealth);
+        const safeOrgName = (formData.organizationName || 'Client').replace(/[^a-zA-Z0-9]/g, '_');
+        const filename = `GROW_Business_Health_Audit_${safeOrgName}.pdf`;
+        doc.save(filename);
+      } catch (pdfErr) {
+        console.warn('PDF save error, continuing redirect:', pdfErr);
       }
 
       setSubmittedSuccess(true);
+
+      // 2. Direct Redirect to WhatsApp (never blocked by popup blocker)
+      setTimeout(() => {
+        window.location.href = waUrl;
+      }, 400);
+
     } catch (err) {
       console.error('Error in submission:', err);
-      const waUrl = `https://wa.me/919405751665?text=Hello%20GROW%20Team%2C%20I%20have%20filled%20the%20Free%20Business%20Health%20Audit%20Questionnaire%20for%20${encodeURIComponent(formData.organizationName || 'My Organization')}.`;
-      window.open(waUrl, '_blank');
-      setSubmittedSuccess(true);
+      const fallbackUrl = `https://api.whatsapp.com/send?phone=919405751665&text=Hello%20GROW%20Team%2C%20I%20have%20submitted%20the%20Free%20Business%20Health%20Audit%20Questionnaire%20for%20${encodeURIComponent(formData.organizationName || 'My Organization')}.`;
+      window.location.href = fallbackUrl;
     } finally {
-      setSubmitting(false);
+      setTimeout(() => {
+        setSubmitting(false);
+      }, 1000);
     }
   };
 
