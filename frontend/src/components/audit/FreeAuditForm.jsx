@@ -128,7 +128,7 @@ export default function FreeAuditForm() {
     }
   };
 
-  // Direct Submit Handler: Generates actual PDF file and directly shares it to WhatsApp (+91 94057 51665)
+  // Direct Submit Handler: Generates actual PDF file and shares on mobile / auto-downloads on desktop + opens WhatsApp
   const handleSubmitAndSendWhatsApp = async (e) => {
     if (e) e.preventDefault();
 
@@ -173,6 +173,14 @@ export default function FreeAuditForm() {
 
       const priorityListText = priorityAreas.map((p, i) => `${i + 1}. ${p.name} [Rating: ${p.ratingCode}]`).join('\n');
 
+      const safeOrgName = (formData.organizationName || 'Client').replace(/[^a-zA-Z0-9]/g, '_');
+      const filename = `GROW_Business_Health_Audit_${safeOrgName}.pdf`;
+
+      // 1. Generate the official 2-page PDF
+      const doc = await generateAuditPDF(formData, ratings, comments, overallHealth);
+      const pdfBlob = doc.output('blob');
+      const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
       const waMessage = `*GROW FREE ORGANIZATIONAL HEALTH AUDIT SUBMISSION*\n` +
         `═════════════════════════\n` +
         `🏢 *ORGANIZATION DETAILS:*\n` +
@@ -188,18 +196,38 @@ export default function FreeAuditForm() {
         `⭐ *Executive Self-Assessment:* ${overallObj.label} (${overallHealth || 'N/A'})\n\n` +
         `📋 *12 FUNCTION ASSESSMENTS:*\n${vectorsBreakdown}\n\n` +
         `⚠️ *TOP 5 PRIORITY GAP AREAS:*\n${priorityListText}\n\n` +
-        `🤝 *Request:* Please review our organizational health check responses and share diagnostic debrief.\n` +
+        `📎 *Attached File:* ${filename}\n` +
+        `🤝 *Request:* Please review our audit responses and share improvement recommendations.\n` +
         `═════════════════════════`;
 
       const waUrl = `https://api.whatsapp.com/send?phone=919405751665&text=${encodeURIComponent(waMessage)}`;
 
+      // 2. Check for mobile native share support (Android/iOS directly attaches PDF into WhatsApp)
+      const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+      if (isMobile && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+        try {
+          await navigator.share({
+            files: [pdfFile],
+            title: `GROW Business Health Audit - ${formData.organizationName}`,
+            text: waMessage
+          });
+          setSubmittedSuccess(true);
+          return;
+        } catch (shareErr) {
+          console.log('Mobile share dismissed, continuing with WhatsApp direct link:', shareErr);
+        }
+      }
+
+      // 3. Desktop / Fallback: Download the official PDF and open WhatsApp Web
+      doc.save(filename);
       setSubmittedSuccess(true);
 
-      // Direct guaranteed instant redirection to WhatsApp
-      window.location.assign(waUrl);
+      setTimeout(() => {
+        window.location.assign(waUrl);
+      }, 500);
 
     } catch (err) {
-      console.error('Error in redirection:', err);
+      console.error('Error in submission:', err);
       const fallbackUrl = `https://api.whatsapp.com/send?phone=919405751665&text=Hello%20GROW%20Team%2C%20I%20have%20submitted%20the%20Free%20Business%20Health%20Audit%20Questionnaire%20for%20${encodeURIComponent(formData.organizationName || 'My Organization')}.`;
       window.location.assign(fallbackUrl);
     } finally {
