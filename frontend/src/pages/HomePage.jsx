@@ -97,11 +97,15 @@ export default function HomePage() {
       {/* 6. Structured Methodologies & Practice Weightage (Interactive Pie Chart & Flowcharts) */}
       <DualMethodologySection />
 
-      {/* 7. Corporate & Government Practice Groups + Client Spectrum Pie Chart */}
-      <PracticeAreasSection />
+      {/* 7. Corporate & Government Practice Groups (Hidden on Mobile, Visible on Desktop/Tablet) */}
+      <div className="hidden md:block">
+        <PracticeAreasSection />
+      </div>
 
-      {/* 8. Industry Sectors Footprint */}
-      <IndustrySectorsSection />
+      {/* 8. Industry Sectors Footprint (Hidden on Mobile, Visible on Desktop/Tablet) */}
+      <div className="hidden md:block">
+        <IndustrySectorsSection />
+      </div>
 
       {/* 9. Strategic Alliance & Partner Ecosystem (Gamotech, Digital Buddies, Engagement Models, Training) */}
       <PartnerEcosystemSection />

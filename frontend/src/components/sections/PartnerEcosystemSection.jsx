@@ -4,24 +4,69 @@ import SectionTitle from '../ui/SectionTitle';
 import Button from '../ui/Button';
 import { strategicPartnersOverview, verifiedPartners, strategicDeliveryPrinciples } from '../../data/partners';
 import { engagementModels, trainingAndCapacityData } from '../../data/engagementModels';
+import techTransformImg from '../../assets/images/business_transformation.jpg';
 
 export default function PartnerEcosystemSection() {
   const [activeTab, setActiveTab] = useState('partners');
 
   return (
     <section className="py-12 lg:py-16 bg-slate-900 text-white border-b border-slate-800" id="ecosystem">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <SectionTitle
-          badge="Ecosystem & Delivery"
+          badge="Ecosystem & Alliances"
           badgeIcon={Handshake}
           title="ENGAGEMENT, ALLIANCES & CAPACITY ECOSYSTEM"
-          subtitle="How GROW India collaborates with strategic partners, structures institutional engagements, and builds internal executive capacity."
+          subtitle="How GROW India collaborates with specialized technology & digital partners to build scalable client infrastructure."
           theme="dark"
           align="center"
         />
 
+        {/* Visual Partner Spotlight Banner with Image */}
+        <div className="relative rounded-3xl overflow-hidden border border-slate-800 bg-slate-950 shadow-2xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 items-center">
+            
+            <div className="lg:col-span-7 p-6 sm:p-8 space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold uppercase tracking-wider border border-amber-500/30">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>Integrated Tech & Growth Architecture</span>
+              </div>
+              
+              <h3 className="font-display text-xl sm:text-2xl lg:text-3xl font-bold text-white leading-tight">
+                Enterprise Modernization Through <span className="text-amber-400">Specialized Alliances</span>
+              </h3>
+              
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                GROW acts as the central institutional architect for governance, SOPs, and compliance, while partnering with certified domain experts for digital software architecture and strategic brand acquisition.
+              </p>
+
+              <div className="flex flex-wrap gap-2 pt-1">
+                <span className="px-3 py-1 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300">
+                  ⚡ Custom ERP & SaaS Workflows
+                </span>
+                <span className="px-3 py-1 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300">
+                  📈 Performance Lead Gen Systems
+                </span>
+                <span className="px-3 py-1 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300">
+                  🛡️ Complete Client Confidentiality
+                </span>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 h-56 sm:h-72 lg:h-full relative overflow-hidden">
+              <img
+                src={techTransformImg}
+                alt="GROW India Strategic Technology Alliance"
+                className="w-full h-full object-cover object-center"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-l from-slate-950/90 lg:from-transparent to-transparent" />
+            </div>
+
+          </div>
+        </div>
+
         {/* 3-Tab Interactive Switcher */}
-        <div className="flex justify-center mt-6 mb-6">
+        <div className="flex justify-center">
           <div className="inline-flex p-1.5 rounded-2xl bg-slate-950 border border-slate-800 shadow-inner flex-wrap justify-center gap-1">
             <button
               type="button"
@@ -33,7 +78,7 @@ export default function PartnerEcosystemSection() {
               }`}
             >
               <Handshake className="w-4 h-4" />
-              <span>1. Strategic Partners (Gamotech & Digital Buddies)</span>
+              <span>1. Strategic Partners</span>
             </button>
             <button
               type="button"
@@ -45,7 +90,7 @@ export default function PartnerEcosystemSection() {
               }`}
             >
               <Layers className="w-4 h-4" />
-              <span>2. Engagement Models (XVI)</span>
+              <span>2. Engagement Models</span>
             </button>
             <button
               type="button"
@@ -57,7 +102,7 @@ export default function PartnerEcosystemSection() {
               }`}
             >
               <GraduationCap className="w-4 h-4" />
-              <span>3. Executive Training (XVII)</span>
+              <span>3. Executive Capacity</span>
             </button>
           </div>
         </div>
@@ -65,15 +110,6 @@ export default function PartnerEcosystemSection() {
         {/* Tab 1: Strategic Partners */}
         {activeTab === 'partners' && (
           <div className="space-y-6 transition-all duration-300">
-            <div className="p-4 sm:p-5 rounded-2xl bg-slate-950 border border-slate-800 text-center max-w-4xl mx-auto">
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-3">
-                {strategicPartnersOverview.description}
-              </p>
-              <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-amber-300 font-semibold">
-                {strategicPartnersOverview.deliveryModel.description}
-              </div>
-            </div>
-
             {/* 2 Strategic Partner Cards */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {verifiedPartners.map((partner) => {
@@ -81,13 +117,13 @@ export default function PartnerEcosystemSection() {
                 return (
                   <div
                     key={partner.id}
-                    className="p-6 sm:p-7 rounded-3xl bg-slate-950 border border-slate-800 hover:border-amber-500/50 transition-all duration-200 flex flex-col justify-between"
+                    className="p-6 rounded-3xl bg-slate-950 border border-slate-800 hover:border-amber-500/50 transition-all duration-200 flex flex-col justify-between space-y-4"
                   >
                     <div>
                       <div className="flex items-start justify-between gap-4 mb-3">
                         <div>
                           <span className="text-[10px] font-bold uppercase tracking-widest text-amber-400 block mb-0.5">
-                            STRATEGIC PARTNER
+                            CERTIFIED PARTNER
                           </span>
                           <h3 className="font-display text-xl font-bold text-white">
                             {partner.name}
@@ -101,61 +137,31 @@ export default function PartnerEcosystemSection() {
                         </div>
                       </div>
 
-                      {/* Partner Area of Expertise */}
-                      <div className="mb-4 p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800">
-                        <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">
-                          {partner.name}'S EXPERTISE:
-                        </h4>
-                        <div className="grid grid-cols-2 gap-1.5">
-                          {partner.expertise.map((exp, idx) => (
-                            <div key={idx} className="text-xs text-slate-300 flex items-center gap-1.5">
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
-                              <span>{exp}</span>
-                            </div>
-                          ))}
-                        </div>
+                      {/* Partner Deliverables Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
+                        {partner.expertise.map((exp, idx) => (
+                          <div key={idx} className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
+                            <span>{exp}</span>
+                          </div>
+                        ))}
                       </div>
 
-                      {/* GROW Role in Collaboration */}
-                      <div className="mb-4 p-3.5 rounded-2xl bg-slate-900/60 border border-slate-800/80">
-                        <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
-                          GROW'S ROLE IN COLLABORATION:
-                        </h4>
-                        <div className="grid grid-cols-2 gap-1.5">
-                          {partner.growRole.map((role, idx) => (
-                            <div key={idx} className="text-xs text-slate-300 flex items-center gap-1.5">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                              <span>{role}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Joint Outcomes */}
-                      <div className="space-y-1.5 mb-4">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
-                          Joint Client Outcomes:
-                        </span>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                          {partner.jointOutcomes.map((del, idx) => (
-                            <div key={idx} className="text-xs text-slate-300 flex items-start gap-1.5">
-                              <span className="text-amber-400 font-bold">•</span>
-                              <span>{del}</span>
-                            </div>
-                          ))}
-                        </div>
+                      <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 text-xs text-slate-300 flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <span>GROW oversees quality assurance, governance & delivery milestones.</span>
                       </div>
                     </div>
 
-                    <div className="pt-3 border-t border-slate-800">
+                    <div className="pt-2 border-t border-slate-800">
                       <Button
                         to="/contact"
-                        variant="outline"
+                        variant="outlineGoldDark"
                         size="sm"
-                        className="w-full justify-between border-slate-700 text-white hover:bg-slate-900"
+                        className="w-full justify-between"
                         icon={ArrowRight}
                       >
-                        Inquire for {partner.name} Joint Solutions
+                        Inquire for {partner.name} Solutions
                       </Button>
                     </div>
                   </div>
