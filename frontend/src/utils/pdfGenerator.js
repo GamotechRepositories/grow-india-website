@@ -208,10 +208,11 @@ export const generateAuditPDF = async (formData, ratings, comments, overallHealt
   currentY += 15.5;
 
   // Table Header
+  // Table Header
   const colNoW = 8;
-  const colAreaW = 42;
-  const colQuestW = 75;
-  const colRatingW = 28;
+  const colAreaW = 38;
+  const colQuestW = 78;
+  const colRatingW = 32;
   const colCommentW = contentWidth - colNoW - colAreaW - colQuestW - colRatingW;
 
   const drawTableHeader = (y) => {
@@ -224,9 +225,9 @@ export const generateAuditPDF = async (formData, ratings, comments, overallHealt
 
     doc.text('NO.', margin + 1.5, y + 4.2);
     doc.text('FUNCTION / AREA', margin + colNoW + 2, y + 4.2);
-    doc.text('KEY QUESTIONS', margin + colNoW + colAreaW + 2, y + 4.2);
-    doc.text('RATING (A/B/C/D)', margin + colNoW + colAreaW + colQuestW + 2, y + 4.2);
-    doc.text('COMMENTS (OPTIONAL)', margin + colNoW + colAreaW + colQuestW + colRatingW + 2, y + 4.2);
+    doc.text('KEY QUESTIONS (2 PER DEPT)', margin + colNoW + colAreaW + 2, y + 4.2);
+    doc.text('RATINGS (A / B / C / D)', margin + colNoW + colAreaW + colQuestW + 2, y + 4.2);
+    doc.text('COMMENTS', margin + colNoW + colAreaW + colQuestW + colRatingW + 2, y + 4.2);
   };
 
   drawTableHeader(currentY);
@@ -255,53 +256,56 @@ export const generateAuditPDF = async (formData, ratings, comments, overallHealt
     const areaLines = doc.splitTextToSize(sec.name, colAreaW - 4);
     doc.text(areaLines, margin + colNoW + 2, currentY + 5);
 
-    // Questions
+    // Question 1 and Question 2 Text
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(5.4);
+    doc.setFontSize(5.2);
     doc.setTextColor(51, 65, 85);
     const q1Text = `1. ${sec.questions[0]}`;
     const q2Text = `2. ${sec.questions[1]}`;
     const q1Lines = doc.splitTextToSize(q1Text, colQuestW - 4);
     const q2Lines = doc.splitTextToSize(q2Text, colQuestW - 4);
 
-    doc.text(q1Lines, margin + colNoW + colAreaW + 2, currentY + 4.5);
-    const nextQY = currentY + 4.5 + q1Lines.length * 2.8 + 1.5;
-    doc.text(q2Lines, margin + colNoW + colAreaW + 2, nextQY);
+    const q1Y = currentY + 4.5;
+    const q2Y = currentY + 14.5;
 
-    // Rating Checkboxes
+    doc.text(q1Lines, margin + colNoW + colAreaW + 2, q1Y);
+    doc.text(q2Lines, margin + colNoW + colAreaW + 2, q2Y);
+
+    // Helper to draw A B C D checkboxes
     const ratingStartX = margin + colNoW + colAreaW + colQuestW + 2;
-    const selectedRating = ratings[sec.id];
-
-    ['A', 'B', 'C', 'D'].forEach((opt, idx) => {
-      const optX = ratingStartX + idx * 6.5;
-      const optY = currentY + 5;
-      const isSelected = selectedRating === opt;
-
-      // Small box
-      doc.setDrawColor(...borderGray);
-      doc.setFillColor(isSelected ? 10 : 255, isSelected ? 17 : 255, isSelected ? 40 : 255);
-      doc.roundedRect(optX, optY, 4.8, 4.8, 0.6, 0.6, isSelected ? 'FD' : 'D');
-
-      doc.setTextColor(isSelected ? 255 : 30, isSelected ? 215 : 41, isSelected ? 0 : 59);
-      doc.setFont('helvetica', isSelected ? 'bold' : 'normal');
-      doc.setFontSize(5.5);
-      doc.text(opt, optX + 1.4, optY + 3.6);
-
-      if (isSelected) {
-        // Gold check dot
-        doc.setFillColor(...goldPrimary);
-        doc.circle(optX + 2.4, optY + 7.5, 0.8, 'F');
-      }
-    });
-
-    // Rating text label under checkboxes
-    if (selectedRating) {
-      const rObj = ratingScale.find((r) => r.code === selectedRating);
-      doc.setTextColor(...goldPrimary);
+    const drawCheckboxGroup = (selectedRating, startY, label) => {
+      doc.setTextColor(...slateDark);
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(5);
-      doc.text(`[ ${rObj ? rObj.label : selectedRating} ]`, ratingStartX, currentY + 16.5);
-    }
+      doc.setFontSize(4.8);
+      doc.text(label, ratingStartX, startY - 0.5);
+
+      ['A', 'B', 'C', 'D'].forEach((opt, idx) => {
+        const optX = ratingStartX + idx * 7;
+        const optY = startY + 0.5;
+        const isSelected = selectedRating === opt;
+
+        doc.setDrawColor(...borderGray);
+        doc.setFillColor(isSelected ? 10 : 255, isSelected ? 17 : 255, isSelected ? 40 : 255);
+        doc.roundedRect(optX, optY, 4.5, 4.2, 0.5, 0.5, isSelected ? 'FD' : 'D');
+
+        doc.setTextColor(isSelected ? 255 : 30, isSelected ? 215 : 41, isSelected ? 0 : 59);
+        doc.setFont('helvetica', isSelected ? 'bold' : 'normal');
+        doc.setFontSize(5);
+        doc.text(opt, optX + 1.3, optY + 3.1);
+
+        if (isSelected) {
+          doc.setFillColor(...goldPrimary);
+          doc.circle(optX + 2.25, optY + 5.5, 0.6, 'F');
+        }
+      });
+    };
+
+    // Draw Q1 Checkboxes and Q2 Checkboxes
+    const q1Rating = ratings[`${sec.id}_1`];
+    const q2Rating = ratings[`${sec.id}_2`];
+
+    drawCheckboxGroup(q1Rating, currentY + 2.5, 'Q1:');
+    drawCheckboxGroup(q2Rating, currentY + 12.5, 'Q2:');
 
     // Comment
     const userComment = comments[sec.id];
@@ -418,7 +422,7 @@ export const generateAuditPDF = async (formData, ratings, comments, overallHealt
 
   doc.setTextColor(...slateGray);
   doc.setFontSize(8);
-  doc.text(`/ 48  (${scoreData.percentage}%)`, rightBoxX + 44, currentY + 12);
+  doc.text(`/ ${scoreData.maxScore}  (${scoreData.percentage}%)`, rightBoxX + 44, currentY + 12);
 
   // Top 5 Priority Areas
   doc.setTextColor(...navyDark);
@@ -435,7 +439,7 @@ export const generateAuditPDF = async (formData, ratings, comments, overallHealt
     doc.setTextColor(...slateDark);
     doc.text(`${idx + 1}. ${pa.name}`, rightBoxX + 3, pY);
     doc.setTextColor(...goldPrimary);
-    doc.text(`[Rating: ${pa.ratingCode}]`, rightBoxX + rightBoxW - 16, pY);
+    doc.text(`[Avg: ${pa.ratingCode}]`, rightBoxX + rightBoxW - 16, pY);
     pY += 3.8;
   });
 

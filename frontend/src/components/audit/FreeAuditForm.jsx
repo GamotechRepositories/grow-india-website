@@ -48,7 +48,7 @@ export default function FreeAuditForm() {
     turnover: '₹5 Cr – ₹25 Cr'
   });
 
-  // Ratings State: { [sectionId]: 'A' | 'B' | 'C' | 'D' }
+  // Ratings State: { [`${sectionId}_1`]: 'A'|'B'|'C'|'D', [`${sectionId}_2`]: 'A'|'B'|'C'|'D' }
   const [ratings, setRatings] = useState({});
 
   // Comments State: { [sectionId]: string }
@@ -57,7 +57,7 @@ export default function FreeAuditForm() {
   // Overall Health Self-Assessment: 'A' | 'B' | 'C' | 'D'
   const [overallHealth, setOverallHealth] = useState('B');
 
-  // Score Calculation
+  // Score Calculation (out of 96 for 24 questions)
   const scoreData = calculateScore(ratings);
   const diagnosis = getHealthDiagnosis(scoreData.score);
   const priorityAreas = getTopPriorityAreas(ratings);
@@ -68,9 +68,10 @@ export default function FreeAuditForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Rating select handler (Checkbox toggle)
-  const handleRatingSelect = (sectionId, ratingCode) => {
-    setRatings((prev) => ({ ...prev, [sectionId]: ratingCode }));
+  // Question Rating select handler (Checkbox toggle for specific question)
+  const handleQuestionRatingSelect = (sectionId, qNum, ratingCode) => {
+    const key = `${sectionId}_${qNum}`;
+    setRatings((prev) => ({ ...prev, [key]: ratingCode }));
   };
 
   // Comment change handler
@@ -78,7 +79,7 @@ export default function FreeAuditForm() {
     setComments((prev) => ({ ...prev, [sectionId]: value }));
   };
 
-  // Pre-fill Sample Data for fast preview
+  // Pre-fill Sample Data for fast preview (all 24 questions rated)
   const handleFillSample = () => {
     setFormData({
       organizationName: 'Vertex Engineering & Industrial Solutions Pvt Ltd',
@@ -96,18 +97,18 @@ export default function FreeAuditForm() {
     });
 
     const sampleRatings = {
-      1: 'A',
-      2: 'B',
-      3: 'B',
-      4: 'C',
-      5: 'B',
-      6: 'B',
-      7: 'C',
-      8: 'C',
-      9: 'B',
-      10: 'C',
-      11: 'B',
-      12: 'C'
+      '1_1': 'A', '1_2': 'A',
+      '2_1': 'B', '2_2': 'B',
+      '3_1': 'B', '3_2': 'B',
+      '4_1': 'C', '4_2': 'C',
+      '5_1': 'B', '5_2': 'A',
+      '6_1': 'B', '6_2': 'B',
+      '7_1': 'C', '7_2': 'B',
+      '8_1': 'C', '8_2': 'C',
+      '9_1': 'B', '9_2': 'B',
+      '10_1': 'C', '10_2': 'C',
+      '11_1': 'B', '11_2': 'B',
+      '12_1': 'B', '12_2': 'C'
     };
     setRatings(sampleRatings);
 
@@ -131,7 +132,7 @@ export default function FreeAuditForm() {
     }
   };
 
-  // Direct Submit Handler: Generates actual PDF file, downloads it, shows guide for 1.8s, then automatically opens WhatsApp
+  // Direct Submit Handler: Generates actual PDF file, downloads it, shows guide, then automatically opens WhatsApp
   const handleSubmitAndSendWhatsApp = async (e) => {
     if (e) e.preventDefault();
 
@@ -165,15 +166,15 @@ export default function FreeAuditForm() {
 
       const overallObj = overallHealthOptions.find((h) => h.code === overallHealth) || { label: 'Not Selected' };
       
-      // Build 12 vectors ratings breakdown
+      // Build 12 departments questions breakdown
       const vectorsBreakdown = auditSections.map((sec) => {
-        const rCode = ratings[sec.id] || 'Not Rated';
-        const rObj = ratingScale.find((r) => r.code === rCode);
+        const q1Code = ratings[`${sec.id}_1`] || '—';
+        const q2Code = ratings[`${sec.id}_2`] || '—';
         const comment = comments[sec.id] ? ` (Note: ${comments[sec.id]})` : '';
-        return `• ${sec.number}. ${sec.name}: *[Rating ${rCode}]* - ${rObj ? rObj.label : ''}${comment}`;
-      }).join('\n');
+        return `• *${sec.number}. ${sec.name}*\n  - Q1: [Rating ${q1Code}]\n  - Q2: [Rating ${q2Code}]${comment}`;
+      }).join('\n\n');
 
-      const priorityListText = priorityAreas.map((p, i) => `${i + 1}. ${p.name} [Rating: ${p.ratingCode}]`).join('\n');
+      const priorityListText = priorityAreas.map((p, i) => `${i + 1}. ${p.name} [Avg Rating: ${p.ratingCode}]`).join('\n');
 
       const safeOrgName = (formData.organizationName || 'Client').replace(/[^a-zA-Z0-9]/g, '_');
       const filename = `GROW_Business_Health_Audit_${safeOrgName}.pdf`;
@@ -191,10 +192,10 @@ export default function FreeAuditForm() {
         `• *Mobile/Phone:* ${formData.mobilePhone || 'N/A'}\n` +
         `• *Email:* ${formData.email || 'N/A'}\n` +
         `• *Employees:* ${formData.noOfEmployees || 'N/A'} | *Turnover:* ${formData.turnover || 'N/A'}\n\n` +
-        `📊 *AUDIT HEALTH SCORE:* ${scoreData.score} / 48 (${scoreData.percentage}% Maturity Index)\n` +
+        `📊 *AUDIT HEALTH SCORE:* ${scoreData.score} / ${scoreData.maxScore} (${scoreData.percentage}% Maturity Index)\n` +
         `🏷️ *Diagnosis:* ${diagnosis.level}\n` +
         `⭐ *Executive Self-Assessment:* ${overallObj.label} (${overallHealth || 'N/A'})\n\n` +
-        `📋 *12 FUNCTION ASSESSMENTS (RATINGS A/B/C/D):*\n${vectorsBreakdown}\n\n` +
+        `📋 *DEPARTMENT QUESTIONNAIRE RATINGS (2 Questions Each):*\n${vectorsBreakdown}\n\n` +
         `⚠️ *TOP 5 PRIORITY GAP AREAS:*\n${priorityListText}\n\n` +
         `📎 *Attached File:* ${filename}\n` +
         `🤝 *Request:* Please review our organizational health check questionnaire responses and share improvement recommendations.\n` +
@@ -260,7 +261,7 @@ export default function FreeAuditForm() {
           </button>
 
           <div className="pl-2 border-l border-slate-200 text-xs font-bold text-slate-700 whitespace-nowrap">
-            <span className="text-amber-700 font-extrabold">{scoreData.answeredCount}</span> / 12 Rated
+            <span className="text-amber-700 font-extrabold">{scoreData.answeredCount}</span> / {scoreData.totalQuestions} Questions Rated
           </div>
         </div>
       </div>
@@ -312,7 +313,7 @@ export default function FreeAuditForm() {
                 GROW Free Audit Questionnaire
               </h3>
               <p className="font-display text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wide">
-                Organizational Health Check
+                Organizational Health Check (2 Questions Per Department)
               </p>
               <p className="text-[10px] sm:text-xs text-slate-300 font-medium italic">
                 Identify Strengths • Detect Gaps • Improve Systems • Drive Growth
@@ -539,10 +540,10 @@ export default function FreeAuditForm() {
             </div>
             <div>
               <span className="text-[11px] font-black uppercase tracking-wider text-amber-300 block">
-                INSTRUCTIONS
+                QUESTIONNAIRE INSTRUCTIONS
               </span>
               <p className="text-[11px] text-slate-200 leading-snug">
-                Select the checkbox option (✓) that best describes the current status in your organization.
+                For each department, there are <strong>2 specific questions</strong>. Select the checkbox (✓) for each individual question to assess your system maturity.
               </p>
             </div>
           </div>
@@ -550,27 +551,27 @@ export default function FreeAuditForm() {
           {/* Rating Scale Legend */}
           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-2 text-[10px] sm:text-[11px] font-bold border border-slate-700 bg-slate-900/90 px-3 py-2 rounded-xl w-full md:w-auto">
             <div className="flex items-center gap-1.5">
-              <span className="font-black text-amber-400">A</span>
+              <span className="w-4 h-4 rounded bg-amber-400 text-slate-950 flex items-center justify-center font-black text-[10px]">A</span>
               <span className="text-slate-200">Fully Established</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="font-black text-amber-400">B</span>
+              <span className="w-4 h-4 rounded bg-amber-400 text-slate-950 flex items-center justify-center font-black text-[10px]">B</span>
               <span className="text-slate-200">Partially Established</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="font-black text-amber-400">C</span>
+              <span className="w-4 h-4 rounded bg-amber-400 text-slate-950 flex items-center justify-center font-black text-[10px]">C</span>
               <span className="text-slate-200">Not Established</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="font-black text-amber-400">D</span>
+              <span className="w-4 h-4 rounded bg-amber-400 text-slate-950 flex items-center justify-center font-black text-[10px]">D</span>
               <span className="text-slate-200">Not Applicable</span>
             </div>
           </div>
         </div>
 
-        {/* 4A. DESKTOP VIEW: OFFICIAL TABLE MATRIX (md:block) */}
+        {/* 4A. DESKTOP VIEW: OFFICIAL TABLE MATRIX WITH 2 QUESTIONS PER ROW (md:block) */}
         <div className="hidden md:block overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[760px]">
+          <table className="w-full text-left border-collapse min-w-[860px]">
             
             {/* Table Header */}
             <thead>
@@ -578,25 +579,19 @@ export default function FreeAuditForm() {
                 <th className="py-2.5 px-3 text-center border-r border-slate-300 w-12">
                   NO.
                 </th>
-                <th className="py-2.5 px-4 border-r border-slate-300 w-48 lg:w-56">
-                  FUNCTION / AREA
+                <th className="py-2.5 px-4 border-r border-slate-300 w-52 lg:w-60">
+                  FUNCTION / DEPARTMENT
                 </th>
                 <th className="py-2.5 px-4 border-r border-slate-300">
-                  KEY QUESTION
-                </th>
-                <th className="py-2 px-1 text-center border-r border-slate-300 w-44 bg-amber-200/80">
-                  <div className="text-[11px] font-black uppercase border-b border-amber-300 pb-1 mb-1 tracking-wider">
-                    RATING ( ✓ )
-                  </div>
-                  <div className="grid grid-cols-4 text-center font-black text-xs">
-                    <span>A</span>
-                    <span>B</span>
-                    <span>C</span>
-                    <span>D</span>
+                  <div className="flex items-center justify-between">
+                    <span>DEPARTMENT QUESTIONS (2 QUESTIONS EACH)</span>
+                    <span className="text-[10px] font-extrabold text-amber-900 bg-amber-200 px-2 py-0.5 rounded">
+                      RATING CHECKBOXES ( ✓ )
+                    </span>
                   </div>
                 </th>
                 <th className="py-2.5 px-4 w-44 lg:w-52">
-                  COMMENTS (Optional)
+                  REMARKS / COMMENTS
                 </th>
               </tr>
             </thead>
@@ -605,17 +600,19 @@ export default function FreeAuditForm() {
             <tbody className="divide-y divide-slate-200 text-xs">
               {auditSections.map((sec) => {
                 const Icon = iconMap[sec.iconName] || ShieldCheck;
-                const selectedRating = ratings[sec.id];
+                const q1Rating = ratings[`${sec.id}_1`];
+                const q2Rating = ratings[`${sec.id}_2`];
+                const isPartiallyOrFullyAnswered = q1Rating || q2Rating;
 
                 return (
                   <tr 
                     key={sec.id}
                     className={`transition-colors hover:bg-amber-50/40 ${
-                      selectedRating ? 'bg-amber-50/20' : ''
+                      isPartiallyOrFullyAnswered ? 'bg-amber-50/20' : ''
                     }`}
                   >
                     {/* No. */}
-                    <td className="py-3 px-3 text-center font-black text-slate-800 border-r border-slate-200 bg-slate-50/60">
+                    <td className="py-3 px-3 text-center font-black text-slate-800 border-r border-slate-200 bg-slate-50/60 align-middle">
                       {sec.number}
                     </td>
 
@@ -629,56 +626,117 @@ export default function FreeAuditForm() {
                           <span className="font-bold text-slate-900 uppercase tracking-tight text-[11px] block leading-tight">
                             {sec.name}
                           </span>
+                          <span className="text-[10px] text-slate-500 block leading-tight mt-1">
+                            {sec.hint}
+                          </span>
                         </div>
                       </div>
                     </td>
 
-                    {/* Key Questions */}
-                    <td className="py-3 px-4 border-r border-slate-200 align-top">
-                      <ol className="list-decimal list-inside space-y-1 text-[11px] sm:text-xs text-slate-700 font-medium leading-snug">
-                        <li>{sec.questions[0]}</li>
-                        <li>{sec.questions[1]}</li>
-                      </ol>
-                    </td>
+                    {/* Key Questions: Q1 & Q2 each with their own Checkbox group */}
+                    <td className="py-2.5 px-3 border-r border-slate-200 align-top space-y-2">
+                      
+                      {/* Question 1 Block */}
+                      <div className={`p-2.5 rounded-xl border transition-all ${
+                        q1Rating ? 'bg-white border-amber-300 shadow-2xs' : 'bg-slate-50/70 border-slate-200'
+                      }`}>
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2">
+                          <div className="flex items-start gap-2 max-w-xl">
+                            <span className="w-4 h-4 rounded-full bg-slate-900 text-amber-400 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                              1
+                            </span>
+                            <span className="text-[11px] text-slate-800 font-semibold leading-snug">
+                              {sec.questions[0]}
+                            </span>
+                          </div>
 
-                    {/* Checkboxes for A, B, C, D */}
-                    <td className="py-2 px-1 border-r border-slate-200 align-middle bg-slate-50/40">
-                      <div className="grid grid-cols-4 gap-1 h-full items-center justify-center">
-                        {['A', 'B', 'C', 'D'].map((code) => {
-                          const isChecked = selectedRating === code;
-                          return (
-                            <div key={code} className="flex items-center justify-center">
-                              <button
-                                type="button"
-                                onClick={() => handleRatingSelect(sec.id, code)}
-                                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 transition-all flex items-center justify-center cursor-pointer ${
-                                  isChecked
-                                    ? 'bg-slate-950 border-slate-950 text-amber-400 shadow-md ring-2 ring-amber-400'
-                                    : 'bg-white border-slate-300 hover:border-slate-500 hover:bg-slate-100 text-transparent'
-                                }`}
-                                title={`Select ${code} for ${sec.name}`}
-                              >
-                                {isChecked ? (
-                                  <Check className="w-4 h-4 stroke-[3]" />
-                                ) : (
-                                  <span className="text-[10px] text-slate-300 font-bold opacity-0 hover:opacity-100">
+                          {/* 4 Checkboxes for Question 1 */}
+                          <div className="flex items-center gap-1.5 shrink-0 self-end lg:self-auto">
+                            {['A', 'B', 'C', 'D'].map((code) => {
+                              const isChecked = q1Rating === code;
+                              const optMeta = ratingScale.find((r) => r.code === code);
+                              return (
+                                <button
+                                  key={`q1_${code}`}
+                                  type="button"
+                                  onClick={() => handleQuestionRatingSelect(sec.id, 1, code)}
+                                  className={`h-7.5 px-2 rounded-lg border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                                    isChecked
+                                      ? 'bg-slate-950 border-slate-950 text-amber-400 shadow-sm ring-2 ring-amber-400'
+                                      : 'bg-white border-slate-300 hover:border-amber-500 hover:bg-amber-50/40 text-slate-700'
+                                  }`}
+                                  title={`Q1: Rating ${code} (${optMeta ? optMeta.label : ''})`}
+                                >
+                                  <span className={`w-3.5 h-3.5 rounded border flex items-center justify-center text-[9px] shrink-0 transition-colors ${
+                                    isChecked ? 'border-amber-400 bg-amber-400 text-slate-950' : 'border-slate-400 bg-white'
+                                  }`}>
+                                    {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
+                                  </span>
+                                  <span className={isChecked ? 'text-amber-400 font-black' : 'text-slate-700'}>
                                     {code}
                                   </span>
-                                )}
-                              </button>
-                            </div>
-                          );
-                        })}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
                       </div>
+
+                      {/* Question 2 Block */}
+                      <div className={`p-2.5 rounded-xl border transition-all ${
+                        q2Rating ? 'bg-white border-amber-300 shadow-2xs' : 'bg-slate-50/70 border-slate-200'
+                      }`}>
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2">
+                          <div className="flex items-start gap-2 max-w-xl">
+                            <span className="w-4 h-4 rounded-full bg-slate-900 text-amber-400 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                              2
+                            </span>
+                            <span className="text-[11px] text-slate-800 font-semibold leading-snug">
+                              {sec.questions[1]}
+                            </span>
+                          </div>
+
+                          {/* 4 Checkboxes for Question 2 */}
+                          <div className="flex items-center gap-1.5 shrink-0 self-end lg:self-auto">
+                            {['A', 'B', 'C', 'D'].map((code) => {
+                              const isChecked = q2Rating === code;
+                              const optMeta = ratingScale.find((r) => r.code === code);
+                              return (
+                                <button
+                                  key={`q2_${code}`}
+                                  type="button"
+                                  onClick={() => handleQuestionRatingSelect(sec.id, 2, code)}
+                                  className={`h-7.5 px-2 rounded-lg border text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                                    isChecked
+                                      ? 'bg-slate-950 border-slate-950 text-amber-400 shadow-sm ring-2 ring-amber-400'
+                                      : 'bg-white border-slate-300 hover:border-amber-500 hover:bg-amber-50/40 text-slate-700'
+                                  }`}
+                                  title={`Q2: Rating ${code} (${optMeta ? optMeta.label : ''})`}
+                                >
+                                  <span className={`w-3.5 h-3.5 rounded border flex items-center justify-center text-[9px] shrink-0 transition-colors ${
+                                    isChecked ? 'border-amber-400 bg-amber-400 text-slate-950' : 'border-slate-400 bg-white'
+                                  }`}>
+                                    {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
+                                  </span>
+                                  <span className={isChecked ? 'text-amber-400 font-black' : 'text-slate-700'}>
+                                    {code}
+                                  </span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+
                     </td>
 
                     {/* Comments Input */}
                     <td className="py-2.5 px-3 align-middle">
                       <textarea
-                        rows="2"
+                        rows="3"
                         value={comments[sec.id] || ''}
                         onChange={(e) => handleCommentChange(sec.id, e.target.value)}
-                        placeholder="Optional remarks..."
+                        placeholder="Optional remarks / gap..."
                         className="w-full p-2 text-[11px] rounded-lg border border-slate-300 focus:border-amber-500 focus:bg-white bg-slate-50/50 text-slate-900 resize-none leading-snug"
                       />
                     </td>
@@ -694,13 +752,14 @@ export default function FreeAuditForm() {
         <div className="block md:hidden divide-y divide-slate-200">
           {auditSections.map((sec) => {
             const Icon = iconMap[sec.iconName] || ShieldCheck;
-            const selectedRating = ratings[sec.id];
+            const q1Rating = ratings[`${sec.id}_1`];
+            const q2Rating = ratings[`${sec.id}_2`];
 
             return (
               <div 
                 key={sec.id}
-                className={`p-4 space-y-3 transition-colors ${
-                  selectedRating ? 'bg-amber-50/30' : 'bg-white'
+                className={`p-4 space-y-3.5 transition-colors ${
+                  q1Rating || q2Rating ? 'bg-amber-50/30' : 'bg-white'
                 }`}
               >
                 {/* Header */}
@@ -713,49 +772,84 @@ export default function FreeAuditForm() {
                       {sec.name}
                     </h4>
                   </div>
-                  {selectedRating && (
-                    <span className="px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 font-black text-[10px]">
-                      Rating {selectedRating}
+                  <div className="flex items-center gap-1 text-[10px] font-black">
+                    {q1Rating && <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900">Q1: {q1Rating}</span>}
+                    {q2Rating && <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-900">Q2: {q2Rating}</span>}
+                  </div>
+                </div>
+
+                {/* Question 1 Box with Checkboxes */}
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+                  <div className="flex items-start gap-2">
+                    <span className="w-4 h-4 rounded-full bg-slate-900 text-amber-400 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                      1
                     </span>
-                  )}
-                </div>
+                    <p className="text-[11px] text-slate-800 font-semibold leading-snug">
+                      {sec.questions[0]}
+                    </p>
+                  </div>
 
-                {/* Questions */}
-                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
-                  <ol className="list-decimal list-inside space-y-1 text-[11px] text-slate-700 font-medium leading-relaxed">
-                    <li>{sec.questions[0]}</li>
-                    <li>{sec.questions[1]}</li>
-                  </ol>
-                </div>
-
-                {/* 4 Interactive Checkbox Boxes for Mobile */}
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">
-                    Select Rating ( ✓ ):
-                  </span>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-1.5 pt-1">
                     {ratingScale.map((opt) => {
-                      const isChecked = selectedRating === opt.code;
+                      const isChecked = q1Rating === opt.code;
                       return (
                         <button
-                          key={opt.code}
+                          key={`mob_q1_${opt.code}`}
                           type="button"
-                          onClick={() => handleRatingSelect(sec.id, opt.code)}
-                          className={`p-2 rounded-xl border text-left flex items-center gap-2 transition-all cursor-pointer ${
+                          onClick={() => handleQuestionRatingSelect(sec.id, 1, opt.code)}
+                          className={`p-1.5 rounded-lg border text-left flex items-center gap-1.5 transition-all cursor-pointer ${
                             isChecked
-                              ? 'bg-slate-950 text-white border-slate-950 shadow-md ring-2 ring-amber-400'
-                              : 'bg-slate-50 text-slate-800 border-slate-300 hover:bg-slate-100'
+                              ? 'bg-slate-950 text-white border-slate-950 shadow-sm ring-1 ring-amber-400'
+                              : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'
                           }`}
                         >
-                          <div className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 ${
+                          <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
                             isChecked ? 'border-amber-400 bg-amber-400 text-slate-950' : 'border-slate-400 bg-white'
                           }`}>
-                            {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                            {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
                           </div>
-                          <div className="leading-tight min-w-0">
-                            <span className="text-xs font-black mr-1 text-amber-500">{opt.code}</span>
-                            <span className="text-[10px] font-semibold truncate">{opt.label}</span>
+                          <span className="text-[10px] font-bold truncate">
+                            <strong className="text-amber-500 mr-1">{opt.code}</strong> {opt.label}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Question 2 Box with Checkboxes */}
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+                  <div className="flex items-start gap-2">
+                    <span className="w-4 h-4 rounded-full bg-slate-900 text-amber-400 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                      2
+                    </span>
+                    <p className="text-[11px] text-slate-800 font-semibold leading-snug">
+                      {sec.questions[1]}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-1.5 pt-1">
+                    {ratingScale.map((opt) => {
+                      const isChecked = q2Rating === opt.code;
+                      return (
+                        <button
+                          key={`mob_q2_${opt.code}`}
+                          type="button"
+                          onClick={() => handleQuestionRatingSelect(sec.id, 2, opt.code)}
+                          className={`p-1.5 rounded-lg border text-left flex items-center gap-1.5 transition-all cursor-pointer ${
+                            isChecked
+                              ? 'bg-slate-950 text-white border-slate-950 shadow-sm ring-1 ring-amber-400'
+                              : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'
+                          }`}
+                        >
+                          <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
+                            isChecked ? 'border-amber-400 bg-amber-400 text-slate-950' : 'border-slate-400 bg-white'
+                          }`}>
+                            {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
                           </div>
+                          <span className="text-[10px] font-bold truncate">
+                            <strong className="text-amber-500 mr-1">{opt.code}</strong> {opt.label}
+                          </span>
                         </button>
                       );
                     })}
@@ -827,13 +921,13 @@ export default function FreeAuditForm() {
                 FOR GROW USE ONLY
               </span>
               <span className="text-xs font-black text-slate-900">
-                SCORE: <strong className="text-base text-amber-700 font-black">{scoreData.score}</strong> / 48
+                SCORE: <strong className="text-base text-amber-700 font-black">{scoreData.score}</strong> / {scoreData.maxScore}
               </span>
             </div>
 
             <div className="space-y-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 block">
-                Top 5 Priority Gap Areas:
+                Top 5 Priority Intervention Areas:
               </span>
               <ol className="space-y-1 text-[11px] text-slate-800 font-medium">
                 {priorityAreas.slice(0, 5).map((pa, idx) => (
@@ -842,7 +936,7 @@ export default function FreeAuditForm() {
                       {idx + 1}. {pa.name}
                     </span>
                     <span className="text-[9px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.2 rounded shrink-0">
-                      Rating {pa.ratingCode}
+                      Avg Rating {pa.ratingCode}
                     </span>
                   </li>
                 ))}

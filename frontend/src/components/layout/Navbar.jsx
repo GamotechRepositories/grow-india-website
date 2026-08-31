@@ -73,35 +73,42 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full transition-all duration-300">
       {/* Corporate Top Strip */}
       <div className="bg-slate-950 text-slate-300 text-xs border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between">
-          <div className="flex items-center space-x-3 min-w-0">
-            <span className="inline-flex items-center gap-1.5 text-amber-400 font-semibold truncate">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between gap-3">
+          
+          {/* Left Brand info & Free Audit Pill */}
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <span className="inline-flex items-center gap-1.5 text-amber-400 font-semibold truncate text-[11px] sm:text-xs">
               <Shield className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
               <span>{brandIdentity.positioning}</span>
             </span>
             <span className="hidden xl:inline text-slate-700">|</span>
-            <span className="hidden xl:inline text-slate-400 font-medium truncate">
-              {brandIdentity.officialName}
-            </span>
+            <Link
+              to="/audit"
+              className="hidden lg:inline-flex items-center gap-1 text-[10.5px] font-black text-slate-950 bg-amber-400 hover:bg-amber-300 px-2.5 py-0.5 rounded-full transition-colors shrink-0 shadow-2xs"
+            >
+              <span>★ 100% Free Health Check-Up Audit</span>
+            </Link>
           </div>
 
-          <div className="flex items-center space-x-4 shrink-0 text-xs font-medium">
+          {/* Right Contact Info */}
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0 text-xs font-medium ml-auto">
             <a
               href={`tel:${contactDetails.phone}`}
-              className="inline-flex items-center gap-1.5 text-slate-300 hover:text-amber-400 transition-colors"
+              className="inline-flex items-center gap-1.5 text-slate-300 hover:text-amber-400 transition-colors whitespace-nowrap text-[11px] sm:text-xs"
             >
               <Phone className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
-              <span>{contactDetails.phoneDisplay}</span>
+              <span className="font-bold">{contactDetails.phoneDisplay}</span>
             </a>
-            <span className="hidden md:inline text-slate-700">|</span>
+            <span className="hidden sm:inline text-slate-700">|</span>
             <a
               href={`mailto:${contactDetails.email}`}
-              className="hidden md:inline-flex items-center gap-1.5 text-slate-300 hover:text-amber-400 transition-colors"
+              className="hidden md:inline-flex items-center gap-1.5 text-slate-300 hover:text-amber-400 transition-colors truncate max-w-[220px] text-[11px] sm:text-xs"
             >
               <Mail className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
-              <span>{contactDetails.email}</span>
+              <span className="truncate">{contactDetails.email}</span>
             </a>
           </div>
+
         </div>
       </div>
 
@@ -209,6 +216,23 @@ export default function Navbar() {
                 }
 
                 const isCurrent = location.pathname === item.href;
+                if (item.highlight) {
+                  return (
+                    <Link
+                      key={item.href}
+                      to={item.href}
+                      onClick={closeMenu}
+                      className={`px-3 py-1.5 text-xs xl:text-sm font-black rounded-xl transition-all whitespace-nowrap border ${
+                        isCurrent
+                          ? 'bg-amber-400 text-slate-950 border-amber-300 shadow-md ring-2 ring-amber-400/50'
+                          : 'bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 border-amber-400 shadow-sm'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                }
+
                 return (
                   <Link
                     key={item.href}
@@ -251,6 +275,15 @@ export default function Navbar() {
         {/* Mobile Navigation Drawer */}
         {isOpen && (
           <div className="lg:hidden border-t border-slate-800 bg-[#070D1E] px-4 pt-4 pb-8 space-y-2 shadow-2xl max-h-[85vh] overflow-y-auto">
+            {/* Top mobile highlighted free audit banner */}
+            <Link
+              to="/audit"
+              onClick={closeMenu}
+              className="w-full p-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-between shadow-lg mb-2"
+            >
+              <span>★ Take Free Corporate Health Check-Up</span>
+              <span>&rarr;</span>
+            </Link>
             {mainNavLinks.map((item) => {
               if (item.children) {
                 const isOpenMobile = openDropdown === item.label;

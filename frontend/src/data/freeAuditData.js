@@ -204,66 +204,91 @@ export const overallHealthOptions = [
   }
 ];
 
-export const calculateScore = (ratings) => {
+export const calculateScore = (ratings = {}) => {
   let totalScore = 0;
   let answeredCount = 0;
+  const totalQuestions = auditSections.length * 2; // 12 departments * 2 questions = 24 questions
+  const maxScore = totalQuestions * 4; // 96 points
 
   auditSections.forEach((section) => {
-    const selected = ratings[section.id];
-    if (selected) {
-      answeredCount++;
-      const item = ratingScale.find((r) => r.code === selected);
-      if (item) {
-        totalScore += item.points;
+    [1, 2].forEach((qNum) => {
+      const key = `${section.id}_${qNum}`;
+      const selected = ratings[key];
+      if (selected) {
+        answeredCount++;
+        const item = ratingScale.find((r) => r.code === selected);
+        if (item) {
+          totalScore += item.points;
+        }
       }
-    }
+    });
   });
+
+  const percentage = Math.round((totalScore / maxScore) * 100);
 
   return {
     score: totalScore,
-    maxScore: 48,
+    maxScore,
     answeredCount,
+    totalQuestions,
     totalSections: auditSections.length,
-    percentage: Math.round((totalScore / 48) * 100)
+    percentage
   };
 };
 
-export const getTopPriorityAreas = (ratings) => {
-  // Sort areas by score ascending (lowest first) to highlight priority areas
+export const getTopPriorityAreas = (ratings = {}) => {
+  // Calculate average score for each department from its 2 questions
   const scoredSections = auditSections.map((sec) => {
-    const ratingCode = ratings[sec.id] || 'C';
-    const ratingObj = ratingScale.find((r) => r.code === ratingCode) || { points: 2, label: 'Not Established' };
+    const q1Code = ratings[`${sec.id}_1`];
+    const q2Code = ratings[`${sec.id}_2`];
+
+    const q1Obj = ratingScale.find((r) => r.code === q1Code) || { points: 2, code: 'C', label: 'Not Established' };
+    const q2Obj = ratingScale.find((r) => r.code === q2Code) || { points: 2, code: 'C', label: 'Not Established' };
+
+    const avgPoints = (q1Obj.points + q2Obj.points) / 2;
+
+    let dominantCode = 'C';
+    if (avgPoints >= 3.5) dominantCode = 'A';
+    else if (avgPoints >= 2.5) dominantCode = 'B';
+    else if (avgPoints >= 1.5) dominantCode = 'C';
+    else dominantCode = 'D';
+
+    const dominantObj = ratingScale.find((r) => r.code === dominantCode) || ratingScale[2];
+
     return {
       id: sec.id,
       number: sec.number,
       name: sec.name,
-      ratingCode,
-      ratingLabel: ratingObj.label,
-      points: ratingObj.points
+      q1Code: q1Code || 'C',
+      q2Code: q2Code || 'C',
+      ratingCode: dominantCode,
+      ratingLabel: dominantObj.label,
+      points: avgPoints
     };
   });
 
-  // Priority: C (2pts), D (1pt), B (3pts), A (4pts)
+  // Sort departments by points ascending (lowest scores = highest priority gaps)
   scoredSections.sort((a, b) => a.points - b.points);
 
   return scoredSections.slice(0, 5);
 };
 
 export const getHealthDiagnosis = (score) => {
-  if (score >= 40) {
+  // Score out of 96 points (24 questions * 4 max points)
+  if (score >= 77) {
     return {
       level: 'Systems-Driven & High Maturity',
       color: 'emerald',
       summary:
-        'Your organization exhibits strong process adherence and governance structures. GROW can partner with you for advanced MIS dashboard automation, institutional scaling manuals, and board-level risk oversight.',
+        'Your organization exhibits strong process adherence and governance structures across all departments. GROW can partner with you for advanced MIS dashboard automation, institutional scaling manuals, and board-level risk oversight.',
       recommendation: 'Strengthen continuous improvement and prepare systems for national or multi-unit expansion.'
     };
-  } else if (score >= 28) {
+  } else if (score >= 53) {
     return {
       level: 'Moderate Maturity (Person-Dependency Gaps)',
       color: 'amber',
       summary:
-        'Your organization has functional operations but experiences moderate person-dependencies and compliance/control gaps. Standardizing SOPs and Delegation of Authority (DoA) matrices will prevent revenue leakage and founder burnout.',
+        'Your organization has functional operations but experiences moderate person-dependencies and department-level control gaps. Standardizing SOPs and Delegation of Authority (DoA) matrices will prevent revenue leakage and founder burnout.',
       recommendation: 'Formalize department-level SOPs, RACI charts, and monthly KPI management dashboards.'
     };
   } else {
@@ -271,7 +296,7 @@ export const getHealthDiagnosis = (score) => {
       level: 'Critical Vulnerability & High Risk',
       color: 'red',
       summary:
-        'Your organization operates with heavy reliance on individuals, informal controls, and elevated compliance vulnerability. Immediate structured intervention via GROW Shield, GROW Engine, and core governance frameworks is recommended.',
+        'Your organization operates with heavy reliance on individuals, informal controls, and elevated compliance vulnerability across multiple departments. Immediate structured intervention via GROW Shield, GROW Engine, and core governance frameworks is recommended.',
       recommendation: 'Urgent turnaround needed: establish baseline statutory registers, financial controls, and operational workflows.'
     };
   }

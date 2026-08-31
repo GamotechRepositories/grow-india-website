@@ -27,8 +27,11 @@ export default function Button({
     gold: 'bg-amber-500 text-slate-950 hover:bg-amber-400 active:bg-amber-600 focus-visible:ring-amber-500 font-bold border border-amber-400 shadow-sm',
     secondary: 'bg-slate-100 text-slate-900 hover:bg-slate-200 active:bg-slate-300 focus-visible:ring-slate-400 border border-slate-200',
     outline: 'bg-transparent text-slate-900 border border-slate-300 hover:bg-slate-100/80 active:bg-slate-200/80 focus-visible:ring-slate-400',
+    outlineDark: 'bg-transparent text-white border border-slate-700 hover:bg-slate-900 active:bg-slate-800 focus-visible:ring-amber-500',
     outlineGold: 'bg-transparent text-amber-600 border border-amber-500/60 hover:bg-amber-500/10 active:bg-amber-500/20 focus-visible:ring-amber-500',
-    ghost: 'bg-transparent text-slate-700 hover:bg-slate-100 hover:text-slate-950 active:bg-slate-200/60 focus-visible:ring-slate-400'
+    outlineGoldDark: 'bg-transparent text-amber-300 border border-amber-400/60 hover:bg-amber-400/10 active:bg-amber-400/20 focus-visible:ring-amber-500 font-bold',
+    ghost: 'bg-transparent text-slate-700 hover:bg-slate-100 hover:text-slate-950 active:bg-slate-200/60 focus-visible:ring-slate-400',
+    ghostDark: 'bg-transparent text-slate-200 hover:bg-slate-900 hover:text-white active:bg-slate-800 focus-visible:ring-slate-400'
   };
 
   const combinedClasses = `${baseStyles} ${sizeStyles[size] || sizeStyles.md} ${variantStyles[variant] || variantStyles.primary} ${className}`.trim();

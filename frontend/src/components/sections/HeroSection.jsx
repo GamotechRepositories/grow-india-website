@@ -62,10 +62,13 @@ export default function HeroSection() {
           <div className="lg:col-span-7 space-y-6 text-left">
             {/* Top Badges */}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-slate-900 border border-amber-500/40 text-amber-300 text-xs font-bold uppercase tracking-wider shadow-sm">
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>{brandIdentity.positioning}</span>
-              </span>
+              <a
+                href="#free-audit"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black uppercase tracking-wider shadow-md hover:bg-amber-300 transition-colors cursor-pointer"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-slate-950 fill-slate-950 animate-pulse" />
+                <span>★ 100% FREE CORPORATE HEALTH CHECK-UP</span>
+              </a>
               <span className="inline-flex items-center px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-slate-400 text-xs font-medium">
                 UDYAM: {contactDetails.udyamRegistration}
               </span>
@@ -90,12 +93,15 @@ export default function HeroSection() {
             </p>
 
             {/* Action CTAs */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <Button to="/contact" variant="gold" size="lg" icon={ArrowRight}>
-                Schedule Diagnostic Consultation
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <Button to="/audit" variant="gold" size="lg" icon={Sparkles} className="shadow-xl">
+                ★ Free Health Check-Up Form
               </Button>
-              <Button to="/services" variant="outline" size="lg" className="border-slate-700 text-white hover:bg-slate-900">
-                Explore 7 Core Divisions
+              <Button to="/contact" variant="outlineGoldDark" size="lg">
+                Schedule Consultation
+              </Button>
+              <Button to="/services" variant="ghostDark" size="lg">
+                Explore Divisions &rarr;
               </Button>
             </div>
 
