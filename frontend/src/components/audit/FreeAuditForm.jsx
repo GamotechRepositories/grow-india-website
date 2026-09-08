@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { 
   Building2, Compass, IndianRupee, Users, Cpu, TrendingUp, ShoppingCart, 
   Laptop, Scale, ShieldAlert, Award, ShieldCheck, CheckCircle2, 
-  MessageSquare, Sparkles, RefreshCcw, MessageCircle, Download, Check
+  MessageSquare, Sparkles, RefreshCcw, MessageCircle, Download, Check,
+  Languages, Globe
 } from 'lucide-react';
 import { 
   auditApplicableCategories, ratingScale, auditSections, 
   overallHealthOptions, calculateScore, getTopPriorityAreas, getHealthDiagnosis 
 } from '../../data/freeAuditData';
+import { languages, auditTranslations } from '../../data/freeAuditTranslations';
 import { generateAuditPDF } from '../../utils/pdfGenerator';
 import { contactDetails } from '../../data/contact';
 
@@ -31,6 +33,10 @@ export default function FreeAuditForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
   const [showAutoGuide, setShowAutoGuide] = useState(false);
+  const [selectedLang, setSelectedLang] = useState('en');
+
+  // Translation dictionary for selected language
+  const t = auditTranslations[selectedLang] || auditTranslations.en;
 
   // Form State
   const [formData, setFormData] = useState({
@@ -123,7 +129,13 @@ export default function FreeAuditForm() {
 
   // Reset form
   const handleResetForm = () => {
-    if (window.confirm('Are you sure you want to reset the form?')) {
+    const confirmMsg = selectedLang === 'mr' 
+      ? 'तुम्हाला खात्री आहे का की फॉर्म रीसेट करायचा आहे?'
+      : selectedLang === 'hi'
+      ? 'क्या आप वाकई फॉर्म रीसेट करना चाहते हैं?'
+      : 'Are you sure you want to reset the form?';
+
+    if (window.confirm(confirmMsg)) {
       setRatings({});
       setComments({});
       setOverallHealth('B');
@@ -137,25 +149,25 @@ export default function FreeAuditForm() {
     if (e) e.preventDefault();
 
     if (!formData.organizationName.trim()) {
-      alert('Please enter your Organization / Enterprise Name.');
+      alert(selectedLang === 'mr' ? 'कृपया तुमच्या संस्थेचे / कंपनीचे नाव टाका.' : selectedLang === 'hi' ? 'कृपया अपनी संस्था / कंपनी का नाम दर्ज करें।' : 'Please enter your Organization / Enterprise Name.');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
     if (!formData.contactPerson.trim()) {
-      alert('Please enter Contact Person Name.');
+      alert(selectedLang === 'mr' ? 'कृपया संपर्क व्यक्तीचे नाव टाका.' : selectedLang === 'hi' ? 'कृपया संपर्क व्यक्ति का नाम दर्ज करें।' : 'Please enter Contact Person Name.');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
     if (!formData.mobilePhone.trim()) {
-      alert('Please enter Mobile / WhatsApp Phone Number.');
+      alert(selectedLang === 'mr' ? 'कृपया मोबाईल / व्हॉट्सॲप नंबर टाका.' : selectedLang === 'hi' ? 'कृपया मोबाइल / व्हाट्सएप नंबर दर्ज करें।' : 'Please enter Mobile / WhatsApp Phone Number.');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
     if (!formData.email.trim()) {
-      alert('Please enter Email Address.');
+      alert(selectedLang === 'mr' ? 'कृपया ईमेल पत्ता टाका.' : selectedLang === 'hi' ? 'कृपया ईमेल पता दर्ज करें।' : 'Please enter Email Address.');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -231,24 +243,52 @@ export default function FreeAuditForm() {
   return (
     <form onSubmit={handleSubmitAndSendWhatsApp} className="w-full max-w-6xl mx-auto space-y-5 sm:space-y-6">
       
-      {/* Top Demo & Reset Action Toolbar */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-3 sm:p-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
-            Interactive Checkbox Audit Matrix
-          </span>
+      {/* ========================================================================= */}
+      {/* TOP DEMO, RESET & MULTI-LANGUAGE ACTION TOOLBAR */}
+      {/* ========================================================================= */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 sm:p-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        
+        {/* Left: Language Selector */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200">
+            <Languages className="w-4 h-4 text-amber-600" />
+            <span className="uppercase tracking-wider text-[11px]">{t.toolbar.langSelect}:</span>
+          </div>
+
+          <div className="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 shadow-2xs">
+            {languages.map((l) => {
+              const isActive = selectedLang === l.code;
+              return (
+                <button
+                  key={l.code}
+                  type="button"
+                  onClick={() => setSelectedLang(l.code)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    isActive
+                      ? 'bg-slate-950 text-amber-400 shadow-md ring-1 ring-amber-400 font-extrabold scale-[1.02]'
+                      : 'text-slate-700 hover:text-slate-950 hover:bg-white/80'
+                  }`}
+                  title={`Switch language to ${l.label} (${l.nativeLabel})`}
+                >
+                  <span className="text-sm leading-none">{l.flag}</span>
+                  <span>{l.nativeLabel}</span>
+                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-amber-400 ml-0.5" />}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Right: Quick Actions & Counter */}
+        <div className="flex items-center justify-end gap-2 flex-wrap pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
           <button
             type="button"
             onClick={handleFillSample}
-            className="text-xs font-bold text-slate-800 bg-amber-100/80 hover:bg-amber-200/90 px-3 py-1.5 rounded-xl border border-amber-300 transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
+            className="text-xs font-bold text-slate-800 bg-amber-100/90 hover:bg-amber-200 px-3 py-1.5 rounded-xl border border-amber-300 transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
             title="Populate demo company answers for quick test"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-700" />
-            <span>Fill Demo</span>
+            <span>{t.toolbar.fillDemo}</span>
           </button>
 
           <button
@@ -257,11 +297,11 @@ export default function FreeAuditForm() {
             className="text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-xl border border-slate-200 transition-colors cursor-pointer flex items-center gap-1"
           >
             <RefreshCcw className="w-3 h-3" />
-            <span>Reset</span>
+            <span>{t.toolbar.reset}</span>
           </button>
 
           <div className="pl-2 border-l border-slate-200 text-xs font-bold text-slate-700 whitespace-nowrap">
-            <span className="text-amber-700 font-extrabold">{scoreData.answeredCount}</span> / {scoreData.totalQuestions} Questions Rated
+            <span className="text-amber-700 font-extrabold">{scoreData.answeredCount}</span> / {scoreData.totalQuestions} {t.toolbar.questionsRated}
           </div>
         </div>
       </div>
@@ -274,7 +314,7 @@ export default function FreeAuditForm() {
         {/* Top Gold Highlighting Strip */}
         <div className="bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 text-slate-950 px-4 py-2 text-center text-xs sm:text-sm font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-xs">
           <Sparkles className="w-4 h-4 text-slate-950 fill-slate-950 animate-pulse" />
-          <span>★ 100% FREE CORPORATE HEALTH CHECK-UP ★</span>
+          <span>{t.topRibbon}</span>
           <Sparkles className="w-4 h-4 text-slate-950 fill-slate-950 animate-pulse" />
         </div>
 
@@ -293,13 +333,13 @@ export default function FreeAuditForm() {
 
               <div>
                 <h2 className="font-display font-black text-lg sm:text-2xl tracking-tight text-amber-400 leading-none">
-                  GROW
+                  {t.header.companyName}
                 </h2>
                 <p className="text-[9px] sm:text-[11px] font-bold text-slate-200 tracking-wider uppercase mt-0.5">
-                  Govind Raadhaa Organizational Wonders
+                  {t.header.fullName}
                 </p>
                 <p className="text-[7px] sm:text-[9px] text-amber-300 font-semibold tracking-wide">
-                  Business Growth & Systems Partner India • GRC • Transformation • SOP • KRA
+                  {t.header.tagline}
                 </p>
               </div>
             </div>
@@ -307,16 +347,16 @@ export default function FreeAuditForm() {
             {/* Document Titles */}
             <div className="text-left md:text-right space-y-1 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-slate-800">
               <span className="inline-block px-3 py-1 rounded-full bg-amber-400 text-slate-950 font-black text-[10px] sm:text-xs uppercase tracking-wider shadow-sm">
-                ★ Free Corporate Health Check-Up ★
+                {t.header.badge}
               </span>
               <h3 className="font-display text-base sm:text-2xl font-black text-white uppercase tracking-tight">
-                GROW Free Audit Questionnaire
+                {t.header.title}
               </h3>
               <p className="font-display text-xs sm:text-sm font-bold text-amber-400 uppercase tracking-wide">
-                Organizational Health Check (2 Questions Per Department)
+                {t.header.subtitle}
               </p>
               <p className="text-[10px] sm:text-xs text-slate-300 font-medium italic">
-                Identify Strengths • Detect Gaps • Improve Systems • Drive Growth
+                {t.header.moto}
               </p>
             </div>
           </div>
@@ -335,64 +375,70 @@ export default function FreeAuditForm() {
 
         {/* 2. ORGANIZATION DETAILS FORM GRID */}
         <div className="p-4 sm:p-6 bg-slate-50/80 border-b border-slate-200">
+          <div className="mb-3 pb-2 border-b border-slate-200 flex items-center justify-between">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-slate-800">
+              {t.orgDetails.title}
+            </span>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 text-xs">
             
             {/* Left Column */}
             <div className="space-y-2.5">
               <div className="flex flex-col sm:flex-row sm:items-center gap-1">
-                <label className="font-bold text-slate-800 sm:min-w-[140px] uppercase tracking-wider text-[10px] sm:text-[11px]">
-                  Organization Name <span className="text-red-500">*</span>:
+                <label className="font-bold text-slate-800 sm:min-w-[150px] uppercase tracking-wider text-[10px] sm:text-[11px]">
+                  {t.orgDetails.orgName} <span className="text-red-500">*</span>:
                 </label>
                 <input
                   type="text"
                   name="organizationName"
                   value={formData.organizationName}
                   onChange={handleInputChange}
-                  placeholder="Official enterprise name"
+                  placeholder={t.orgDetails.orgNamePlaceholder}
                   className="w-full sm:flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:border-amber-500 focus:bg-white text-xs text-slate-900 bg-white"
                   required
                 />
               </div>
 
               <div className="flex flex-col sm:flex-row sm:items-center gap-1">
-                <label className="font-bold text-slate-800 sm:min-w-[140px] uppercase tracking-wider text-[10px] sm:text-[11px]">
-                  Address :
+                <label className="font-bold text-slate-800 sm:min-w-[150px] uppercase tracking-wider text-[10px] sm:text-[11px]">
+                  {t.orgDetails.address} :
                 </label>
                 <input
                   type="text"
                   name="address"
                   value={formData.address}
                   onChange={handleInputChange}
-                  placeholder="Street / Industrial Area"
+                  placeholder={t.orgDetails.addressPlaceholder}
                   className="w-full sm:flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:border-amber-500 focus:bg-white text-xs text-slate-900 bg-white"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-1">
-                  <label className="font-bold text-slate-800 sm:min-w-[50px] uppercase tracking-wider text-[10px] sm:text-[11px]">
-                    City :
+                  <label className="font-bold text-slate-800 sm:min-w-[60px] uppercase tracking-wider text-[10px] sm:text-[11px]">
+                    {t.orgDetails.city} :
                   </label>
                   <input
                     type="text"
                     name="city"
                     value={formData.city}
                     onChange={handleInputChange}
-                    placeholder="e.g. Pune"
+                    placeholder={t.orgDetails.cityPlaceholder}
                     className="w-full sm:flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:border-amber-500 text-xs text-slate-900 bg-white"
                   />
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:items-center gap-1">
-                  <label className="font-bold text-slate-800 sm:min-w-[50px] uppercase tracking-wider text-[10px] sm:text-[11px]">
-                    State :
+                  <label className="font-bold text-slate-800 sm:min-w-[60px] uppercase tracking-wider text-[10px] sm:text-[11px]">
+                    {t.orgDetails.state} :
                   </label>
                   <input
                     type="text"
                     name="state"
                     value={formData.state}
                     onChange={handleInputChange}
-                    placeholder="e.g. Maharashtra"
+                    placeholder={t.orgDetails.statePlaceholder}
                     className="w-full sm:flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:border-amber-500 text-xs text-slate-900 bg-white"
                   />
                 </div>
@@ -401,21 +447,21 @@ export default function FreeAuditForm() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-0.5">
                 <div className="space-y-1">
                   <label className="font-bold text-slate-700 text-[10px] uppercase tracking-wider block">
-                    Year Est. :
+                    {t.orgDetails.yearEst} :
                   </label>
                   <input
                     type="text"
                     name="yearOfEstablishment"
                     value={formData.yearOfEstablishment}
                     onChange={handleInputChange}
-                    placeholder="e.g. 2016"
+                    placeholder={t.orgDetails.yearEstPlaceholder}
                     className="w-full px-2.5 py-2 rounded-lg border border-slate-300 text-xs text-slate-900 bg-white"
                   />
                 </div>
 
                 <div className="space-y-1">
                   <label className="font-bold text-slate-700 text-[10px] uppercase tracking-wider block">
-                    Employees :
+                    {t.orgDetails.employees} :
                   </label>
                   <select
                     name="noOfEmployees"
@@ -433,7 +479,7 @@ export default function FreeAuditForm() {
 
                 <div className="space-y-1">
                   <label className="font-bold text-slate-700 text-[10px] uppercase tracking-wider block">
-                    Turnover :
+                    {t.orgDetails.turnover} :
                   </label>
                   <select
                     name="turnover"
@@ -455,7 +501,7 @@ export default function FreeAuditForm() {
             <div className="space-y-2.5">
               <div className="flex flex-col sm:flex-row sm:items-center gap-1">
                 <label className="font-bold text-slate-800 sm:min-w-[150px] uppercase tracking-wider text-[10px] sm:text-[11px]">
-                  Nature of Org :
+                  {t.orgDetails.natureOfOrg} :
                 </label>
                 <select
                   name="natureOfOrganization"
@@ -471,14 +517,14 @@ export default function FreeAuditForm() {
 
               <div className="flex flex-col sm:flex-row sm:items-center gap-1">
                 <label className="font-bold text-slate-800 sm:min-w-[150px] uppercase tracking-wider text-[10px] sm:text-[11px]">
-                  Contact Person <span className="text-red-500">*</span>:
+                  {t.orgDetails.contactPerson} <span className="text-red-500">*</span>:
                 </label>
                 <input
                   type="text"
                   name="contactPerson"
                   value={formData.contactPerson}
                   onChange={handleInputChange}
-                  placeholder="Full Name"
+                  placeholder={t.orgDetails.contactPersonPlaceholder}
                   className="w-full sm:flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:border-amber-500 text-xs text-slate-900 bg-white"
                   required
                 />
@@ -486,28 +532,28 @@ export default function FreeAuditForm() {
 
               <div className="flex flex-col sm:flex-row sm:items-center gap-1">
                 <label className="font-bold text-slate-800 sm:min-w-[150px] uppercase tracking-wider text-[10px] sm:text-[11px]">
-                  Designation :
+                  {t.orgDetails.designation} :
                 </label>
                 <input
                   type="text"
                   name="designation"
                   value={formData.designation}
                   onChange={handleInputChange}
-                  placeholder="Founder / Director / CEO / Head"
+                  placeholder={t.orgDetails.designationPlaceholder}
                   className="w-full sm:flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:border-amber-500 text-xs text-slate-900 bg-white"
                 />
               </div>
 
               <div className="flex flex-col sm:flex-row sm:items-center gap-1">
                 <label className="font-bold text-slate-800 sm:min-w-[150px] uppercase tracking-wider text-[10px] sm:text-[11px]">
-                  Email <span className="text-red-500">*</span>:
+                  {t.orgDetails.email} <span className="text-red-500">*</span>:
                 </label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="director@company.com"
+                  placeholder={t.orgDetails.emailPlaceholder}
                   className="w-full sm:flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:border-amber-500 text-xs text-slate-900 bg-white"
                   required
                 />
@@ -515,14 +561,14 @@ export default function FreeAuditForm() {
 
               <div className="flex flex-col sm:flex-row sm:items-center gap-1">
                 <label className="font-bold text-slate-800 sm:min-w-[150px] uppercase tracking-wider text-[10px] sm:text-[11px]">
-                  Mobile / Phone <span className="text-red-500">*</span>:
+                  {t.orgDetails.mobile} <span className="text-red-500">*</span>:
                 </label>
                 <input
                   type="tel"
                   name="mobilePhone"
                   value={formData.mobilePhone}
                   onChange={handleInputChange}
-                  placeholder="+91 98765 43210"
+                  placeholder={t.orgDetails.mobilePlaceholder}
                   className="w-full sm:flex-1 px-3 py-2 rounded-lg border border-slate-300 focus:border-amber-500 text-xs text-slate-900 bg-white"
                   required
                 />
@@ -540,32 +586,25 @@ export default function FreeAuditForm() {
             </div>
             <div>
               <span className="text-[11px] font-black uppercase tracking-wider text-amber-300 block">
-                QUESTIONNAIRE INSTRUCTIONS
+                {t.instructions.title}
               </span>
-              <p className="text-[11px] text-slate-200 leading-snug">
-                For each department, there are <strong>2 specific questions</strong>. Select the checkbox (✓) for each individual question to assess your system maturity.
-              </p>
+              <p 
+                className="text-[11px] text-slate-200 leading-snug"
+                dangerouslySetInnerHTML={{ __html: t.instructions.text }}
+              />
             </div>
           </div>
 
           {/* Rating Scale Legend */}
           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-2 text-[10px] sm:text-[11px] font-bold border border-slate-700 bg-slate-900/90 px-3 py-2 rounded-xl w-full md:w-auto">
-            <div className="flex items-center gap-1.5">
-              <span className="w-4 h-4 rounded bg-amber-400 text-slate-950 flex items-center justify-center font-black text-[10px]">A</span>
-              <span className="text-slate-200">Fully Established</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-4 h-4 rounded bg-amber-400 text-slate-950 flex items-center justify-center font-black text-[10px]">B</span>
-              <span className="text-slate-200">Partially Established</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-4 h-4 rounded bg-amber-400 text-slate-950 flex items-center justify-center font-black text-[10px]">C</span>
-              <span className="text-slate-200">Not Established</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-4 h-4 rounded bg-amber-400 text-slate-950 flex items-center justify-center font-black text-[10px]">D</span>
-              <span className="text-slate-200">Not Applicable</span>
-            </div>
+            {t.ratingScale.map((rk) => (
+              <div key={rk.code} className="flex items-center gap-1.5" title={rk.desc}>
+                <span className="w-4 h-4 rounded bg-amber-400 text-slate-950 flex items-center justify-center font-black text-[10px] shrink-0">
+                  {rk.code}
+                </span>
+                <span className="text-slate-200 truncate">{rk.label.split('(')[0]}</span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -577,21 +616,21 @@ export default function FreeAuditForm() {
             <thead>
               <tr className="bg-amber-100/90 text-slate-950 text-xs font-black uppercase border-b-2 border-slate-400">
                 <th className="py-2.5 px-3 text-center border-r border-slate-300 w-12">
-                  NO.
+                  {t.tableHeaders.no}
                 </th>
-                <th className="py-2.5 px-4 border-r border-slate-300 w-52 lg:w-60">
-                  FUNCTION / DEPARTMENT
+                <th className="py-2.5 px-4 border-r border-slate-300 w-52 lg:w-64">
+                  {t.tableHeaders.function}
                 </th>
                 <th className="py-2.5 px-4 border-r border-slate-300">
                   <div className="flex items-center justify-between">
-                    <span>DEPARTMENT QUESTIONS (2 QUESTIONS EACH)</span>
+                    <span>{t.tableHeaders.questions}</span>
                     <span className="text-[10px] font-extrabold text-amber-900 bg-amber-200 px-2 py-0.5 rounded">
-                      RATING CHECKBOXES ( ✓ )
+                      {t.tableHeaders.checkboxes}
                     </span>
                   </div>
                 </th>
                 <th className="py-2.5 px-4 w-44 lg:w-52">
-                  REMARKS / COMMENTS
+                  {t.tableHeaders.remarks}
                 </th>
               </tr>
             </thead>
@@ -603,6 +642,12 @@ export default function FreeAuditForm() {
                 const q1Rating = ratings[`${sec.id}_1`];
                 const q2Rating = ratings[`${sec.id}_2`];
                 const isPartiallyOrFullyAnswered = q1Rating || q2Rating;
+
+                const secT = t.sections[sec.id] || {};
+                const sectionName = secT.name || sec.name;
+                const sectionHint = secT.hint || sec.hint;
+                const q1Question = secT.questions?.[0] || sec.questions[0];
+                const q2Question = secT.questions?.[1] || sec.questions[1];
 
                 return (
                   <tr 
@@ -624,10 +669,10 @@ export default function FreeAuditForm() {
                         </div>
                         <div>
                           <span className="font-bold text-slate-900 uppercase tracking-tight text-[11px] block leading-tight">
-                            {sec.name}
+                            {sectionName}
                           </span>
                           <span className="text-[10px] text-slate-500 block leading-tight mt-1">
-                            {sec.hint}
+                            {sectionHint}
                           </span>
                         </div>
                       </div>
@@ -646,7 +691,7 @@ export default function FreeAuditForm() {
                               1
                             </span>
                             <span className="text-[11px] text-slate-800 font-semibold leading-snug">
-                              {sec.questions[0]}
+                              {q1Question}
                             </span>
                           </div>
 
@@ -654,7 +699,7 @@ export default function FreeAuditForm() {
                           <div className="flex items-center gap-1.5 shrink-0 self-end lg:self-auto">
                             {['A', 'B', 'C', 'D'].map((code) => {
                               const isChecked = q1Rating === code;
-                              const optMeta = ratingScale.find((r) => r.code === code);
+                              const optMeta = t.ratingScale.find((r) => r.code === code);
                               return (
                                 <button
                                   key={`q1_${code}`}
@@ -692,7 +737,7 @@ export default function FreeAuditForm() {
                               2
                             </span>
                             <span className="text-[11px] text-slate-800 font-semibold leading-snug">
-                              {sec.questions[1]}
+                              {q2Question}
                             </span>
                           </div>
 
@@ -700,7 +745,7 @@ export default function FreeAuditForm() {
                           <div className="flex items-center gap-1.5 shrink-0 self-end lg:self-auto">
                             {['A', 'B', 'C', 'D'].map((code) => {
                               const isChecked = q2Rating === code;
-                              const optMeta = ratingScale.find((r) => r.code === code);
+                              const optMeta = t.ratingScale.find((r) => r.code === code);
                               return (
                                 <button
                                   key={`q2_${code}`}
@@ -736,7 +781,7 @@ export default function FreeAuditForm() {
                         rows="3"
                         value={comments[sec.id] || ''}
                         onChange={(e) => handleCommentChange(sec.id, e.target.value)}
-                        placeholder="Optional remarks / gap..."
+                        placeholder={t.tableHeaders.remarksPlaceholder}
                         className="w-full p-2 text-[11px] rounded-lg border border-slate-300 focus:border-amber-500 focus:bg-white bg-slate-50/50 text-slate-900 resize-none leading-snug"
                       />
                     </td>
@@ -755,6 +800,11 @@ export default function FreeAuditForm() {
             const q1Rating = ratings[`${sec.id}_1`];
             const q2Rating = ratings[`${sec.id}_2`];
 
+            const secT = t.sections[sec.id] || {};
+            const sectionName = secT.name || sec.name;
+            const q1Question = secT.questions?.[0] || sec.questions[0];
+            const q2Question = secT.questions?.[1] || sec.questions[1];
+
             return (
               <div 
                 key={sec.id}
@@ -769,7 +819,7 @@ export default function FreeAuditForm() {
                       {sec.number}
                     </span>
                     <h4 className="font-display text-xs font-bold text-slate-900 uppercase tracking-tight">
-                      {sec.name}
+                      {sectionName}
                     </h4>
                   </div>
                   <div className="flex items-center gap-1 text-[10px] font-black">
@@ -785,12 +835,12 @@ export default function FreeAuditForm() {
                       1
                     </span>
                     <p className="text-[11px] text-slate-800 font-semibold leading-snug">
-                      {sec.questions[0]}
+                      {q1Question}
                     </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-1.5 pt-1">
-                    {ratingScale.map((opt) => {
+                    {t.ratingScale.map((opt) => {
                       const isChecked = q1Rating === opt.code;
                       return (
                         <button
@@ -809,7 +859,7 @@ export default function FreeAuditForm() {
                             {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
                           </div>
                           <span className="text-[10px] font-bold truncate">
-                            <strong className="text-amber-500 mr-1">{opt.code}</strong> {opt.label}
+                            <strong className="text-amber-500 mr-1">{opt.code}</strong> {opt.label.split('(')[0]}
                           </span>
                         </button>
                       );
@@ -824,12 +874,12 @@ export default function FreeAuditForm() {
                       2
                     </span>
                     <p className="text-[11px] text-slate-800 font-semibold leading-snug">
-                      {sec.questions[1]}
+                      {q2Question}
                     </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-1.5 pt-1">
-                    {ratingScale.map((opt) => {
+                    {t.ratingScale.map((opt) => {
                       const isChecked = q2Rating === opt.code;
                       return (
                         <button
@@ -848,7 +898,7 @@ export default function FreeAuditForm() {
                             {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
                           </div>
                           <span className="text-[10px] font-bold truncate">
-                            <strong className="text-amber-500 mr-1">{opt.code}</strong> {opt.label}
+                            <strong className="text-amber-500 mr-1">{opt.code}</strong> {opt.label.split('(')[0]}
                           </span>
                         </button>
                       );
@@ -862,7 +912,7 @@ export default function FreeAuditForm() {
                     type="text"
                     value={comments[sec.id] || ''}
                     onChange={(e) => handleCommentChange(sec.id, e.target.value)}
-                    placeholder="Optional remarks / gap..."
+                    placeholder={t.tableHeaders.remarksPlaceholder}
                     className="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-300 bg-white text-slate-900"
                   />
                 </div>
@@ -878,36 +928,41 @@ export default function FreeAuditForm() {
           <div className="md:col-span-7 p-4 sm:p-5 space-y-2.5">
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-0.5 rounded bg-slate-900 text-amber-300 font-black text-[10px] uppercase tracking-wider">
-                OVERALL SELF-ASSESSMENT (OPTIONAL)
+                {t.selfAssessment.title}
               </span>
             </div>
             
             <p className="text-xs font-bold text-slate-800">
-              How would you rate your overall organizational health?
+              {t.selfAssessment.question}
             </p>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {overallHealthOptions.map((opt) => {
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {t.selfAssessment.options.map((opt) => {
                 const isSelected = overallHealth === opt.code;
                 return (
                   <button
                     key={opt.code}
                     type="button"
                     onClick={() => setOverallHealth(opt.code)}
-                    className={`p-2 rounded-xl border text-left flex items-center gap-2 transition-all cursor-pointer ${
+                    className={`p-2.5 rounded-xl border text-left flex items-start gap-2.5 transition-all cursor-pointer ${
                       isSelected
                         ? 'bg-slate-950 text-white border-slate-950 shadow-md ring-2 ring-amber-400'
                         : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100'
                     }`}
                   >
-                    <div className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 ${
+                    <div className={`w-5 h-5 rounded-md border flex items-center justify-center shrink-0 mt-0.5 ${
                       isSelected ? 'border-amber-400 bg-amber-400 text-slate-950' : 'border-slate-400 bg-white'
                     }`}>
                       {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                     </div>
-                    <span className="text-[11px] font-bold leading-tight">
-                      <strong className="text-amber-500 mr-1">{opt.code}</strong> {opt.label}
-                    </span>
+                    <div>
+                      <span className="text-[11px] font-bold leading-tight block">
+                        <strong className="text-amber-500 mr-1">{opt.code}</strong> {opt.label}
+                      </span>
+                      <span className="text-[9px] text-slate-500 block leading-tight mt-0.5">
+                        {opt.subtitle}
+                      </span>
+                    </div>
                   </button>
                 );
               })}
@@ -918,28 +973,32 @@ export default function FreeAuditForm() {
           <div className="md:col-span-5 p-4 sm:p-5 bg-amber-50/50 space-y-2">
             <div className="flex items-center justify-between border-b border-amber-300/80 pb-1.5">
               <span className="px-2 py-0.5 rounded bg-amber-300 text-slate-950 font-black text-[10px] uppercase tracking-wider">
-                FOR GROW USE ONLY
+                {t.growUseOnly.title}
               </span>
               <span className="text-xs font-black text-slate-900">
-                SCORE: <strong className="text-base text-amber-700 font-black">{scoreData.score}</strong> / {scoreData.maxScore}
+                {t.growUseOnly.score}: <strong className="text-base text-amber-700 font-black">{scoreData.score}</strong> / {scoreData.maxScore}
               </span>
             </div>
 
             <div className="space-y-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 block">
-                Top 5 Priority Intervention Areas:
+                {t.growUseOnly.top5Title}
               </span>
               <ol className="space-y-1 text-[11px] text-slate-800 font-medium">
-                {priorityAreas.slice(0, 5).map((pa, idx) => (
-                  <li key={pa.id} className="flex items-center justify-between border-b border-slate-200/80 pb-0.5">
-                    <span className="truncate pr-1">
-                      {idx + 1}. {pa.name}
-                    </span>
-                    <span className="text-[9px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.2 rounded shrink-0">
-                      Avg Rating {pa.ratingCode}
-                    </span>
-                  </li>
-                ))}
+                {priorityAreas.slice(0, 5).map((pa, idx) => {
+                  const secT = t.sections[pa.id];
+                  const displayName = secT?.name ? secT.name.split('(')[0] : pa.name;
+                  return (
+                    <li key={pa.id} className="flex items-center justify-between border-b border-slate-200/80 pb-0.5">
+                      <span className="truncate pr-1">
+                        {idx + 1}. {displayName}
+                      </span>
+                      <span className="text-[9px] font-bold text-amber-800 bg-amber-100 px-1.5 py-0.2 rounded shrink-0">
+                        Avg Rating {pa.ratingCode}
+                      </span>
+                    </li>
+                  );
+                })}
               </ol>
             </div>
           </div>
@@ -951,7 +1010,7 @@ export default function FreeAuditForm() {
           
           <div className="md:col-span-5 space-y-1">
             <span className="text-xs font-black uppercase text-amber-400 tracking-wider block">
-              ✉ PLEASE RETURN THE COMPLETED FORM TO US
+              {t.footerInfo.returnTitle}
             </span>
             <p className="text-[11px] text-slate-300">
               Email: <strong className="text-white">{contactDetails.email}</strong>
@@ -960,25 +1019,25 @@ export default function FreeAuditForm() {
               WhatsApp: <strong className="text-white">+91 94057 51665</strong>
             </p>
             <p className="text-[10px] text-slate-400 italic leading-snug pt-0.5">
-              We will analyze and share a summary report with key observations and improvement suggestions.
+              {t.footerInfo.returnDesc}
             </p>
           </div>
 
           <div className="md:col-span-3 p-3 rounded-xl bg-slate-900 border border-slate-800 text-center space-y-1">
             <span className="inline-block px-2 py-0.5 rounded bg-amber-500/20 border border-amber-400/40 text-amber-300 text-[9px] font-black uppercase tracking-wider">
-              OUR COMMITMENT
+              {t.footerInfo.commitmentTitle}
             </span>
             <p className="text-[10px] text-slate-300 leading-snug">
-              Your responses are confidential and will be used only for improvement recommendations.
+              {t.footerInfo.commitmentDesc}
             </p>
           </div>
 
           <div className="md:col-span-4 text-left md:text-right space-y-1">
             <h4 className="font-display text-sm font-black text-amber-400 uppercase tracking-tight">
-              THANK YOU
+              {t.footerInfo.thankYouTitle}
             </h4>
             <p className="text-[11px] text-slate-300 leading-snug">
-              for partnering with GROW in building stronger systems, better controls and sustainable growth.
+              {t.footerInfo.thankYouDesc}
             </p>
           </div>
 
@@ -1001,13 +1060,13 @@ export default function FreeAuditForm() {
         
         <div>
           <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-emerald-700 block mb-0.5">
-            1-Click Submission & Instant PDF
+            {t.submitCard.tag}
           </span>
           <h4 className="font-display text-sm sm:text-lg font-black text-slate-900">
-            Submit Corporate Health Check-Up to GROW
+            {t.submitCard.title}
           </h4>
           <p className="text-[11px] sm:text-xs text-slate-600 mt-0.5 max-w-md">
-            Downloads your official 2-page PDF certificate and directly opens WhatsApp (+91 94057 51665) with your full responses.
+            {t.submitCard.desc}
           </p>
         </div>
 
@@ -1019,12 +1078,12 @@ export default function FreeAuditForm() {
           {submitting ? (
             <>
               <RefreshCcw className="w-4 h-4 sm:w-5 sm:h-5 animate-spin shrink-0" />
-              <span>Generating PDF & Opening WhatsApp...</span>
+              <span>{t.submitCard.buttonLoading}</span>
             </>
           ) : (
             <>
               <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-              <span>Download PDF & Submit on WhatsApp (+91 94057 51665)</span>
+              <span>{t.submitCard.buttonReady}</span>
             </>
           )}
         </button>
@@ -1045,13 +1104,13 @@ export default function FreeAuditForm() {
 
             <div className="space-y-1">
               <span className="text-[10px] font-black uppercase tracking-wider text-amber-900 bg-amber-200 px-3 py-0.5 rounded-full inline-block">
-                PDF Report Downloaded
+                {t.autoGuide.tag}
               </span>
               <h3 className="font-display text-xl sm:text-2xl font-black text-slate-900">
-                Opening WhatsApp...
+                {t.autoGuide.title}
               </h3>
               <p className="text-xs text-slate-600 leading-snug">
-                तुमचा २ पानांचा अधिकृत PDF रिपोर्ट डाऊनलोड झाला आहे.
+                {t.autoGuide.subtitle}
               </p>
             </div>
 
@@ -1059,13 +1118,14 @@ export default function FreeAuditForm() {
             <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-left space-y-2 text-xs">
               <div className="flex items-center gap-2 text-slate-900 font-bold">
                 <span className="w-5 h-5 rounded-full bg-[#25D366] text-white flex items-center justify-center text-[10px] shrink-0 font-bold">✓</span>
-                <span>WhatsApp (+91 94057 51665) आपोआप ओपन होत आहे</span>
+                <span>{t.autoGuide.step1}</span>
               </div>
               <div className="flex items-start gap-2 text-slate-700 bg-amber-50/80 p-2 rounded-xl border border-amber-200/70">
                 <span className="text-base shrink-0">📎</span>
-                <span className="text-[11px] leading-snug font-medium">
-                  व्हॉट्सॲप चॅटमध्ये <strong>📎 (Attach / Paperclip)</strong> वर क्लिक करून डाऊनलोड झालेली PDF सेंड करा.
-                </span>
+                <span 
+                  className="text-[11px] leading-snug font-medium"
+                  dangerouslySetInnerHTML={{ __html: t.autoGuide.step2 }}
+                />
               </div>
             </div>
 

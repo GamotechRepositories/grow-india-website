@@ -2,12 +2,6 @@ import { contactDetails } from './contact';
 
 export const mainNavLinks = [
   { label: 'Home', href: '/' },
-  { 
-    label: '★ Free Health Check-Up', 
-    href: '/audit', 
-    highlight: true,
-    description: '100% Free Corporate Health & Systems Audit' 
-  },
   { label: 'About', href: '/about' },
   {
     label: 'Services',

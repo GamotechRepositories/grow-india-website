@@ -75,19 +75,12 @@ export default function Navbar() {
       <div className="bg-slate-950 text-slate-300 text-xs border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between gap-3">
           
-          {/* Left Brand info & Free Audit Pill */}
+          {/* Left Brand info */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <span className="inline-flex items-center gap-1.5 text-amber-400 font-semibold truncate text-[11px] sm:text-xs">
               <Shield className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
               <span>{brandIdentity.positioning}</span>
             </span>
-            <span className="hidden xl:inline text-slate-700">|</span>
-            <Link
-              to="/audit"
-              className="hidden lg:inline-flex items-center gap-1 text-[10.5px] font-black text-slate-950 bg-amber-400 hover:bg-amber-300 px-2.5 py-0.5 rounded-full transition-colors shrink-0 shadow-2xs"
-            >
-              <span>★ 100% Free Health Check-Up Audit</span>
-            </Link>
           </div>
 
           {/* Right Contact Info */}
@@ -275,15 +268,6 @@ export default function Navbar() {
         {/* Mobile Navigation Drawer */}
         {isOpen && (
           <div className="lg:hidden border-t border-slate-800 bg-[#070D1E] px-4 pt-4 pb-8 space-y-2 shadow-2xl max-h-[85vh] overflow-y-auto">
-            {/* Top mobile highlighted free audit banner */}
-            <Link
-              to="/audit"
-              onClick={closeMenu}
-              className="w-full p-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-between shadow-lg mb-2"
-            >
-              <span>★ Take Free Corporate Health Check-Up</span>
-              <span>&rarr;</span>
-            </Link>
             {mainNavLinks.map((item) => {
               if (item.children) {
                 const isOpenMobile = openDropdown === item.label;
