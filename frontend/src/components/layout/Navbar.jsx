@@ -21,7 +21,8 @@ import {
   Workflow,
   GraduationCap,
   Handshake,
-  Film
+  Film,
+  QrCode
 } from 'lucide-react';
 import { mainNavLinks } from '../../data/navigation';
 import { contactDetails } from '../../data/contact';
@@ -43,7 +44,8 @@ const iconMap = {
   Workflow,
   GraduationCap,
   Handshake,
-  Film
+  Film,
+  QrCode
 };
 
 export default function Navbar() {
@@ -95,7 +97,7 @@ export default function Navbar() {
             <span className="hidden sm:inline text-slate-700">|</span>
             <a
               href={`mailto:${contactDetails.email}`}
-              className="hidden md:inline-flex items-center gap-1.5 text-slate-300 hover:text-amber-400 transition-colors truncate max-w-[220px] text-[11px] sm:text-xs"
+              className="hidden md:inline-flex items-center gap-1.5 text-slate-300 hover:text-amber-400 transition-colors truncate max-w-[280px] text-[11px] sm:text-xs"
             >
               <Mail className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
               <span className="truncate">{contactDetails.email}</span>

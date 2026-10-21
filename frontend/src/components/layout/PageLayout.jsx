@@ -30,7 +30,9 @@ export default function PageLayout({
   children,
   title = 'GROW India – Govind Raadhaa Organizational Wonders | Business Growth & Systems Partner',
   description = 'GROW India - Premier corporate consulting, governance, risk, compliance, business systems, and digital transformation partner in India.',
-  canonicalUrl
+  canonicalUrl,
+  hideNavbar = false,
+  hideFooter = false
 }) {
   const { pathname } = useLocation();
 
@@ -49,13 +51,13 @@ export default function PageLayout({
         <meta property="og:type" content="website" />
       </Helmet>
 
-      <Navbar />
+      {!hideNavbar && <Navbar />}
 
       <main className="flex-1 w-full" id="main-content">
         {children}
       </main>
 
-      <Footer />
+      {!hideFooter && <Footer />}
 
       {/* Persistent WhatsApp Floating Button */}
       <FloatingWhatsApp />

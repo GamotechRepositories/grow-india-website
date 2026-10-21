@@ -124,6 +124,12 @@ export const mainNavLinks = [
         subtitle: 'Gamotech Solutions & Digital Buddies',
         href: '/partners',
         icon: 'Handshake'
+      },
+      {
+        label: 'Resources & QR Portal',
+        subtitle: 'Brochure & Health Check-Up Questionnaire',
+        href: '/resources',
+        icon: 'QrCode'
       }
     ]
   },
@@ -134,6 +140,7 @@ export const mainNavLinks = [
 export const footerLinks = {
   company: [
     { label: 'Institutional Profile', href: '/about' },
+    { label: 'Resources (Brochure & Audit)', href: '/resources' },
     { label: 'Purpose, Vision & Mission', href: '/about' },
     { label: 'Strategic Video Reels', href: '/reels' },
     { label: '10 Ethical Principles', href: '/about' },

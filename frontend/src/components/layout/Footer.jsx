@@ -132,6 +132,12 @@ export default function Footer() {
                   {contactDetails.phoneDisplay}
                 </a>
               </div>
+              <div className="flex items-center gap-2">
+                <Mail className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden="true" />
+                <a href={`mailto:${contactDetails.email}`} className="hover:text-amber-400 transition-colors font-semibold truncate">
+                  {contactDetails.email}
+                </a>
+              </div>
             </div>
           </div>
 

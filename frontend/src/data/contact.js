@@ -12,7 +12,7 @@ export const contactDetails = {
   whatsapp: '+919405751665',
   whatsappDisplay: '+91 94057 51665',
   whatsappLink: 'https://wa.me/919405751665',
-  email: 'growindia.corporateconsultants@gmail.com',
+  email: 'contact@growbusinesspartner.in',
   geographicScope: 'Serving Businesses Across India',
   location: 'Pan-India Delivery • Maharashtra, India',
   workingHours: 'Mon – Sat: 9:30 AM – 6:30 PM IST',

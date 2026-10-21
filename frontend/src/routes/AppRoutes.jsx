@@ -13,6 +13,7 @@ import PartnersPage from '../pages/PartnersPage';
 import ClientsPartnersPage from '../pages/ClientsPartnersPage';
 import ContactPage from '../pages/ContactPage';
 import ReelsPage from '../pages/ReelsPage';
+import ResourcesPage from '../pages/ResourcesPage';
 import PlaceholderPage from '../pages/PlaceholderPage';
 
 export default function AppRoutes() {
@@ -51,6 +52,10 @@ export default function AppRoutes() {
 
       {/* 7. Contact */}
       <Route path="/contact" element={<ContactPage />} />
+
+      {/* 8. Dedicated Resources & QR Code Gateway (Brochure & Questionnaire) */}
+      <Route path="/resources" element={<ResourcesPage />} />
+      <Route path="/brochure" element={<ResourcesPage />} />
 
       {/* 404 Fallback */}
       <Route

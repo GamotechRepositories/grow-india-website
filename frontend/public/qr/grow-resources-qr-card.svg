@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" width="800" height="1100">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4AF37"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="navyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#070D1E"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Clean Print Canvas -->
+  <rect width="800" height="1100" fill="#F8FAFC"/>
+
+  <!-- Main Card Container -->
+  <rect x="40" y="40" width="720" height="1020" rx="24" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2" filter="url(#shadow)"/>
+
+  <!-- Top Decorative Header Strip -->
+  <path d="M 40 64 Q 40 40 64 40 L 736 40 Q 760 40 760 64 L 760 180 L 40 180 Z" fill="url(#navyGrad)"/>
+  <rect x="40" y="176" width="720" height="4" fill="url(#goldGrad)"/>
+
+  <!-- Brand Typography Header -->
+  <text x="400" y="90" font-family="'Outfit', -apple-system, sans-serif" font-size="12" font-weight="700" fill="#FBBF24" text-anchor="middle" letter-spacing="3">OFFICIAL CLIENT RESOURCE PORTAL</text>
+  <text x="400" y="125" font-family="'Outfit', -apple-system, sans-serif" font-size="24" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">GOVIND RAADHAA ORGANIZATIONAL WONDERS</text>
+  <text x="400" y="152" font-family="'Outfit', -apple-system, sans-serif" font-size="12" font-weight="600" fill="#94A3B8" text-anchor="middle" letter-spacing="2">BUSINESS GROWTH AND SYSTEMS PARTNER INDIA</text>
+
+  <!-- Gold Pill Tagline -->
+  <rect x="220" y="210" width="360" height="34" rx="17" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/>
+  <text x="400" y="233" font-family="'Outfit', -apple-system, sans-serif" font-size="12" font-weight="800" fill="#92400E" text-anchor="middle" letter-spacing="1.5">GRC • SOPs • TRANSFORMATION • SYSTEMS</text>
+
+  <!-- Main White Frame for QR with Quiet Zone -->
+  <rect x="150" y="270" width="500" height="500" rx="24" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2"/>
+
+  <!-- Embedded Scaled QR Code -->
+  <g transform="translate(180, 300)">
+    <svg width="440" height="440" viewBox="0 0 45 45">
+      <path fill="#FFFFFF" d="M0 0h45v45H0z"/><path stroke="#070D1E" d="M2 2.5h7m4 0h1m1 0h2m2 0h1m3 0h2m3 0h1m2 0h2m3 0h7M2 3.5h1m5 0h1m2 0h1m2 0h2m1 0h2m5 0h1m5 0h1m1 0h2m2 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m1 0h1m1 0h3m2 0h1m1 0h1m2 0h1m1 0h1m5 0h1m3 0h1m1 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h4m1 0h1m1 0h7m1 0h1m4 0h1m1 0h3m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m3 0h4m4 0h1m1 0h1m2 0h4m1 0h2m1 0h1m2 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m3 0h1m3 0h1m3 0h4m1 0h2m7 0h1m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M11 9.5h1m5 0h1m6 0h2m1 0h1m1 0h2m3 0h1M5 10.5h2m1 0h2m3 0h2m2 0h2m1 0h2m1 0h1m3 0h2m1 0h2m1 0h1m5 0h2M3 11.5h2m1 0h1m3 0h1m3 0h4m2 0h3m1 0h2m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h2m2 0h1M4 12.5h1m2 0h2m1 0h1m1 0h4m1 0h1m4 0h1m1 0h4m1 0h4m2 0h1m2 0h1m1 0h1M3 13.5h1m1 0h1m1 0h1m2 0h3m2 0h4m2 0h4m6 0h1m1 0h3m2 0h2m1 0h2M2 14.5h1m2 0h1m1 0h3m1 0h1m2 0h1m1 0h1m1 0h1m3 0h3m9 0h3m5 0h1M3 15.5h1m2 0h2m2 0h1m1 0h4m1 0h1m1 0h3m1 0h2m2 0h2m2 0h1m1 0h1m3 0h2m1 0h1m1 0h1M2 16.5h2m2 0h1m1 0h2m1 0h3m4 0h1m1 0h2m1 0h1m1 0h1m2 0h2m5 0h5m2 0h1M3 17.5h2m2 0h1m1 0h2m3 0h9m1 0h4m2 0h1m2 0h1m1 0h1m1 0h1m1 0h2M2 18.5h1m3 0h3m1 0h1m1 0h1m4 0h1m1 0h1m1 0h1m1 0h2m3 0h3m1 0h4m5 0h1M3 19.5h2m1 0h2m3 0h3m2 0h3m3 0h1m3 0h4m2 0h4m2 0h2M2 20.5h2m1 0h2m1 0h2m1 0h3m4 0h3m7 0h2m3 0h1m2 0h3m1 0h1m1 0h1M3 21.5h1m1 0h2m3 0h3m1 0h1m3 0h3m1 0h1m1 0h3m3 0h3m1 0h3m1 0h1m1 0h1m1 0h1M2 22.5h2m3 0h4m1 0h2m1 0h4m2 0h1m1 0h1m1 0h1m1 0h1m1 0h2m2 0h2m1 0h2m1 0h2M3 23.5h3m1 0h1m1 0h2m3 0h2m1 0h3m1 0h2m2 0h5m2 0h2m3 0h2m1 0h1M3 24.5h4m1 0h1m3 0h7m1 0h3m4 0h1m1 0h1m2 0h1m1 0h2m2 0h1M5 25.5h1m1 0h1m4 0h3m1 0h1m4 0h1m3 0h5m1 0h3m4 0h2m1 0h2M3 26.5h2m1 0h1m1 0h2m4 0h1m3 0h1m7 0h1m1 0h1m1 0h1m2 0h5m1 0h1m1 0h2M2 27.5h6m1 0h1m1 0h3m3 0h1m2 0h1m2 0h1m2 0h1m1 0h2m2 0h1m1 0h1m1 0h3m1 0h3M2 28.5h1m2 0h1m1 0h3m4 0h2m2 0h1m3 0h1m1 0h1m1 0h1m1 0h2m3 0h2m3 0h2m2 0h1M2 29.5h1m7 0h1m3 0h4m1 0h1m2 0h4m1 0h1m1 0h1m2 0h2m3 0h5M5 30.5h5m4 0h1m2 0h1m1 0h1m1 0h1m3 0h2m2 0h1m3 0h1m2 0h2m1 0h1m2 0h1M2 31.5h5m2 0h1m2 0h2m4 0h8m2 0h1m3 0h1m3 0h3m1 0h2M2 32.5h5m1 0h1m1 0h3m4 0h1m6 0h1m1 0h1m3 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1M2 33.5h2m2 0h1m4 0h2m3 0h2m1 0h1m1 0h1m1 0h2m4 0h2m2 0h2m1 0h1m1 0h1m1 0h1m1 0h1M2 34.5h3m1 0h6m1 0h2m4 0h2m1 0h2m1 0h3m2 0h2m1 0h8M10 35.5h1m1 0h1m1 0h5m1 0h1m2 0h3m1 0h1m1 0h1m4 0h1m3 0h2M2 36.5h7m1 0h1m1 0h2m3 0h2m2 0h3m1 0h1m1 0h3m1 0h4m1 0h1m1 0h1M2 37.5h1m5 0h1m2 0h3m1 0h2m3 0h3m1 0h4m1 0h3m1 0h2m3 0h2m1 0h2M2 38.5h1m1 0h3m1 0h1m1 0h1m1 0h3m2 0h1m3 0h2m2 0h2m2 0h11m1 0h1M2 39.5h1m1 0h3m1 0h1m1 0h11m1 0h1m3 0h2m1 0h1m1 0h1m1 0h1m3 0h1m1 0h4M2 40.5h1m1 0h3m1 0h1m2 0h1m1 0h1m2 0h1m1 0h1m1 0h1m1 0h2m3 0h3m1 0h1m2 0h2m1 0h2m1 0h3M2 41.5h1m5 0h1m6 0h2m1 0h2m2 0h1m1 0h3m1 0h1m6 0h2m1 0h3m1 0h1M2 42.5h7m3 0h1m3 0h5m1 0h1m2 0h2m2 0h2m2 0h2m3 0h1"/>
+
+    </svg>
+  </g>
+
+  <!-- Clear Primary Call-To-Action Label -->
+  <text x="400" y="820" font-family="'Outfit', -apple-system, sans-serif" font-size="24" font-weight="900" fill="#070D1E" text-anchor="middle" letter-spacing="0.5">SCAN TO VIEW BROCHURE &amp; QUESTIONNAIRE</text>
+  <text x="400" y="852" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="500" fill="#475569" text-anchor="middle">Access Corporate Brochure &amp; Free 2-Minute Health Check-Up Audit</text>
+
+  <!-- Destination URL Display Badge -->
+  <rect x="180" y="880" width="440" height="40" rx="10" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="400" y="905" font-family="monospace" font-size="13" font-weight="600" fill="#0F172A" text-anchor="middle">https://grow-india-website.onrender.com/resources</text>
+
+  <!-- Institutional Credentials & Verification Footer -->
+  <line x1="80" y1="960" x2="720" y2="960" stroke="#E2E8F0" stroke-width="1.5"/>
+  <text x="400" y="995" font-family="-apple-system, sans-serif" font-size="12" font-weight="700" fill="#64748B" text-anchor="middle" letter-spacing="1">UDYAM REGISTRATION: UDYAM-MH-20-0338117</text>
+  <text x="400" y="1020" font-family="-apple-system, sans-serif" font-size="11" font-weight="500" fill="#94A3B8" text-anchor="middle">Serving Enterprises Across India • Email: contact@growbusinesspartner.in</text>
+</svg>
