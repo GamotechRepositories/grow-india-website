@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/generate-spa-fallbacks.js",
     "generate-qr": "node scripts/generate-qr.js",
     "lint": "eslint .",
     "preview": "vite preview"
