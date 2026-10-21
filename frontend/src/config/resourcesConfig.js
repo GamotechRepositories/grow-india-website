@@ -30,33 +30,28 @@ export const resourcesConfig = {
 
   // Brochure configuration
   brochure: {
-    /**
-     * Asset Availability Flag:
-     * Set to true once the brochure PDF is uploaded, or pass VITE_BROCHURE_AVAILABLE=true.
-     * When false, the landing page gracefully displays a corporate advisory notice with
-     * direct WhatsApp request and questionnaire options instead of throwing a 404 error.
-     */
-    isAvailable: (typeof import.meta !== 'undefined' && (import.meta.env?.VITE_BROCHURE_AVAILABLE === 'true' || Boolean(import.meta.env?.VITE_BROCHURE_URL))) || false,
-
-    /**
-     * Brochure PDF location:
-     * When the actual PDF is ready, you can either:
-     * a) Place the PDF file in `frontend/public/brochure.pdf` (default local path)
-     * b) Provide an external hosted URL via the VITE_BROCHURE_URL environment variable
-     */
-    url: (typeof import.meta !== 'undefined' && import.meta.env?.VITE_BROCHURE_URL) || '/brochure.pdf',
-
-    title: 'GROW India Corporate Brochure',
+    isAvailable: true,
+    title: 'GROW India Corporate Brochures',
     subtitle: 'Institutional Profile, Governance Systems, SOP Architecture & Services Suite',
-    description: 'Comprehensive 360° overview of Govind Raadhaa Organizational Wonders (GROW) consulting practices, 7 core divisions, frameworks, and institutional engagement models.',
-    
-    // Fallback advisory details when brochure is pending final upload
-    pendingNotice: {
-      badge: 'PDF Being Finalized',
-      heading: 'Official Brochure Update in Progress',
-      message: 'The official GROW India Corporate Brochure & Institutional Presentation is currently undergoing final review for the current fiscal cycle. It will be available for direct download shortly.',
-      whatsappPrompt: `Hello GROW India advisory desk, I scanned the resources QR code and would like to request the latest Corporate Brochure & Service Suite presentation deck.`
-    }
+    description: 'Explore the two official GROW India corporate brochures: the Tri-Fold Corporate Brochure and the Executive Strategic Guide with QR diagnostic.',
+    items: [
+      {
+        id: 'trifold',
+        title: 'GROW India Tri-Fold Brochure',
+        tagline: 'Official Corporate Profile & Services',
+        image: '/brochures/GROW_India_TriFold_Brochure_Resized.png',
+        downloadName: 'GROW_India_TriFold_Corporate_Brochure.png',
+        description: 'Comprehensive corporate presentation covering the 7 practice divisions, institutional credentials, and organizational transformation models.'
+      },
+      {
+        id: 'executive-qr',
+        title: 'GROW Executive Brochure (QR Edition)',
+        tagline: 'Strategic Diagnostic & Systems Guide',
+        image: '/brochures/GROW_brochure_updated_working_QR.png',
+        downloadName: 'GROW_Brochure_Strategic_Guide.png',
+        description: 'Executive overview featuring diagnostic health check vectors, quick scan access, and advisory methodologies.'
+      }
+    ]
   },
 
   // Questionnaire card configuration
