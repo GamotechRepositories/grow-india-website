@@ -11,7 +11,7 @@
 import { contactDetails } from '../data/contact';
 
 // Public production site base URL (can be customized via VITE_PUBLIC_SITE_URL)
-const DEFAULT_PRODUCTION_BASE = 'https://grow-india-website.onrender.com';
+const DEFAULT_PRODUCTION_BASE = 'https://growbusinesspartner.in';
 
 export const resourcesConfig = {
   // Base website URL - prioritizes Vite environment variable if set

@@ -100,7 +100,7 @@ export const generateAuditPDF = async (formData, ratings, comments, overallHealt
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(5.8);
 
-    const contactLine1 = `WhatsApp / Phone: +91 94057 51665   |   Email: ${contactDetails.email}   |   Web: grow-india-website.onrender.com/about`;
+    const contactLine1 = `WhatsApp / Phone: +91 94057 51665   |   Email: ${contactDetails.email}   |   Web: growbusinesspartner.in`;
     const contactLine2 = `Instagram: @growbusinesspartner   |   Facebook: /GROWIndia   |   LinkedIn: /Govind Raadhaa Organizational Wonders`;
 
     doc.text(contactLine1, pageWidth / 2, footerY + 4.5, { align: 'center' });

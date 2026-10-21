@@ -24,7 +24,7 @@ const __dirname = path.dirname(__filename);
 const OUTPUT_DIR = path.resolve(__dirname, '../public/qr');
 
 // Default production URL for the landing page
-const DEFAULT_URL = 'https://grow-india-website.onrender.com/resources';
+const DEFAULT_URL = 'https://growbusinesspartner.in/resources';
 
 // Parse command-line args for --url=...
 function getTargetUrl() {

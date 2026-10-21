@@ -36,7 +36,7 @@ function TwitterIcon({ className = "w-4 h-4" }) {
 }
 
 export default function SocialShareBar({
-  shareUrl = typeof window !== 'undefined' ? window.location.href : 'https://grow-india-website.onrender.com/audit',
+  shareUrl = typeof window !== 'undefined' ? window.location.href : 'https://growbusinesspartner.in/audit',
   title = 'GROW Free Organizational Health Audit Questionnaire',
   description = 'Take this 2-minute free organizational health check to identify strengths, detect operational gaps, and improve systems for sustainable growth.'
 }) {
